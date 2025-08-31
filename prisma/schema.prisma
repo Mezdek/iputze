@@ -1,0 +1,206 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// ---------- Prisma setup ----------
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+enum RoleLevel {
+  ADMIN
+  MANAGER
+  CLEANER
+  PENDING
+}
+
+enum RoleStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum RoomOccupancy {
+  AVAILABLE
+  OCCUPIED
+}
+
+enum RoomCleanliness {
+  CLEAN
+  DIRTY
+}
+
+enum AssignmentStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+}
+
+// ---------- Domain models ----------
+
+model Hotel {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  address     String?
+  phone       String?
+  email       String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rooms   Room[]
+  roles   Role[]
+  layouts HotelLayout[]
+}
+
+model HotelLayout {
+  id        Int      @id @default(autoincrement())
+  hotelId   Int
+  html      String // HTML layout content
+  isCurrent Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  hotel Hotel @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@index([hotelId, isCurrent])
+}
+
+model Room {
+  id          Int             @id @default(autoincrement())
+  number      String
+  occupancy   RoomOccupancy   @default(AVAILABLE)
+  cleanliness RoomCleanliness @default(CLEAN)
+  notes       String?
+
+  hotelId    Int
+  hotel      Hotel        @relation(fields: [hotelId], references: [id], onDelete: Restrict)
+  assignment Assignment[]
+
+  @@unique([hotelId, number])
+  @@index([hotelId])
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  avatarUrl    String?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Rooms where the user is assigned as cleaner
+  assignments    Assignment[]     @relation("AssignmentUsers")
+  roles          Role[]
+  accounts       Account[]
+  sessions       Session[]
+  AssignmentUser AssignmentUser[]
+  AssignmentNote AssignmentNote[]
+}
+
+model Role {
+  id      Int        @id @default(autoincrement())
+  userId  Int
+  hotelId Int
+  level   RoleLevel  @default(PENDING)
+  status  RoleStatus @default(DISABLED)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  hotel Hotel @relation(fields: [hotelId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, hotelId, level])
+  @@index([hotelId, level])
+}
+
+model Assignment {
+  id         Int              @id @default(autoincrement())
+  roomId     Int? // optional FK, preserves assignment if room is deleted
+  roomNumber String // snapshot of room number
+  createdAt  DateTime         @default(now())
+  dueAt      DateTime?
+  status     AssignmentStatus @default(PENDING)
+  notes      String?
+  isActive   Boolean          @default(true)
+  assignedBy Int? // optional FK to the assigning user
+
+  room           Room?            @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  users          User[]           @relation("AssignmentUsers")
+  AssignmentUser AssignmentUser[]
+  AssignmentNote AssignmentNote[]
+
+  @@index([dueAt])
+  @@index([status])
+  @@index([roomId])
+  @@index([isActive])
+  @@index([assignedBy])
+}
+
+model AssignmentUser {
+  assignmentId Int
+  userId       Int
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([assignmentId, userId])
+}
+
+model AssignmentNote {
+  id           Int      @id @default(autoincrement())
+  assignmentId Int
+  authorId     Int
+  content      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id])
+}
+
+// ---------- Auth models (NextAuth Prisma Adapter) ----------
+
+model Account {
+  id                 Int     @id @default(autoincrement())
+  userId             Int
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
