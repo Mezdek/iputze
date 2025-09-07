@@ -1,5 +1,5 @@
-import { TAdminRights, THotelManagement } from "@/app/types/permissions";
-import { isAdmin, isHotelManager } from "@helpers/permissions/utilityPermissions";
+import { isAdmin, isHotelManager } from "helpers";
+import type { AdminRights, HotelManagement } from "types";
 
 /**
  * Determines whether the actor can create a hotel.
@@ -7,11 +7,13 @@ import { isAdmin, isHotelManager } from "@helpers/permissions/utilityPermissions
  * Business rule:
  * - Only admins can create hotels.
  *
- * @param {TAdminRights} params - Actor roles.
+ * @param {AdminRights} params - Actor roles.
  * @returns {boolean} True if the actor can create a hotel, false otherwise.
  */
-export const canCreateHotel = ({ roles }: TAdminRights): boolean =>
+export const canCreateHotel = ({ roles }: AdminRights): boolean =>
     isAdmin({ roles });
+
+
 
 /**
  * Determines whether the actor can update a hotel.
@@ -19,11 +21,13 @@ export const canCreateHotel = ({ roles }: TAdminRights): boolean =>
  * Business rule:
  * - Only admins can update hotels.
  *
- * @param {TAdminRights} params - Actor roles.
+ * @param {AdminRights} params - Actor roles.
  * @returns {boolean} True if the actor can update a hotel, false otherwise.
  */
-export const canUpdateHotel = ({ roles }: TAdminRights): boolean =>
+export const canUpdateHotel = ({ roles }: AdminRights): boolean =>
     isAdmin({ roles });
+
+
 
 /**
  * Determines whether the actor can delete a hotel.
@@ -31,25 +35,13 @@ export const canUpdateHotel = ({ roles }: TAdminRights): boolean =>
  * Business rule:
  * - Only admins can delete hotels.
  *
- * @param {TAdminRights} params - Actor roles.
+ * @param {AdminRights} params - Actor roles.
  * @returns {boolean} True if the actor can delete a hotel, false otherwise.
  */
-export const canDeleteHotel = ({ roles }: TAdminRights): boolean =>
+export const canDeleteHotel = ({ roles }: AdminRights): boolean =>
     isAdmin({ roles });
 
 
-
-/**
- * Determines whether the actor can see all rooms a hotel.
- *
- * Business rule:
- * - Only admins and hotel managers can see all rooms in a hotel.
- *
- * @param {THotelManagement} params - Actor roles.
- * @returns {boolean} True if the actor can see all rooms in a hotel, false otherwise.
- */
-export const canListRooms = ({ roles, hotelId }: THotelManagement): boolean =>
-    isAdmin({ roles }) || isHotelManager({ roles, hotelId });
 
 /**
  * Determines whether the actor can see all hotels.
@@ -57,11 +49,12 @@ export const canListRooms = ({ roles, hotelId }: THotelManagement): boolean =>
  * Business rule:
  * - Only admins can see all hotels.
  *
- * @param {TAdminRights} params - Actor roles.
+ * @param {AdminRights} params - Actor roles.
  * @returns {boolean} True if the actor can see all rooms in a hotel, false otherwise.
  */
-export const canListHotels = ({ roles }: TAdminRights): boolean =>
+export const canListHotels = ({ roles }: AdminRights): boolean =>
     isAdmin({ roles });
+
 
 
 /**
@@ -70,8 +63,22 @@ export const canListHotels = ({ roles }: TAdminRights): boolean =>
  * Business rule:
  * - Only admins and hotel managers can view the information of a hotel.
  *
- * @param {THotelManagement} params - Actor roles.
+ * @param {HotelManagement} params - Actor roles.
  * @returns {boolean} True if the actor can view the information of a hotel, false otherwise.
  */
-export const canViewHotel = ({ roles, hotelId }: THotelManagement): boolean =>
+export const canViewHotel = ({ roles, hotelId }: HotelManagement): boolean =>
     isAdmin({ roles }) || isHotelManager({ roles, hotelId });
+
+
+
+/**
+ * Determines whether the actor can see all rooms a hotel. 
+ *
+ * Business rule:
+ * - Only admins and hotel managers can see all rooms in a hotel.
+ *
+ * @param {HotelManagement} params - Actor roles.
+ * @returns {boolean} True if the actor can see all rooms in a hotel, false otherwise.
+ */
+export const canListRooms = ({ roles, hotelId }: HotelManagement): boolean =>
+    isAdmin({ roles }) || isHotelManager({ roles, hotelId });    

@@ -1,35 +1,27 @@
-// File: src/app/api/auth/signout/route.ts
-
-import { HttpStatus } from "@constants/httpResponses";
-import { getSessionToken } from "@helpers/getSessionToken";
-import { APP_ERRORS } from "@lib/errors/factories";
-import { HttpError } from "@lib/errors/HttpError";
-import { prisma } from "@lib/prisma";
+import { AuthErrors, CustomSuccessMessages, HttpStatus, SESSION_COOKIE_NAMES } from "@constants";
+import { getSessionToken } from "@helpers";
+import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
-    try {
-        const sessionToken = await getSessionToken();
+export const POST = withErrorHandling(
+    async (req: NextRequest) => {
 
-        // 1️⃣ Delete session in DB
-        await prisma.session.deleteMany({ where: { sessionToken } });
+        const sessionToken = await getSessionToken(req);
 
-        // 2️⃣ Clear cookie
+        // Delete session in DB
+        const sessions = await prisma.session.deleteMany({ where: { sessionToken } });
+        if (sessions.count < 1) throw APP_ERRORS.badRequest(AuthErrors.NO_SESSION);
+
+        // Clear all session cookies
         const cookieStore = await cookies();
-        cookieStore.set("next-auth.session-token", "", { maxAge: 0, path: "/" });
-        cookieStore.set("__Secure-next-auth.session-token", "", { maxAge: 0, path: "/" });
+        SESSION_COOKIE_NAMES.forEach(name => {
+            cookieStore.set(name, "", { maxAge: 0, path: "/" });
+        });
 
-        return NextResponse.json(
-            { message: "Signed out successfully" },
-            { status: HttpStatus.OK }
-        );
-    } catch (error: unknown) {
-        if (error instanceof HttpError) {
-            console.error(error);
-            return error.nextResponse();
-        }
-        console.error(error);
-        return APP_ERRORS.internalServerError().nextResponse();
+        return NextResponse.json({
+            status: HttpStatus.NO_CONTENT,
+            message: CustomSuccessMessages.SESSION_TERMINATED,
+        });
     }
-}
+)

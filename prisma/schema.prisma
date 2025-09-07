@@ -111,7 +111,7 @@ model Role {
   userId  Int
   hotelId Int
   level   RoleLevel  @default(PENDING)
-  status  RoleStatus @default(DISABLED)
+  status  RoleStatus @default(ACTIVE)
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
   hotel Hotel @relation(fields: [hotelId], references: [id], onDelete: Restrict)

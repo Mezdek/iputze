@@ -1,4 +1,4 @@
-import { DefaultMessages, HttpStatus } from "@constants/httpResponses";
+import { DefaultMessages, HttpStatus } from "@constants";
 import { HttpError } from "./HttpError";
 
 function createErrorFactory(status: HttpStatus, code?: string) {
@@ -21,8 +21,3 @@ export const APP_ERRORS: Record<typeof APP_ERRORS_NAMES[number], ErrorFactory> =
     forbidden: createErrorFactory(HttpStatus.FORBIDDEN, "FORBIDDEN"),
     conflict: createErrorFactory(HttpStatus.CONFLICT, "CONFLICT"),
 };
-
-
-
-
-

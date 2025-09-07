@@ -1,0 +1,11 @@
+import { handleError } from "@lib/errors/handleError";
+
+export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(fn: T) {
+    return async (...args: Parameters<T>) => {
+        try {
+            return await fn(...args);
+        } catch (err) {
+            return handleError(err);
+        }
+    };
+}

@@ -1,5 +1,5 @@
-import { APP_ERRORS } from "@lib/errors/factories";
-import { CustomErrorMessages } from "../constants/httpResponses";
+import { AuthErrors } from "@constants";
+import { APP_ERRORS } from "@lib";
 
 /**
  * Parses a string ID into a number.
@@ -14,7 +14,7 @@ export const parseId = (id: string, errorMessage?: string): number => {
     const parsedId = Number(id);
 
     if (!Number.isInteger(parsedId)) {
-        throw APP_ERRORS.badRequest(errorMessage ?? CustomErrorMessages.INVALID_ID);
+        throw APP_ERRORS.badRequest(errorMessage ?? AuthErrors.INVALID_ID);
     }
 
     return parsedId;

@@ -1,104 +1,66 @@
-import { CustomErrorMessages, CustomSuccessMessages } from "@constants/httpResponses";
-import { getAuthContext } from "@helpers/getAuthContext";
-import { parseId } from "@helpers/parseId";
-import { canDeleteHotel, canUpdateHotel, canViewHotel } from "@helpers/permissions/hotelManagement";
-import { APP_ERRORS } from "@lib/errors/factories";
-import { HttpError } from "@lib/errors/HttpError";
-import { prisma } from "@lib/prisma";
+import type { HotelParams } from "@/types";
+import { CustomSuccessMessages, DefaultMessages, GeneralErrors, HttpStatus } from "@constants";
+import { canDeleteHotel, canUpdateHotel, canViewHotel, getAuthContext, getHotelOrThrow } from "@helpers";
+import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 
 
-type Params = { hotelId: string; };
+export const GET = withErrorHandling(
+    async (req: NextRequest, { params }: { params: HotelParams }) => {
 
-export async function GET(_req: NextRequest, { params }: { params: Params }) {
-    try {
-        const hotelId = parseId(params.hotelId, CustomErrorMessages.HOTEL_ID_NOT_VALID);
+        const hotel = await getHotelOrThrow(params.hotelId);
 
-        const hotel = await prisma.hotel.findUnique({ where: { id: hotelId } });
+        const { roles } = await getAuthContext(req);
 
-        if (!hotel) throw APP_ERRORS.notFound(CustomErrorMessages.HOTEL_NOT_FOUND);
-
-        const { roles } = await getAuthContext();
-
-        if (!canViewHotel({ roles, hotelId })) throw APP_ERRORS.forbidden();
+        if (!canViewHotel({ roles, hotelId: hotel.id })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
 
         return NextResponse.json(hotel);
-
-    } catch (error: unknown) {
-
-        if (error instanceof HttpError) {
-            // If error is a custom HttpError, return its NextResponse
-            console.error(error);
-            return error.nextResponse();
-        }
-
-        // Otherwise, return generic internal server error
-        console.error(error);
-        return APP_ERRORS.internalServerError(CustomErrorMessages.UNEXPECTED_SERVER_ERROR).nextResponse();
-    }
-}
+    })
 
 
-export async function PATCH(req: NextRequest, { params }: { params: Params }) {
-    try {
-        const hotelId = parseId(params.hotelId, CustomErrorMessages.HOTEL_ID_NOT_VALID);
+export const PATCH = withErrorHandling(
+    async (req: NextRequest, { params }: { params: HotelParams }) => {
 
-        const hotel = await prisma.hotel.findUnique({ where: { id: hotelId } });
+        const { id: hotelId } = await getHotelOrThrow(params.hotelId)
 
-        if (!hotel) throw APP_ERRORS.notFound(CustomErrorMessages.HOTEL_NOT_FOUND);
+        const { roles } = await getAuthContext(req);
 
-        const { roles } = await getAuthContext();
-
-        //to-do: validate update fields
         if (!canUpdateHotel({ roles })) throw APP_ERRORS.forbidden();
 
-        const data = await req.json();
+        //to-do: validate update fields
+        const data: Record<string, any> = await req.json();
 
-        const updatedHotel = await prisma.hotel.update({ where: { id: hotelId }, data, });
+        const updateFields: string[] = Object.keys(data);
+        const forbiddenFields: string[] = ["id", "createdAt", "updatedAt"];
 
-        return NextResponse.json(updatedHotel);
+        const forbiddenFieldsContained = updateFields.filter(f => forbiddenFields.includes(f));
+        const allowedFields: string[] = updateFields.filter(f => !forbiddenFields.includes(f));
 
-    } catch (error: unknown) {
+        // Filtered object containing only allowed fields
+        const filteredData: Record<string, any> = allowedFields.reduce((acc, field) => {
+            acc[field] = data[field];
+            return acc;
+        }, {} as Record<string, any>);
 
-        if (error instanceof HttpError) {
-            // If error is a custom HttpError, return its NextResponse
-            console.error(error);
-            return error.nextResponse();
-        }
-        // Otherwise, return generic internal server error
-        console.error(error);
-        return APP_ERRORS.internalServerError("Unexpected server error").nextResponse();
-    }
-}
+        // Now, `filteredData` contains only the allowed fields
+        const updatedHotel = await prisma.hotel.update({ where: { id: hotelId }, data: filteredData, });
+        const forbiddenMessage = `These Fields Are Not Allowed To Be Updated: ${forbiddenFieldsContained.reduce((acc, cur) => { acc += `${cur}, `; return acc }, "")}`;
 
 
-export async function DELETE(_req: NextRequest, { params }: { params: Params }) {
-    try {
-        const hotelId = parseId(params.hotelId, CustomErrorMessages.HOTEL_ID_NOT_VALID);
+        return NextResponse.json(updatedHotel, { status: HttpStatus.OK, statusText: forbiddenFieldsContained.length > 0 ? forbiddenMessage : DefaultMessages[200] });
 
-        const hotel = await prisma.hotel.findUnique({ where: { id: hotelId } });
+    })
 
-        if (!hotel) throw APP_ERRORS.notFound(CustomErrorMessages.HOTEL_NOT_FOUND);
 
-        const { roles } = await getAuthContext();
+export const DELETE = withErrorHandling(
+    async (req: NextRequest, { params }: { params: HotelParams }) => {
+        const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+
+        const { roles } = await getAuthContext(req);
 
         if (!canDeleteHotel({ roles })) throw APP_ERRORS.forbidden();
 
         await prisma.hotel.delete({ where: { id: hotelId } });
 
         return NextResponse.json({ message: CustomSuccessMessages.HOTEL_DELETED_SUCCESSFULLY });
-
-    } catch (error: unknown) {
-
-
-        if (error instanceof HttpError) {
-            // If error is a custom HttpError, return its NextResponse
-            console.error(error);
-            return error.nextResponse();
-        }
-
-        // Otherwise, return generic internal server error
-        console.error(error);
-        return APP_ERRORS.internalServerError(CustomErrorMessages.UNEXPECTED_SERVER_ERROR).nextResponse();
-    }
-}
+    })

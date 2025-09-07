@@ -1,4 +1,4 @@
-import { DefaultMessages, HttpStatus } from "@constants/httpResponses";
+import { DefaultMessages, HttpStatus } from "@constants";
 import { NextResponse } from "next/server";
 
 export interface IHttpError {

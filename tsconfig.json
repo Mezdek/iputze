@@ -22,24 +22,31 @@
         "name": "next"
       }
     ],
+    "baseUrl": "app",
     "paths": {
       "@/*": [
         "./*"
       ],
-      "@app/*": [
-        "./app/*"
-      ],
       "@api/*": [
-        "./app/api/*"
+        "./api/*"
+      ],
+      "@constants": [
+        "./constants/index"
       ],
       "@constants/*": [
-        "./app/constants/*"
+        "./constants/*"
+      ],
+      "@helpers": [
+        "./helpers/index"
       ],
       "@helpers/*": [
-        "./app/helpers/*"
+        "./helpers/*"
+      ],
+      "@lib": [
+        "./lib/index"
       ],
       "@lib/*": [
-        "./app/lib/*"
+        "./lib/*"
       ],
     }
   },
