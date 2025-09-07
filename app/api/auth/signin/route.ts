@@ -1,5 +1,5 @@
-import { AuthErrors, HttpStatus, SESSION_COOKIE_NAMES } from "@constants";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import { AuthErrors, HttpStatus, RateLimitKeys, SESSION_COOKIE_NAMES } from "@constants";
+import { APP_ERRORS, checkRateLimit, prisma, withErrorHandling } from "@lib";
 import { compare } from "bcrypt";
 import { randomUUID } from "crypto";
 import { cookies } from "next/headers";
@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = withErrorHandling(
     async (req: NextRequest) => {
+
+        checkRateLimit(req, RateLimitKeys.SIGNIN, 5, 300000); // 5 attempts per 5 minutes
 
         const { email, password } = await req.json();
 

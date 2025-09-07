@@ -1,5 +1,5 @@
 import type { RoomParams } from "@/types";
-import { CustomSuccessMessages } from "@constants";
+import { CustomSuccessMessages, GeneralErrors } from "@constants";
 import { canDeleteRoom, canUpdateRoom, canViewRoom, getAuthContext, getHotelOrThrow, getRoomOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
@@ -34,7 +34,8 @@ export const DELETE = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoomParams }) => {
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
         const room = await getRoomOrThrow(params.roomId, hotelId);
-        const { roles } = await getAuthContext(req); if (!canDeleteRoom({ roles, hotelId })) return APP_ERRORS.forbidden().nextResponse();
+        const { roles } = await getAuthContext(req);
+        if (!canDeleteRoom({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
         await prisma.room.delete({ where: { id: room.id, hotelId } });
         return NextResponse.json({ message: CustomSuccessMessages.ROOM_DELETED_SUCCESSFULLY });
     }

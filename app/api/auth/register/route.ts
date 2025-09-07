@@ -1,31 +1,33 @@
 import { RegisterRequest } from "@/types";
-import { AuthErrors, HttpStatus } from "@constants";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import { AuthErrors, HttpStatus, RateLimitKeys } from "@constants";
+import { validateRegistration } from "@helpers";
+import { APP_ERRORS, checkRateLimit, prisma, withErrorHandling } from "@lib";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = withErrorHandling(
     async (req: NextRequest) => {
-        const data: RegisterRequest = await req.json()
 
-        if (!data.name || !data.email || !data.password) {
-            throw APP_ERRORS.badRequest(AuthErrors.ALL_FIELDS_REQUIRED);
-        }
+        checkRateLimit(req, RateLimitKeys.REGISTER, 3, 600000);
+
+        const data = (await req.json()) as RegisterRequest;
+
+        const { name, email, password } = validateRegistration(data);
 
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
+        const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
             throw APP_ERRORS.conflict(AuthErrors.USER_ALREADY_EXISTS);
         }
 
         // Hash password
-        const passwordHash = await hash(data.password, 10);
+        const passwordHash = await hash(password, 10);
 
         // Create User
         const user = await prisma.user.create({
             data: {
-                name: data.name,
-                email: data.email,
+                name,
+                email,
                 passwordHash,
             },
         });

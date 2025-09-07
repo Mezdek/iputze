@@ -1,7 +1,8 @@
 import { getHotelOrThrow } from "@/helpers/getHotelOrThrow";
 import { GeneralErrors, HttpStatus } from "@constants";
-import { canCreateAssignment, canListAssignments, getAuthContext } from "@helpers";
+import { canCreateAssignment, canListAssignments, getAuthContext, getPaginationFromRequest } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import { AssignmentStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import type { AssignmentCollectionParams, CreateAssignmentBody } from "types";
 
@@ -15,11 +16,53 @@ export const GET = withErrorHandling(
 
         if (!canListAssignments({ roles, hotelId })) throw APP_ERRORS.forbidden();
 
-        const assignments = await prisma.assignment.findMany({ where: { room: { hotelId } } })
+        const { page, pageSize, skip, take } = getPaginationFromRequest(req);
+        const status = req.nextUrl.searchParams.get('status') as AssignmentStatus | null;
+        const isActive = req.nextUrl.searchParams.get('active') !== 'false';
 
-        return NextResponse.json(assignments);
+        const where = {
+            room: { hotelId },
+            ...(status && { status }),
+            isActive
+        };
+
+
+        const [assignments, total] = await Promise.all([
+            prisma.assignment.findMany({
+                where,
+                skip,
+                take,
+                orderBy: { dueAt: 'asc' },
+                select: {
+                    id: true,
+                    roomNumber: true,
+                    status: true,
+                    dueAt: true,
+                    isActive: true,
+                    notes: true,
+                    room: {
+                        select: {
+                            id: true,
+                            number: true,
+                            cleanliness: true
+                        }
+                    }
+                }
+            }),
+            prisma.assignment.count({ where })
+        ]);
+
+        return NextResponse.json({
+            assignments,
+            pagination: {
+                page,
+                pageSize,
+                total,
+                totalPages: Math.ceil(total / pageSize)
+            }
+        });
     }
-)
+);
 
 export const POST = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentCollectionParams }) => {
@@ -32,7 +75,7 @@ export const POST = withErrorHandling(
         const data = await req.json() as CreateAssignmentBody;
 
         const { dueAt, roomId, roomNumber } = data;
-        if (!roomNumber || !dueAt || roomId) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMETERS);
+        if (!roomNumber || !dueAt || !roomId) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMETERS);
 
         const newAssignment = await prisma.assignment.create({
             data: { ...data, assignedBy: userId }

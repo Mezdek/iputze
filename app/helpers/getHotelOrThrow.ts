@@ -1,4 +1,3 @@
-// helpers/getHotelOrThrow.ts
 import { HotelErrors } from "@constants";
 import { parseId } from "@helpers";
 import { APP_ERRORS, prisma } from "@lib";
@@ -19,6 +18,3 @@ export const getHotelOrThrow = async (hotelIdParam: string) => {
 
     return hotel;
 };
-
-
-

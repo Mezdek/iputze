@@ -9,23 +9,25 @@ import { NextRequest } from "next/server";
  * `name` is guaranteed to be defined because it is mandatory on registration.
  */
 export const getAuthContext = async (req?: NextRequest): Promise<AuthContext> => {
-    // 1️⃣ Get session token from cookies
 
     const sessionToken = await getSessionToken(req);
-    // 2️⃣ Load active session
+
+    if (!sessionToken || sessionToken.length < 32) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_SESSION);
+
+    // Load active session
     const session = await prisma.session.findFirst({
         where: { sessionToken, expires: { gt: new Date() } },
     });
     if (!session) throw APP_ERRORS.unauthorized();
 
-    // 3️⃣ Load user info
+    // Load user info
     const user = await prisma.user.findUnique({
         where: { id: session.userId },
         select: { id: true, email: true, name: true, avatarUrl: true },
     });
     if (!user) throw APP_ERRORS.notFound(AuthErrors.USER_NOT_FOUND);
 
-    // 4️⃣ Load all roles
+    // Load all roles
     const roles = await prisma.role.findMany({
         where: { userId: user.id },
     });

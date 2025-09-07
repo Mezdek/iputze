@@ -9,4 +9,5 @@ export * from "./getRoomOrThrow"
 export * from "./getSessionToken"
 export * from "./parseId"
 export * from "./permissions"
+export * from "./validation"
 

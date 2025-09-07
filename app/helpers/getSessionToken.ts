@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
  * This allows API testing in Postman or other clients without cookies.
  */
 export const getSessionToken = async (req?: NextRequest): Promise<string> => {
-    // 1️⃣ Check Authorization header first if request is provided
+    // Check Authorization header first if request is provided
     if (req) {
         const authHeader = req.headers.get(AUTH_HEADER);
         if (authHeader?.startsWith(BEARER_PREFIX)) {
@@ -16,7 +16,7 @@ export const getSessionToken = async (req?: NextRequest): Promise<string> => {
         }
     }
 
-    // 2️⃣ Check cookies
+    // Check cookies
     const store = await cookies();
     for (const name of SESSION_COOKIE_NAMES) {
         const cookie = store.get(name);

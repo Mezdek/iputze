@@ -9,6 +9,7 @@ export enum HttpStatus {
     METHOD_NOT_ALLOWED = 405,
     CONFLICT = 409,
     UNPROCESSABLE_ENTITY = 422,
+    TOO_MANY_REQUESTS = 429,
     INTERNAL_SERVER_ERROR = 500,
     BAD_GATEWAY = 502,//When API depends on another service and it fails.
 }
@@ -24,6 +25,7 @@ export const DefaultMessages: Record<HttpStatus, string> = {
     [HttpStatus.METHOD_NOT_ALLOWED]: "Method Not Allowed",
     [HttpStatus.CONFLICT]: "Conflict",
     [HttpStatus.UNPROCESSABLE_ENTITY]: "Unprocessable Entity",
+    [HttpStatus.TOO_MANY_REQUESTS]: "Too Many Requests. Try Again Later.",
     [HttpStatus.INTERNAL_SERVER_ERROR]: "Internal Server Error",
     [HttpStatus.BAD_GATEWAY]: "Bad Gateway",
 };

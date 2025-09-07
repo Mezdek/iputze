@@ -29,7 +29,7 @@ export const POST = withErrorHandling(
 
         const { roles, id } = await getAuthContext(req);
 
-
+        // To-Do fix error naming
         if (!canCreateRole({ roles, hotelId })) throw APP_ERRORS.forbidden(RolesErrors.ROLE_ALREADY_EXISTS);
 
         const role = await prisma.role.create({ data: { hotelId, userId: id } })

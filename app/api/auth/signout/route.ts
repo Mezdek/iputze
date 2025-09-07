@@ -11,7 +11,7 @@ export const POST = withErrorHandling(
 
         // Delete session in DB
         const sessions = await prisma.session.deleteMany({ where: { sessionToken } });
-        if (sessions.count < 1) throw APP_ERRORS.badRequest(AuthErrors.NO_SESSION);
+        if (sessions.count < 1) throw APP_ERRORS.badRequest(AuthErrors.INVALID_SESSION);
 
         // Clear all session cookies
         const cookieStore = await cookies();
