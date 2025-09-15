@@ -4,7 +4,7 @@ export enum AuthErrors {
     USER_NOT_FOUND = "User Not Found",
     INVALID_VALUES = "Missing Or Invalid Values Passed",
     USER_ALREADY_EXISTS = "User Already Exists",
-    INVALID_SESSION = "Invalid Session",
+    INVALID_ACCESS_TOKEN = "Invalid Access Token",
     TOO_MANY_REQUESTS_TRY_IN = "Too Many Requests. Try Again In ",
     SESSION_EXPIRED = "Your Session Has Expired, Please Log In Again!"
 }

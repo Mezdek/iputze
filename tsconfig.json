@@ -36,6 +36,30 @@
       "@constants/*": [
         "./lib/constants/*"
       ],
+      "@components": [
+        "./components/index"
+      ],
+      "@components/*": [
+        "./components/*"
+      ],
+      "@hooks": [
+        "./hooks/index"
+      ],
+      "@hooks/*": [
+        "./hooks/*"
+      ],
+      "@providers": [
+        "./providers/index"
+      ],
+      "@providers/*": [
+        "./providers/*"
+      ],
+      "@config": [
+        "./lib/config/index"
+      ],
+      "@config/*": [
+        "./lib/config/*"
+      ],
       "@helpers": [
         "./lib/helpers/index"
       ],
