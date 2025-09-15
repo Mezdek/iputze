@@ -1,27 +1,24 @@
-import { AuthErrors, CustomSuccessMessages, HttpStatus, SESSION_COOKIE_NAMES } from "@/lib/constants";
-import { getSessionToken } from "@/lib/helpers";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
-import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { HttpStatus, REFRESH_TOKEN_NAME } from "@constants";
+import { withErrorHandling } from "@errors";
+import { revokeRefreshToken } from "@helpers";
+import { NextResponse } from "next/server";
 
-export const POST = withErrorHandling(
-    async (req: NextRequest) => {
+export const POST = withErrorHandling(async (req) => {
+    const cookie = req.cookies.get(REFRESH_TOKEN_NAME);
 
-        const sessionToken = await getSessionToken(req);
-
-        // Delete session in DB
-        const sessions = await prisma.session.deleteMany({ where: { sessionToken } });
-        if (sessions.count < 1) throw APP_ERRORS.badRequest(AuthErrors.INVALID_SESSION);
-
-        // Clear all session cookies
-        const cookieStore = await cookies();
-        SESSION_COOKIE_NAMES.forEach(name => {
-            cookieStore.set(name, "", { maxAge: 0, path: "/" });
-        });
-
-        return NextResponse.json({
-            status: HttpStatus.NO_CONTENT,
-            message: CustomSuccessMessages.SESSION_TERMINATED,
-        });
+    if (cookie?.value) {
+        await revokeRefreshToken(cookie.value);
     }
-)
+
+    const res = NextResponse.json({ message: "Signed out" }, { status: HttpStatus.OK });
+
+    res.cookies.set(REFRESH_TOKEN_NAME, "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+    });
+
+    return res;
+});

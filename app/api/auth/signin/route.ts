@@ -1,62 +1,40 @@
-import { AuthErrors, HttpStatus, RateLimitKeys, SESSION_COOKIE_NAMES } from "@constants";
+import { AuthErrors, HttpStatus, RateLimitKeys, REFRESH_TOKEN_NAME } from "@constants";
 import { APP_ERRORS, withErrorHandling } from "@errors";
-import { checkRateLimit } from "@helpers";
+import { checkRateLimit, generateAccessToken, generateRefreshToken, parseExpiryToSeconds } from "@helpers";
 import { prisma } from "@lib/prisma";
 import { compare } from "bcrypt";
-import { randomUUID } from "crypto";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-export const POST = withErrorHandling(
-    async (req: NextRequest) => {
+export const POST = withErrorHandling(async (req: NextRequest) => {
+    checkRateLimit(req, RateLimitKeys.SIGNIN, 5, 300_000);
 
-        checkRateLimit(req, RateLimitKeys.SIGNIN, 5, 300000); // 5 attempts per 5 minutes
+    const { email, password } = await req.json();
+    if (!email || !password) throw APP_ERRORS.badRequest(AuthErrors.INVALID_CREDENTIALS);
 
-        const { email, password } = await req.json();
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || !user.passwordHash) throw APP_ERRORS.unauthorized();
 
-        if (!email || !password) {
-            throw APP_ERRORS.badRequest(AuthErrors.INVALID_CREDENTIALS);
-        }
+    const isValid = await compare(password, user.passwordHash);
+    if (!isValid) throw APP_ERRORS.unauthorized();
 
-        // Find user
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user || !user.passwordHash) {
-            throw APP_ERRORS.unauthorized();
-        }
+    const accessToken = generateAccessToken({ sub: user.id, email: user.email });
+    const refreshToken = await generateRefreshToken(user.id);
 
-        // Verify password
-        const isValid = await compare(password, user.passwordHash);
-        if (!isValid) {
-            throw APP_ERRORS.unauthorized();
-        }
+    const REFRESH_TOKEN_EXP = process.env.REFRESH_TOKEN_EXP || "7d";
+    const maxAge = parseExpiryToSeconds(REFRESH_TOKEN_EXP);
 
-        // Create session
-        const sessionToken = randomUUID();
-        const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // e.g. 7 days
+    const res = NextResponse.json(
+        { user: { id: user.id, email: user.email, name: user.name }, accessToken },
+        { status: HttpStatus.OK }
+    );
 
-        await prisma.session.create({
-            data: {
-                sessionToken,
-                userId: user.id,
-                expires,
-            },
-        });
+    res.cookies.set(REFRESH_TOKEN_NAME, refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge,
+    });
 
-        // Set cookie
-        const store = await cookies();
-        const cookieName = SESSION_COOKIE_NAMES[0];
-        store.set(cookieName, sessionToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            expires,
-            path: "/",
-        });
-
-        // Return success with minimal user info
-        return NextResponse.json(
-            { id: user.id, email: user.email, name: user.name, sessionToken },
-            { status: HttpStatus.OK }
-        );
-    }
-)
+    return res;
+});
