@@ -1,6 +1,6 @@
-import type { CreateRoomBody, RoomCollectionParams } from "@/types";
-import { HttpStatus, RoomErrors } from "@constants";
-import { canCreateRoom, canListRooms, getAuthContext, getHotelOrThrow } from "@helpers";
+import type { CreateRoomBody, RoomCollectionParams } from "@/lib/types";
+import { HttpStatus, RoomErrors } from "@/lib/constants";
+import { canCreateRoom, canListRooms, getAuthContext, getHotelOrThrow } from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

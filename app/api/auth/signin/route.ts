@@ -1,5 +1,7 @@
 import { AuthErrors, HttpStatus, RateLimitKeys, SESSION_COOKIE_NAMES } from "@constants";
-import { APP_ERRORS, checkRateLimit, prisma, withErrorHandling } from "@lib";
+import { APP_ERRORS, withErrorHandling } from "@errors";
+import { checkRateLimit } from "@helpers";
+import { prisma } from "@lib/prisma";
 import { compare } from "bcrypt";
 import { randomUUID } from "crypto";
 import { cookies } from "next/headers";

@@ -1,5 +1,5 @@
-import { RoomErrors } from "@constants";
-import { parseId } from "@helpers";
+import { RoomErrors } from "@/lib/constants";
+import { parseId } from "@/lib/helpers";
 import { APP_ERRORS, prisma } from "@lib";
 import type { Prisma } from "@prisma/client";
 

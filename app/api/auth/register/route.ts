@@ -1,7 +1,8 @@
-import { RegisterRequest } from "@/types";
-import { AuthErrors, HttpStatus, RateLimitKeys } from "@constants";
-import { validateRegistration } from "@helpers";
-import { APP_ERRORS, checkRateLimit, prisma, withErrorHandling } from "@lib";
+import { AuthErrors, HttpStatus, RateLimitKeys } from "@lib/constants";
+import { APP_ERRORS, withErrorHandling } from "@lib/errors";
+import { checkRateLimit, validateRegistration } from "@lib/helpers";
+import { prisma } from "@lib/prisma";
+import { RegisterRequest } from "@lib/types";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 

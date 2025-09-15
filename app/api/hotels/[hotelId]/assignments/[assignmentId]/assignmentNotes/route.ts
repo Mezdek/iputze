@@ -1,6 +1,6 @@
-import { HttpStatus } from "@/constants";
-import type { AssignmentNoteCollectionParams, CreateAssignmentNoteBody } from "@/types";
-import { getAssignmentAccessContext, getPaginationFromRequest } from "@helpers";
+import { HttpStatus } from "@/lib/constants";
+import type { AssignmentNoteCollectionParams, CreateAssignmentNoteBody } from "@/lib/types";
+import { getAssignmentAccessContext, getPaginationFromRequest } from "@/lib/helpers";
 import { prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

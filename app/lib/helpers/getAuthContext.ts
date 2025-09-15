@@ -1,6 +1,6 @@
-import type { AuthContext } from "@/types";
-import { AuthErrors } from "@constants";
-import { getSessionToken } from "@helpers";
+import type { AuthContext } from "@/lib/types";
+import { AuthErrors } from "@/lib/constants";
+import { getSessionToken } from "@/lib/helpers";
 import { APP_ERRORS, prisma } from "@lib";
 import { NextRequest } from "next/server";
 

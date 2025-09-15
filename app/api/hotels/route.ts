@@ -1,6 +1,6 @@
-import type { CreateHotelBody } from "@/types";
-import { GeneralErrors, HotelErrors, HttpStatus } from "@constants";
-import { canCreateHotel, canListHotels, getAuthContext } from "@helpers";
+import type { CreateHotelBody } from "@/lib/types";
+import { GeneralErrors, HotelErrors, HttpStatus } from "@/lib/constants";
+import { canCreateHotel, canListHotels, getAuthContext } from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

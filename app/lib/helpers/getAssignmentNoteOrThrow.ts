@@ -1,5 +1,5 @@
-import { AssignmentErrors, AssignmentNotesErrors } from "@constants";
-import { parseId } from "@helpers";
+import { AssignmentErrors, AssignmentNotesErrors } from "@/lib/constants";
+import { parseId } from "@/lib/helpers";
 import { APP_ERRORS, prisma } from "@lib";
 import type { Assignment, AssignmentNote, Hotel, Room } from "@prisma/client";
 

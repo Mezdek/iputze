@@ -1,4 +1,4 @@
-import { DefaultMessages, HttpStatus } from "@constants";
+import { DefaultMessages, HttpStatus } from "@/lib/constants";
 import { HttpError } from "@lib";
 
 function createErrorFactory(status: HttpStatus, code?: string) {

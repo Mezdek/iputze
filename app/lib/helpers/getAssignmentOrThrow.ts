@@ -1,5 +1,5 @@
-import { AssignmentErrors } from "@constants";
-import { parseId } from "@helpers";
+import { AssignmentErrors } from "@/lib/constants";
+import { parseId } from "@/lib/helpers";
 import { APP_ERRORS, prisma } from "@lib";
 
 /**

@@ -1,6 +1,6 @@
-import type { RoomParams } from "@/types";
-import { CustomSuccessMessages, GeneralErrors } from "@constants";
-import { canDeleteRoom, canUpdateRoom, canViewRoom, getAuthContext, getHotelOrThrow, getRoomOrThrow } from "@helpers";
+import type { RoomParams } from "@/lib/types";
+import { CustomSuccessMessages, GeneralErrors } from "@/lib/constants";
+import { canDeleteRoom, canUpdateRoom, canViewRoom, getAuthContext, getHotelOrThrow, getRoomOrThrow } from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

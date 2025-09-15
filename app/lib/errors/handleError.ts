@@ -1,4 +1,4 @@
-import { GeneralErrors, PrismaErrors } from "@constants";
+import { GeneralErrors, PrismaErrors } from "@/lib/constants";
 import { Prisma } from "@prisma/client";
 import { APP_ERRORS } from "./factories";
 import { HttpError } from "./HttpError";

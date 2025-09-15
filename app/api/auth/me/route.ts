@@ -1,5 +1,5 @@
-import { HttpStatus } from "@constants";
-import { getAuthContext } from "@helpers";
+import { HttpStatus } from "@/lib/constants";
+import { getAuthContext } from "@/lib/helpers";
 import { withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

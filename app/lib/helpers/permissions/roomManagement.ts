@@ -1,5 +1,5 @@
-import type { RoomManagement } from "@/types";
-import { isAdmin, isHotelCleaner, isHotelManager } from "@helpers";
+import type { RoomManagement } from "@/lib/types";
+import { isAdmin, isHotelCleaner, isHotelManager } from "@/lib/helpers";
 
 /**
  * Check if the actor can create a room in a specific hotel.

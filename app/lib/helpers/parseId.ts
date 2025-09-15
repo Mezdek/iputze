@@ -1,4 +1,4 @@
-import { AuthErrors } from "@constants";
+import { AuthErrors } from "@/lib/constants";
 import { APP_ERRORS } from "@lib";
 
 /**

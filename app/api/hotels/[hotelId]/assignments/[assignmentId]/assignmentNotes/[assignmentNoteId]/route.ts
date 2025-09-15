@@ -1,5 +1,5 @@
-import type { AssignmentNoteParams, UpdateAssignmentNoteBody } from "@/types";
-import { getAssignmentNoteOrThrow, getAssignmentOrThrow, getAuthContext, getHotelOrThrow } from "@helpers";
+import type { AssignmentNoteParams, UpdateAssignmentNoteBody } from "@/lib/types";
+import { getAssignmentNoteOrThrow, getAssignmentOrThrow, getAuthContext, getHotelOrThrow } from "@/lib/helpers";
 import { prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

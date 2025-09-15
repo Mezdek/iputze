@@ -1,9 +1,9 @@
-import { AssignmentParams, UpdateAssignmentBody } from "@/types";
-import { CustomSuccessMessages, GeneralErrors, HttpStatus } from "@constants";
+import { AssignmentParams, UpdateAssignmentBody } from "@/lib/types";
+import { CustomSuccessMessages, GeneralErrors, HttpStatus } from "@/lib/constants";
 import {
     canDeleteAssignment,
     getAssignmentAccessContext
-} from "@helpers";
+} from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

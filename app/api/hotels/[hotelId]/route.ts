@@ -1,6 +1,6 @@
-import type { HotelParams } from "@/types";
-import { CustomSuccessMessages, DefaultMessages, GeneralErrors, HttpStatus } from "@constants";
-import { canDeleteHotel, canUpdateHotel, canViewHotel, getAuthContext, getHotelOrThrow } from "@helpers";
+import type { HotelParams } from "@/lib/types";
+import { CustomSuccessMessages, DefaultMessages, GeneralErrors, HttpStatus } from "@/lib/constants";
+import { canDeleteHotel, canUpdateHotel, canViewHotel, getAuthContext, getHotelOrThrow } from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

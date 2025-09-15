@@ -1,5 +1,5 @@
-import { AuthErrors, CustomSuccessMessages, HttpStatus, SESSION_COOKIE_NAMES } from "@constants";
-import { getSessionToken } from "@helpers";
+import { AuthErrors, CustomSuccessMessages, HttpStatus, SESSION_COOKIE_NAMES } from "@/lib/constants";
+import { getSessionToken } from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,5 +1,5 @@
-import type { AdminRights, AssignmentManagement } from "@/types";
-import { isAdmin, isHotelManager } from "helpers";
+import type { AdminRights, AssignmentManagement } from "@/lib/types";
+import { isAdmin, isHotelManager } from "@/lib/helpers";
 
 
 

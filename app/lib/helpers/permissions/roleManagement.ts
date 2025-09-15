@@ -1,5 +1,5 @@
-import type { RoleManagement, RoleManagementModification } from "@/types";
-import { isAdmin, isHotelManager } from "@helpers";
+import type { RoleManagement, RoleManagementModification } from "@/lib/types";
+import { isAdmin, isHotelManager } from "@/lib/helpers";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 
 /**

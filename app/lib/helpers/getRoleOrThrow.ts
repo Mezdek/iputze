@@ -1,5 +1,5 @@
-import { RolesErrors } from "@constants";
-import { parseId } from "@helpers";
+import { RolesErrors } from "@/lib/constants";
+import { parseId } from "@/lib/helpers";
 import { APP_ERRORS, prisma } from "@lib";
 
 export const getRoleOrThrow = async (roleIdParam: string, expectedHotelId?: number) => {

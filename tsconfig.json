@@ -31,16 +31,22 @@
         "./api/*"
       ],
       "@constants": [
-        "./constants/index"
+        "./lib/constants/index"
       ],
       "@constants/*": [
-        "./constants/*"
+        "./lib/constants/*"
       ],
       "@helpers": [
-        "./helpers/index"
+        "./lib/helpers/index"
       ],
       "@helpers/*": [
-        "./helpers/*"
+        "./lib/helpers/*"
+      ],
+      "@errors": [
+        "./lib/errors/index"
+      ],
+      "@errors/*": [
+        "./lib/errors/*"
       ],
       "@lib": [
         "./lib/index"
@@ -57,6 +63,7 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    ".next",
+    "node_modules",
   ]
 }

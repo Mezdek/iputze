@@ -1,6 +1,6 @@
-import { RoleCollectionParams } from "@/types";
-import { GeneralErrors, HttpStatus, RolesErrors } from "@constants";
-import { canCreateRole, canViewRoles, getAuthContext, getHotelOrThrow } from "@helpers";
+import { RoleCollectionParams } from "@/lib/types";
+import { GeneralErrors, HttpStatus, RolesErrors } from "@/lib/constants";
+import { canCreateRole, canViewRoles, getAuthContext, getHotelOrThrow } from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { NextRequest, NextResponse } from "next/server";
 

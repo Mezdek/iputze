@@ -1,4 +1,4 @@
-import { AUTH_HEADER, BEARER_PREFIX, SESSION_COOKIE_NAMES } from "@constants";
+import { AUTH_HEADER, BEARER_PREFIX, SESSION_COOKIE_NAMES } from "@/lib/constants";
 import { APP_ERRORS } from "@lib";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";

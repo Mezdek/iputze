@@ -1,5 +1,5 @@
-import { isAdmin, isHotelManager } from "helpers";
-import type { AdminRights, HotelManagement } from "types";
+import { isAdmin, isHotelManager } from "@/lib/helpers";
+import type { AdminRights, HotelManagement } from "@/lib/types";
 
 /**
  * Determines whether the actor can create a hotel.

@@ -1,6 +1,6 @@
-import { AssignmentNoteCollectionParams } from "@/types";
-import { AssignmentErrors, GeneralErrors } from "@constants";
-import { getAssignmentOrThrow, getAuthContext, getHotelOrThrow, isAdmin, isHotelManager } from "@helpers";
+import { AssignmentNoteCollectionParams } from "@/lib/types";
+import { AssignmentErrors, GeneralErrors } from "@/lib/constants";
+import { getAssignmentOrThrow, getAuthContext, getHotelOrThrow, isAdmin, isHotelManager } from "@/lib/helpers";
 import { APP_ERRORS, prisma } from "@lib";
 import { Assignment, Role } from "@prisma/client";
 import { NextRequest } from "next/server";

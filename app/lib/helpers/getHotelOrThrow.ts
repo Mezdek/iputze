@@ -1,5 +1,5 @@
-import { HotelErrors } from "@constants";
-import { parseId } from "@helpers";
+import { HotelErrors } from "@/lib/constants";
+import { parseId } from "@/lib/helpers";
 import { APP_ERRORS, prisma } from "@lib";
 
 /**

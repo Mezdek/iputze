@@ -1,10 +1,10 @@
-import { getHotelOrThrow } from "@/helpers/getHotelOrThrow";
-import { GeneralErrors, HttpStatus } from "@constants";
-import { canCreateAssignment, canListAssignments, getAuthContext, getPaginationFromRequest } from "@helpers";
+import { getHotelOrThrow } from "@/lib/helpers/getHotelOrThrow";
+import { GeneralErrors, HttpStatus } from "@/lib/constants";
+import { canCreateAssignment, canListAssignments, getAuthContext, getPaginationFromRequest } from "@/lib/helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import { AssignmentStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import type { AssignmentCollectionParams, CreateAssignmentBody } from "types";
+import type { AssignmentCollectionParams, CreateAssignmentBody } from "@/lib/types";
 
 
 export const GET = withErrorHandling(
