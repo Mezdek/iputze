@@ -1,6 +1,6 @@
 import { prisma } from "@lib/prisma";
 import { hash } from "bcrypt";
-import { admin1, admin2, cleanerKhanAlHarir1, cleanerKhanAlHarir2, cleanerLaLuna1, cleanerLaLuna2, khanAlHarir, laLuna, manager_khanAlHarir, manager_laLuna, THotel, TUser, zentrale } from "./people";
+import { hotels, people, type THotel, type TUser, } from "./seeding/data";
 
 
 const createHotel = async ({ name, ...rest }: THotel) => {
@@ -49,18 +49,18 @@ const createUser = async (extendedUser: TUser & { hotelId: number }) => {
 
 
 async function main() {
-    const zentraleH = (await createHotel(zentrale))
-    const laLunaH = (await createHotel(laLuna))
-    const khanAlHarirH = (await createHotel(khanAlHarir))
+    const zentraleH = (await createHotel(hotels.zentrale))
+    const laLunaH = (await createHotel(hotels.laLuna))
+    const khanAlHarirH = (await createHotel(hotels.khanAlHarir))
 
-    await createUser({ ...admin1, hotelId: zentraleH.id });
-    await createUser({ ...admin2, hotelId: zentraleH.id });
-    await createUser({ ...manager_laLuna, hotelId: laLunaH.id });
-    await createUser({ ...cleanerLaLuna1, hotelId: laLunaH.id });
-    await createUser({ ...cleanerLaLuna2, hotelId: laLunaH.id });
-    await createUser({ ...manager_khanAlHarir, hotelId: khanAlHarirH.id });
-    await createUser({ ...cleanerKhanAlHarir1, hotelId: khanAlHarirH.id });
-    await createUser({ ...cleanerKhanAlHarir2, hotelId: khanAlHarirH.id });
+    await createUser({ ...people.admin1, hotelId: zentraleH.id });
+    await createUser({ ...people.admin2, hotelId: zentraleH.id });
+    await createUser({ ...people.manager_laLuna, hotelId: laLunaH.id });
+    await createUser({ ...people.cleanerLaLuna1, hotelId: laLunaH.id });
+    await createUser({ ...people.cleanerLaLuna2, hotelId: laLunaH.id });
+    await createUser({ ...people.manager_khanAlHarir, hotelId: khanAlHarirH.id });
+    await createUser({ ...people.cleanerKhanAlHarir1, hotelId: khanAlHarirH.id });
+    await createUser({ ...people.cleanerKhanAlHarir2, hotelId: khanAlHarirH.id });
 }
 
 
