@@ -20,8 +20,8 @@ export interface SignUpRequestBody {
 
 export interface SignUpResponse { id: number; email: string; name: string };
 
-export type TRoleWithHotel = Omit<Role, "userId" | "hotelId"> & { hotel: Hotel };
+export type TRole = Omit<Role, "userId" | "hotelId"> & { hotel: Hotel };
 
-export type TMeResponse = Omit<User, "roles"> & { roles: TRoleWithHotel[] }
+export type TMeResponse = Omit<User, "roles"> & { roles: TRole[] }
 
 export type TPublicHotelList = Omit<Hotel, "createdAt" | "updatedAt">[]

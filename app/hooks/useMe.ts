@@ -1,5 +1,5 @@
 import { api } from "@config";
-import { AuthErrors, BEARER_PREFIX, ROUTES } from "@constants";
+import { AuthErrors, BEARER_PREFIX, getPath } from "@constants";
 import { APP_ERRORS } from "@lib";
 import type { TMeResponse } from "@lib/types";
 import { useAccessToken } from "@providers/AccessTokenProvider";
@@ -12,7 +12,7 @@ export const useMe = () => {
     queryFn: async () => {
       if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
 
-      const res = await api.get<TMeResponse>(ROUTES.API.ME, {
+      const res = await api.get<TMeResponse>(getPath().API.ME, {
         headers: {
           Authorization: BEARER_PREFIX + accessToken,
         },

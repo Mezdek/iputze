@@ -1,7 +1,7 @@
 "use client";
 
 import { EyeFilledIcon, EyeSlashFilledIcon } from "@components/icons";
-import { PAGES, ROUTES } from "@constants";
+import { getPath, PAGES } from "@constants";
 import { Button, Form, Input } from "@heroui/react";
 import { useSignIn } from "@hooks";
 import { useRouter } from "next/navigation";
@@ -27,7 +27,7 @@ export default function SignInForm() {
         signIn(
             { email, password },
             {
-                onSuccess: () => router.push(ROUTES.DASHBOARD),
+                onSuccess: () => router.push(getPath().DASHBOARD),
                 onError: (err: any) => setApiError(err.message || "Failed to sign in"),
             }
         );

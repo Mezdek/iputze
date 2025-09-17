@@ -1,5 +1,5 @@
 import { api } from "@config";
-import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, ROUTES } from "@constants";
+import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath } from "@constants";
 import { APP_ERRORS } from "@lib";
 import type { TPublicHotelList } from "@lib/types";
 import { useAccessToken } from "@providers/AccessTokenProvider";
@@ -11,7 +11,7 @@ export const useHotels = () => {
         queryKey: ["hotels"],
         queryFn: async () => {
             if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
-            const res = await api.get<TPublicHotelList>(ROUTES.API.HOTELS, {
+            const res = await api.get<TPublicHotelList>(getPath().API.HOTELS, {
                 headers: { [AUTH_HEADER]: BEARER_PREFIX + accessToken },
             });
             return res.data;

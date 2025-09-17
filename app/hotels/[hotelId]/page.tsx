@@ -1,6 +1,6 @@
 'use client';
 
-import { withAuthGuard } from "@/components/auth/withAuthGuard";
+import { CleanerView, DisabledView, ManagerView, PendingView, withAuthGuard } from "@components";
 import { useMe } from "@hooks";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
@@ -12,28 +12,17 @@ function Hotel() {
 
     const role = user?.roles.find(r => r.hotel.id === Number(params.hotelId))
 
-    return (
-        <div className="flex flex-col gap-2 items-center justify-around w-full h-screen">
-            <p>
-                Hotel
-            </p>
-            {role?.hotel?.name}
-            <div>
-                {
-                    !role
-                        ? CM["FORBIDDEN"]
-                        : role.status === RoleStatus.DISABLED
-                            ? CM["DISABLED"]
-                            : CM[role.level]
-                }
-            </div>
-        </div>
-    );
+    if (!role) return <p className="flex justify-center items-center w-full h-screen text-6xl bg-red-400">Access Denied</p>
+    if (role.status === RoleStatus.DISABLED) return <DisabledView role={role} />
+    if (role.level === RoleLevel.ADMIN || role.level === RoleLevel.MANAGER) return <ManagerView role={role} />
+    if (role.level === RoleLevel.CLEANER) return <CleanerView role={role} />
+    if (role.level === RoleLevel.PENDING) return <PendingView role={role} />
+    return null
 };
 
-type Views = RoleLevel | "FORBIDDEN" | "DISABLED";
 
-const CM: Record<Views, React.ReactNode> = { ADMIN: <p>You are an Admin</p>, CLEANER: <p>You are a Cleaner</p>, DISABLED: <p>Your role has been deactivated</p>, FORBIDDEN: <p>Access Denied</p>, MANAGER: <p>You are a Manager</p>, PENDING: <p>You have not yet been approved</p> }
+
+
 
 
 export default withAuthGuard(Hotel);

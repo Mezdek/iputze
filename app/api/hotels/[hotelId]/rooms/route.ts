@@ -2,6 +2,7 @@ import { HttpStatus, RoomErrors } from "@constants";
 import { canCreateRoom, canListRooms, getHotelOrThrow, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import type { CreateRoomBody, RoomCollectionParams } from "@lib/types";
+import { Room } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -50,6 +51,6 @@ export const POST = withErrorHandling(
             data: { ...data, hotelId }
         });
 
-        return NextResponse.json(newRoom, { status: HttpStatus.CREATED });
+        return NextResponse.json<Room>(newRoom, { status: HttpStatus.CREATED });
     }
 )

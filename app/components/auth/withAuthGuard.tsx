@@ -1,11 +1,11 @@
 'use client';
 
-import { useMe } from "@/hooks";
-import { ROUTES } from "@/lib/constants";
-import { useAccessToken } from "@/providers/AccessTokenProvider";
+import { LoadingScreen } from "@components";
+import { getPath } from "@constants";
+import { useMe } from "@hooks";
+import { useAccessToken } from "@providers/AccessTokenProvider";
 import { useRouter } from "next/navigation";
 import { ComponentType, useEffect } from "react";
-import LoadingScreen from "../LoadingScreen";
 
 export function withAuthGuard<P extends object>(Component: ComponentType<P>) {
   return function Guarded(props: P) {
@@ -14,7 +14,7 @@ export function withAuthGuard<P extends object>(Component: ComponentType<P>) {
     const { initialized } = useAccessToken();
     useEffect(() => {
       if (initialized && !user && !isLoading) {
-        router.replace(ROUTES.HOME);
+        router.replace(getPath().HOME);
       }
     }, [router, user, initialized, isLoading, isFetching]);
 

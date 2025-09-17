@@ -1,7 +1,7 @@
 import { HttpStatus } from "@constants";
 import { getUserOrThrow, isAdmin } from "@helpers";
 import { prisma, withErrorHandling } from "@lib";
-import type { TMeResponse, TRoleWithHotel } from "@lib/types";
+import type { TMeResponse, TRole } from "@lib/types";
 import type { Hotel } from "@prisma/client";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,7 +11,7 @@ export const GET = withErrorHandling(
         const user = await getUserOrThrow(req);
         const userIsAdmin = isAdmin({ roles: user.roles });
 
-        let hotels: Hotel[], rolesWithHotels: TRoleWithHotel[];
+        let hotels: Hotel[], rolesWithHotels: TRole[];
 
         if (userIsAdmin) {
             hotels = await prisma.hotel.findMany();

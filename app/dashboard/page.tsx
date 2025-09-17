@@ -16,8 +16,6 @@ function Dashboard() {
         router.replace("/");
     }
 
-    console.log({ user })
-
     const R: Record<RoleLevel, string> = { ADMIN: "Administer", CLEANER: "Check", MANAGER: "Manage", PENDING: "" }
 
     return (

@@ -6,7 +6,6 @@ import { NextRequest } from "next/server";
 
 export const getUserOrThrow = async (req: NextRequest): Promise<User> => {
     const authHeader = req.headers.get(AUTH_HEADER);
-    console.log({authHeader})
     if (!authHeader?.startsWith(BEARER_PREFIX)) throw APP_ERRORS.unauthorized();
 
     const token = authHeader.slice(7);
