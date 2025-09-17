@@ -1,29 +1,45 @@
-import { AuthErrors } from "@constants";
-import { verifyAccessToken } from "@helpers";
-import { APP_ERRORS, prisma } from "@lib";
-import type { AuthContext } from "@lib/types";
-import { NextRequest } from "next/server";
+import { HttpStatus, REFRESH_TOKEN_NAME } from "@constants";
+import { APP_ERRORS, withErrorHandling } from "@errors";
+import { generateAccessToken, generateRefreshToken, ResponseCookieOptions } from "@helpers";
+import { prisma } from "@lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 
-export const getAuthContext = async (req: NextRequest): Promise<AuthContext> => {
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) throw APP_ERRORS.unauthorized();
+export const POST = withErrorHandling(async (req: NextRequest) => {
+    const refreshTokenCookie = req.cookies.get(REFRESH_TOKEN_NAME);
 
-    const token = authHeader.slice(7);
-    const payload = verifyAccessToken(token);
+    if (!refreshTokenCookie?.value) throw APP_ERRORS.unauthorized();
 
-    const user = await prisma.user.findUnique({
-        where: { id: payload.sub },
-        select: { id: true, email: true, name: true, avatarUrl: true },
+    const existing = await prisma.refreshToken.findUnique({
+        where: { token: refreshTokenCookie.value },
+        include: { user: true },
     });
-    if (!user) throw APP_ERRORS.notFound(AuthErrors.USER_NOT_FOUND);
 
-    const roles = await prisma.role.findMany({ where: { userId: user.id } });
+    if (!existing || !existing.user) throw APP_ERRORS.unauthorized();
 
-    return {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatarUrl: user.avatarUrl ?? undefined,
-        roles,
-    };
-};
+    // check expiry
+    if (existing.expiresAt < new Date()) {
+        // cleanup
+        await prisma.refreshToken.delete({ where: { id: existing.id } });
+        throw APP_ERRORS.unauthorized();
+    }
+
+    // issue new access token
+    const accessToken = generateAccessToken({
+        sub: existing.user.id,
+        email: existing.user.email,
+    });
+
+    // rotate refresh token (optional but recommended)
+    await prisma.refreshToken.delete({ where: { id: existing.id } });
+    const newRefreshToken = await generateRefreshToken(existing.user.id);
+
+    const res = NextResponse.json(
+        { accessToken },
+        { status: HttpStatus.OK }
+    );
+
+    // set new refresh token in cookie
+    res.cookies.set(REFRESH_TOKEN_NAME, newRefreshToken, ResponseCookieOptions);
+
+    return res;
+});

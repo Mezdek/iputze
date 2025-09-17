@@ -1,7 +1,7 @@
-import type { CreateRoomBody, RoomCollectionParams } from "@/lib/types";
-import { HttpStatus, RoomErrors } from "@/lib/constants";
-import { canCreateRoom, canListRooms, getAuthContext, getHotelOrThrow } from "@/lib/helpers";
+import { HttpStatus, RoomErrors } from "@constants";
+import { canCreateRoom, canListRooms, getHotelOrThrow, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import type { CreateRoomBody, RoomCollectionParams } from "@lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -12,7 +12,7 @@ export const GET = withErrorHandling(
 
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canListRooms({ roles, hotelId })) throw APP_ERRORS.forbidden();
 
@@ -30,7 +30,7 @@ export const POST = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoomCollectionParams }) => {
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canCreateRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
 

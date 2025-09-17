@@ -1,11 +1,11 @@
 import { api } from "@config";
 import { ROUTES } from "@constants";
-import { SignUpInput, User } from "@lib/types/hooks";
+import type { SignUpRequestBody, User } from "@lib/types/api";
 import { useMutation } from "@tanstack/react-query";
 
 export const useSignUp = () =>
     useMutation({
-        mutationFn: async (data: SignUpInput) => {
+        mutationFn: async (data: SignUpRequestBody) => {
             const res = await api.post<User>(ROUTES.API.SIGNUP, data);
             return res.data;
         },

@@ -1,8 +1,8 @@
-import { AuthErrors, HttpStatus, RateLimitKeys } from "@lib/constants";
-import { APP_ERRORS, withErrorHandling } from "@lib/errors";
-import { checkRateLimit, validateRegistration } from "@lib/helpers";
+import { AuthErrors, HttpStatus, RateLimitKeys } from "@constants";
+import { APP_ERRORS, withErrorHandling } from "@errors";
+import { checkRateLimit, validateRegistration } from "@helpers";
 import { prisma } from "@lib/prisma";
-import { RegisterRequest } from "@lib/types";
+import type { RegisterRequest, SignUpResponse } from "@lib/types";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -33,7 +33,7 @@ export const POST = withErrorHandling(
             },
         });
 
-        return NextResponse.json(
+        return NextResponse.json<SignUpResponse>(
             { id: user.id, email: user.email, name: user.name },
             { status: HttpStatus.CREATED }
         );

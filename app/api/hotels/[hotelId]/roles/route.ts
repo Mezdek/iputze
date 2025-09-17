@@ -1,7 +1,7 @@
-import { RoleCollectionParams } from "@/lib/types";
-import { GeneralErrors, HttpStatus, RolesErrors } from "@/lib/constants";
-import { canCreateRole, canViewRoles, getAuthContext, getHotelOrThrow } from "@/lib/helpers";
+import { GeneralErrors, HttpStatus, RolesErrors } from "@constants";
+import { canCreateRole, canViewRoles, getHotelOrThrow, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import { RoleCollectionParams } from "@lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = withErrorHandling(
@@ -9,7 +9,7 @@ export const GET = withErrorHandling(
 
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canViewRoles({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
 
@@ -27,7 +27,7 @@ export const POST = withErrorHandling(
 
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
-        const { roles, id } = await getAuthContext(req);
+        const { roles, id } = await getUserOrThrow(req);
 
         // To-Do fix error naming
         if (!canCreateRole({ roles, hotelId })) throw APP_ERRORS.forbidden(RolesErrors.ROLE_ALREADY_EXISTS);

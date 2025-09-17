@@ -1,7 +1,7 @@
-import type { RoleParams, UpdateRoleBody } from "@/lib/types";
-import { GeneralErrors, RolesErrors } from "@/lib/constants";
-import { canModifyRole, getAuthContext, getRoleOrThrow } from "@/lib/helpers";
+import { GeneralErrors, RolesErrors } from "@constants";
+import { canModifyRole, getRoleOrThrow, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import type { RoleParams, UpdateRoleBody } from "@lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export const PATCH = withErrorHandling(
@@ -20,7 +20,7 @@ export const PATCH = withErrorHandling(
             ...(newStatus ? { status: newStatus } : {}),
         };
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canModifyRole({ roles, targetRole, newLevel, newStatus })) throw APP_ERRORS.forbidden(RolesErrors.ROLE_MODIFICATION_NOT_ALLOWED);
 

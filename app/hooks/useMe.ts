@@ -1,18 +1,18 @@
 import { api } from "@config";
 import { AuthErrors, BEARER_PREFIX, ROUTES } from "@constants";
 import { APP_ERRORS } from "@lib";
-import { User } from "@lib/types/hooks";
+import type { TMeResponse } from "@lib/types";
 import { useAccessToken } from "@providers/AccessTokenProvider";
 import { useQuery } from "@tanstack/react-query";
 
 export const useMe = () => {
   const { accessToken } = useAccessToken();
-  return useQuery<User | null>({
+  return useQuery<TMeResponse | null>({
     queryKey: ["me"],
     queryFn: async () => {
       if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
 
-      const res = await api.get<User>(ROUTES.API.ME, {
+      const res = await api.get<TMeResponse>(ROUTES.API.ME, {
         headers: {
           Authorization: BEARER_PREFIX + accessToken,
         },
@@ -29,3 +29,6 @@ export const useMe = () => {
   });
 
 }
+
+
+

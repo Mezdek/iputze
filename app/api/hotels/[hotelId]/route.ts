@@ -1,7 +1,7 @@
-import type { HotelParams } from "@/lib/types";
-import { CustomSuccessMessages, DefaultMessages, GeneralErrors, HttpStatus } from "@/lib/constants";
-import { canDeleteHotel, canUpdateHotel, canViewHotel, getAuthContext, getHotelOrThrow } from "@/lib/helpers";
+import { CustomSuccessMessages, DefaultMessages, GeneralErrors, HttpStatus } from "@constants";
+import { canDeleteHotel, canUpdateHotel, canViewHotel, getHotelOrThrow, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import type { HotelParams } from "@lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -10,7 +10,7 @@ export const GET = withErrorHandling(
 
         const hotel = await getHotelOrThrow(params.hotelId);
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canViewHotel({ roles, hotelId: hotel.id })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
 
@@ -23,7 +23,7 @@ export const PATCH = withErrorHandling(
 
         const { id: hotelId } = await getHotelOrThrow(params.hotelId)
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canUpdateHotel({ roles })) throw APP_ERRORS.forbidden();
 
@@ -56,7 +56,7 @@ export const DELETE = withErrorHandling(
     async (req: NextRequest, { params }: { params: HotelParams }) => {
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canDeleteHotel({ roles })) throw APP_ERRORS.forbidden();
 

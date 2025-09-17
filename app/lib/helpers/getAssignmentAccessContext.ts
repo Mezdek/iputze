@@ -1,7 +1,7 @@
-import { AssignmentNoteCollectionParams } from "@/lib/types";
-import { AssignmentErrors, GeneralErrors } from "@/lib/constants";
-import { getAssignmentOrThrow, getAuthContext, getHotelOrThrow, isAdmin, isHotelManager } from "@/lib/helpers";
+import { AssignmentErrors, GeneralErrors } from "@constants";
+import { getAssignmentOrThrow, getHotelOrThrow, getUserOrThrow, isAdmin, isHotelManager } from "@helpers";
 import { APP_ERRORS, prisma } from "@lib";
+import { AssignmentNoteCollectionParams } from "@lib/types";
 import { Assignment, Role } from "@prisma/client";
 import { NextRequest } from "next/server";
 
@@ -24,7 +24,7 @@ export const getAssignmentAccessContext = async ({
     if (!assignment.room) throw APP_ERRORS.badRequest(AssignmentErrors.ASSIGNMENT_FLOATING);
     if (assignment.room.hotelId !== hotelId) throw APP_ERRORS.badRequest(AssignmentErrors.ASSIGNMENT_NOT_IN_HOTEL);
 
-    const { roles, id: userId } = await getAuthContext(req);
+    const { roles, id: userId } = await getUserOrThrow(req);
 
     const isAdminFlag = isAdmin({ roles });
     const isManagerFlag = isHotelManager({ roles, hotelId });

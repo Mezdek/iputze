@@ -1,7 +1,8 @@
 import { AuthErrors, HttpStatus, RateLimitKeys, REFRESH_TOKEN_NAME } from "@constants";
 import { APP_ERRORS, withErrorHandling } from "@errors";
-import { checkRateLimit, generateAccessToken, generateRefreshToken, parseExpiryToSeconds } from "@helpers";
+import { checkRateLimit, generateAccessToken, generateRefreshToken, ResponseCookieOptions } from "@helpers";
 import { prisma } from "@lib/prisma";
+import type { SignInResponse } from "@lib/types";
 import { compare } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,21 +21,12 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     const accessToken = generateAccessToken({ sub: user.id, email: user.email });
     const refreshToken = await generateRefreshToken(user.id);
 
-    const REFRESH_TOKEN_EXP = process.env.REFRESH_TOKEN_EXP || "7d";
-    const maxAge = parseExpiryToSeconds(REFRESH_TOKEN_EXP);
-
-    const res = NextResponse.json(
+    const res = NextResponse.json<SignInResponse>(
         { user: { id: user.id, email: user.email, name: user.name }, accessToken },
         { status: HttpStatus.OK }
     );
 
-    res.cookies.set(REFRESH_TOKEN_NAME, refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-        maxAge,
-    });
+    res.cookies.set(REFRESH_TOKEN_NAME, refreshToken, ResponseCookieOptions);
 
     return res;
 });

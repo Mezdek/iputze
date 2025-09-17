@@ -44,20 +44,6 @@ export const canDeleteHotel = ({ roles }: AdminRights): boolean =>
 
 
 /**
- * Determines whether the actor can see all hotels.
- *
- * Business rule:
- * - Only admins can see all hotels.
- *
- * @param {AdminRights} params - Actor roles.
- * @returns {boolean} True if the actor can see all rooms in a hotel, false otherwise.
- */
-export const canListHotels = ({ roles }: AdminRights): boolean =>
-    isAdmin({ roles });
-
-
-
-/**
  * Determines whether the actor can view the information of a hotel.
  *
  * Business rule:

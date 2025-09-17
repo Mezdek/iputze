@@ -15,7 +15,6 @@ const createHotel = async ({ name, ...rest }: THotel) => {
 const createUser = async (extendedUser: TUser & { hotelId: number }) => {
 
     const { email, hotelId, level, name, password } = extendedUser;
-    console.log({ ...extendedUser })
     const existing = await prisma.user.findUnique({
         where: { email },
     });

@@ -1,14 +1,14 @@
-import type { RoomParams } from "@/lib/types";
-import { CustomSuccessMessages, GeneralErrors } from "@/lib/constants";
-import { canDeleteRoom, canUpdateRoom, canViewRoom, getAuthContext, getHotelOrThrow, getRoomOrThrow } from "@/lib/helpers";
+import { CustomSuccessMessages, GeneralErrors } from "@constants";
+import { canDeleteRoom, canUpdateRoom, canViewRoom, getHotelOrThrow, getRoomOrThrow, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import type { RoomParams } from "@lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoomParams }) => {
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
         const room = await getRoomOrThrow(params.roomId, hotelId);
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canViewRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
         return NextResponse.json(room);
@@ -20,7 +20,7 @@ export const PATCH = withErrorHandling(
 
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
         const room = await getRoomOrThrow(params.roomId, hotelId);
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         //to-do: validate update fields
         if (!canUpdateRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
@@ -34,7 +34,7 @@ export const DELETE = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoomParams }) => {
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
         const room = await getRoomOrThrow(params.roomId, hotelId);
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
         if (!canDeleteRoom({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
         await prisma.room.delete({ where: { id: room.id, hotelId } });
         return NextResponse.json({ message: CustomSuccessMessages.ROOM_DELETED_SUCCESSFULLY });

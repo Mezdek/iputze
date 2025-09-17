@@ -71,7 +71,7 @@ export const people: Record<string, TUser> = {
     },
 
     manager_laLuna: {
-        email: "antonio@lalauna.com",
+        email: "antonio@laluna.com",
         name: "Antonio",
         password: "antonio@luna",
         hotelName: "La Luna",

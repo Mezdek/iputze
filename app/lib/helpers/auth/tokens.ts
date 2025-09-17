@@ -1,12 +1,13 @@
-// app/lib/auth/tokens.ts
 import { prisma } from "@lib/prisma";
-import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+import type { JwtPayload, SignOptions } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
+import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 /** Environment + defaults (fail fast if secrets missing) */
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
-const ACCESS_TOKEN_EXP = process.env.ACCESS_TOKEN_EXP || "15m";
-const REFRESH_TOKEN_EXP = process.env.REFRESH_TOKEN_EXP || "7d";
+export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;
+export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
+export const ACCESS_TOKEN_EXP = process.env.ACCESS_TOKEN_EXP || "15m";
+export const REFRESH_TOKEN_EXP = process.env.REFRESH_TOKEN_EXP || "7d";
 
 /** Types for token payloads */
 export interface AccessTokenPayload {
@@ -45,7 +46,7 @@ export const parseExpiryToSeconds = (exp: string): number => {
 
 /** Generate access token (short-lived) */
 export const generateAccessToken = (payload: { sub: number; email: string }): string => {
-    return jwt.sign(
+    return sign(
         { sub: payload.sub, email: payload.email },
         JWT_ACCESS_SECRET,
         { expiresIn: ACCESS_TOKEN_EXP } as SignOptions
@@ -54,7 +55,7 @@ export const generateAccessToken = (payload: { sub: number; email: string }): st
 
 /** Generate refresh token, persist in DB and return token string */
 export const generateRefreshToken = async (userId: number): Promise<string> => {
-    const token = jwt.sign({ sub: userId }, JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXP } as SignOptions);
+    const token = sign({ sub: userId }, JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXP } as SignOptions);
 
     // compute expiresAt from REFRESH_TOKEN_EXP
     const seconds = parseExpiryToSeconds(REFRESH_TOKEN_EXP);
@@ -73,7 +74,7 @@ export const generateRefreshToken = async (userId: number): Promise<string> => {
 
 /** Verify access token and return typed payload (throws on invalid) */
 export const verifyAccessToken = (token: string): AccessTokenPayload => {
-    const decoded = jwt.verify(token, JWT_ACCESS_SECRET) as unknown;
+    const decoded = verify(token, JWT_ACCESS_SECRET) as unknown;
 
     if (typeof decoded === "string") throw new Error("Invalid access token payload");
     // now decoded is object-like; ensure required fields exist
@@ -96,7 +97,7 @@ export const verifyAccessToken = (token: string): AccessTokenPayload => {
 /** Verify refresh token: check JWT and DB presence/expiry. Returns payload. */
 export const verifyRefreshToken = async (token: string): Promise<RefreshTokenPayload> => {
     // 1) verify signature
-    const decoded = jwt.verify(token, JWT_REFRESH_SECRET) as unknown;
+    const decoded = verify(token, JWT_REFRESH_SECRET) as unknown;
     if (typeof decoded === "string") throw new Error("Invalid refresh token payload");
     const maybe = decoded as JwtPayload;
     if (!maybe.sub) throw new Error("Refresh token missing sub");
@@ -124,4 +125,13 @@ export const revokeRefreshToken = async (token: string): Promise<void> => {
 /** Revoke all refresh tokens for user (e.g. logout-all-devices) */
 export const revokeUserRefreshTokens = async (userId: number): Promise<void> => {
     await prisma.refreshToken.deleteMany({ where: { userId } });
+}
+
+
+export const ResponseCookieOptions: Partial<ResponseCookie> = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: parseExpiryToSeconds(REFRESH_TOKEN_EXP)
 }

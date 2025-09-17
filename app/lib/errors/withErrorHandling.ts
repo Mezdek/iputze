@@ -1,11 +1,13 @@
 import { handleError } from "@lib/errors/handleError";
 
-export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(fn: T) {
+export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(
+    fn: T
+): (...args: Parameters<T>) => Promise<Awaited<ReturnType<T>>> {
     return async (...args: Parameters<T>) => {
         try {
             return await fn(...args);
         } catch (err) {
-            return handleError(err);
+            return handleError(err) as Awaited<ReturnType<T>>;
         }
     };
 }

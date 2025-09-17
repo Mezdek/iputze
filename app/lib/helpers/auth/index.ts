@@ -1,3 +1,4 @@
-export * from "./getAuthContext";
+export * from "./getUserOrThrow";
 export * from "./rateLimit";
 export * from "./tokens";
+

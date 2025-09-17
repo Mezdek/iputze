@@ -1,10 +1,9 @@
-import { getHotelOrThrow } from "@/lib/helpers/getHotelOrThrow";
-import { GeneralErrors, HttpStatus } from "@/lib/constants";
-import { canCreateAssignment, canListAssignments, getAuthContext, getPaginationFromRequest } from "@/lib/helpers";
+import { GeneralErrors, HttpStatus } from "@constants";
+import { canCreateAssignment, canListAssignments, getHotelOrThrow, getPaginationFromRequest, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+import type { AssignmentCollectionParams, CreateAssignmentBody } from "@lib/types";
 import { AssignmentStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import type { AssignmentCollectionParams, CreateAssignmentBody } from "@/lib/types";
 
 
 export const GET = withErrorHandling(
@@ -12,7 +11,7 @@ export const GET = withErrorHandling(
 
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
-        const { roles } = await getAuthContext(req);
+        const { roles } = await getUserOrThrow(req);
 
         if (!canListAssignments({ roles, hotelId })) throw APP_ERRORS.forbidden();
 
@@ -68,7 +67,7 @@ export const POST = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentCollectionParams }) => {
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
-        const { roles, id: userId } = await getAuthContext(req);
+        const { roles, id: userId } = await getUserOrThrow(req);
 
         if (!canCreateAssignment({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
 
