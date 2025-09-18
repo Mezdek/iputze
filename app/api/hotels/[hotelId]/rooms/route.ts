@@ -38,14 +38,14 @@ export const POST = withErrorHandling(
         const data = await req.json() as CreateRoomBody;
 
         const roomNumber = data.number;
-        if (!roomNumber) throw APP_ERRORS.badRequest(RoomErrors.ROOM_NUMBER_REQUIRED);
+        if (!roomNumber) throw APP_ERRORS.badRequest(RoomErrors.NUMBER_REQUIRED);
 
         // Ensure room number is unique for this hotel
         const existingRoom = await prisma.room.findUnique({
             where: { hotelId_number: { hotelId, number: roomNumber } }
         });
 
-        if (existingRoom) throw APP_ERRORS.badRequest(RoomErrors.ROOM_NUMBER_ALREADY_EXISTS);
+        if (existingRoom) throw APP_ERRORS.badRequest(RoomErrors.NUMBER_ALREADY_EXISTS);
 
         const newRoom = await prisma.room.create({
             data: { ...data, hotelId }

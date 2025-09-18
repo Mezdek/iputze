@@ -1,7 +1,7 @@
 import { GeneralErrors, HttpStatus, RolesErrors } from "@constants";
 import { canCreateRole, canViewRoles, getHotelOrThrow, getUserOrThrow } from "@helpers";
 import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
-import { RoleCollectionParams } from "@lib/types";
+import type { RoleCollectionParams, TGetRolesResponse } from "@lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = withErrorHandling(
@@ -15,10 +15,16 @@ export const GET = withErrorHandling(
 
         const allRolesInHotel = await prisma.role.findMany({
             where: { hotelId },
-            include: { hotel: { select: { name: true } }, user: { select: { name: true } } }
+            include: { user: { select: { name: true, avatarUrl: true, createdAt: true, email: true, notes: true, id: true, updatedAt: true } } }
         });
 
-        return NextResponse.json(allRolesInHotel);
+        const rolesEnhanced = allRolesInHotel.map<TGetRolesResponse>
+            (
+                ({ id, user: { name, id: userId, email, avatarUrl, notes, createdAt, updatedAt }, hotelId, level, status }) =>
+                    ({ id, userId, hotelId, name, level, status, email, avatarUrl, notes, createdAt, updatedAt })
+            )
+
+        return NextResponse.json(rolesEnhanced);
     }
 )
 
