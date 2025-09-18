@@ -1,6 +1,7 @@
 import { useDeleteRoom } from "@/hooks/mutations/useDeleteRoom";
-import { Button } from "@heroui/react";
 import { Room } from "@prisma/client";
+import { RoomDelete } from "./RoomDelete";
+import { RoomUpdate } from "./RoomUpdate";
 
 export function RoomTile({ room }: { room: Room }) {
     const { mutate: deleteRoom } = useDeleteRoom({ roomId: room.id, hotelId: room.hotelId })
@@ -13,7 +14,10 @@ export function RoomTile({ room }: { room: Room }) {
                 <li>Occupancy: {room.occupancy}</li>
                 <p>{!room.notes || room.notes === "" ? "No Notes" : room.notes}</p>
             </ul>
-            <Button onPress={() => deleteRoom()}>Delete</Button>
+            <div className="flex w-full justify-between">
+                <RoomUpdate room={room} />
+                <RoomDelete room={room} />
+            </div>
         </div>
     )
 }

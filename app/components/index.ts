@@ -5,4 +5,5 @@ export * from "./icons";
 export * from "./LoadingScreen";
 export * from "./ManagerView";
 export * from "./PendingView";
+export * from "./RoomCreation";
 export * from "./RoomTile";
