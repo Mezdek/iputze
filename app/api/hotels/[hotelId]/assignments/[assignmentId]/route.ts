@@ -1,10 +1,12 @@
-import { AssignmentParams, UpdateAssignmentBody } from "@/lib/types";
-import { CustomSuccessMessages, GeneralErrors, HttpStatus } from "@/lib/constants";
+import type { AssignmentParams, AssignmentUpdateBody } from "@apptypes";
+import { GeneralErrors, HttpStatus } from "@constants";
+import { APP_ERRORS, withErrorHandling } from "@errors";
 import {
     canDeleteAssignment,
     getAssignmentAccessContext
-} from "@/lib/helpers";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
+} from "@helpers";
+import { prisma } from "@lib/prisma";
+import { Assignment } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -14,7 +16,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentParams }) => {
         const { assignment } = await getAssignmentAccessContext({ params, req });
-        return NextResponse.json(assignment);
+        return NextResponse.json<Assignment>(assignment);
     }
 );
 
@@ -27,29 +29,23 @@ export const GET = withErrorHandling(
  */
 export const PATCH = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentParams }) => {
-        const { assignmentId, isAdmin, isAssignmentCleaner, isHotelManager } =
+        const { assignmentId, isAdmin, isAssignmentCleaner, isHotelManager, assignment: { isActive } } =
             await getAssignmentAccessContext({ params, req });
 
-        const data = (await req.json()) as UpdateAssignmentBody;
-        let updateData: Partial<UpdateAssignmentBody> = {};
+        const data = (await req.json()) as AssignmentUpdateBody;
+        let updateData: Partial<AssignmentUpdateBody> = {};
 
         if (isAdmin) {
             updateData = data;
         } else if (isHotelManager) {
-            if ("status" in data && data.status !== undefined) {
-                throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
-            }
-            updateData = {
-                notes: data.notes,
-                isActive: data.isActive,
-            };
+            if ("status" in data && data.status !== undefined) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
+            updateData = { isActive: data.isActive };
         } else if (isAssignmentCleaner) {
-            if (!("status" in data) || data.status === undefined) {
-                throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMETERS);
-            }
+            if (!("status" in data) || data.status === undefined) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS)
+            if (!isActive) throw APP_ERRORS.badRequest(GeneralErrors.ACTION_DENIED)
             updateData = { status: data.status };
         } else {
-            throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
+            throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
         }
 
         const updatedAssignment = await prisma.assignment.update({
@@ -57,7 +53,7 @@ export const PATCH = withErrorHandling(
             data: updateData,
         });
 
-        return NextResponse.json(updatedAssignment);
+        return NextResponse.json<Assignment>(updatedAssignment);
     }
 );
 
@@ -70,11 +66,10 @@ export const DELETE = withErrorHandling(
 
         const { assignmentId, roles } = await getAssignmentAccessContext({ params, req });
 
-
         if (!canDeleteAssignment({ roles })) throw APP_ERRORS.forbidden();
 
         await prisma.assignment.delete({ where: { id: assignmentId } });
 
-        return NextResponse.json({ message: CustomSuccessMessages.ASSIGNMENT_DELETED_SUCCESSFULLY }, { status: HttpStatus.NO_CONTENT });
+        return NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
     }
 );

@@ -1,6 +1,6 @@
-import { AssignmentErrors } from "@/lib/constants";
-import { parseId } from "@/lib/helpers";
-import { APP_ERRORS, prisma } from "@lib";
+import { AssignmentErrors } from "@constants";
+import { APP_ERRORS } from "@errors";
+import { prisma } from "@lib/prisma";
 
 /**
  * Retrieves an assignment by ID and throws if not found or invalid.
@@ -9,12 +9,34 @@ import { APP_ERRORS, prisma } from "@lib";
  * @returns The validated hotel entity.
  * @throws {HttpError} If assignmentId is invalid or assignment not found.
  */
-export const getAssignmentOrThrow = async (assignmentIdParam: string) => {
-    const assignmentId = parseId(assignmentIdParam, AssignmentErrors.ASSIGNMENT_ID_NOT_VALID);
+export const getAssignmentOrThrow = async (assignmentId: string) => {
 
-    const assignment = await prisma.assignment.findUnique({ where: { id: assignmentId }, include: { room: { select: { hotelId: true } } }, });
+    const assignment = await prisma.assignment.findUnique(
+        {
+            where:
+            {
+                id: assignmentId
+            },
+            include:
+            {
+                room:
+                {
+                    select:
+                    {
+                        hotelId: true
+                    }
+                },
+                assignedByUser:
+                {
+                    omit: {
+                        passwordHash: true
+                    }
+                }
+            },
+        }
+    );
 
-    if (!assignment) throw APP_ERRORS.badRequest(AssignmentErrors.ASSIGNMENT_NOT_FOUND);
+    if (!assignment) throw APP_ERRORS.badRequest(AssignmentErrors.NOT_FOUND);
 
     return assignment;
 };

@@ -1,17 +1,17 @@
+import type { EnhancedRole, RoleCollectionParams } from "@apptypes";
 import { api } from "@config";
-import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath } from "@constants";
-import { APP_ERRORS } from "@lib";
-import type { TGetRolesResponse } from "@lib/types";
+import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath, queryKeys } from "@constants";
+import { APP_ERRORS } from "@errors";
 import { useAccessToken } from "@providers/AccessTokenProvider";
 import { useQuery } from "@tanstack/react-query";
 
-export const useRoles = ({ hotelId }: { hotelId: number }) => {
+export const useRoles = ({ hotelId }: RoleCollectionParams) => {
     const { accessToken } = useAccessToken();
-    return useQuery<TGetRolesResponse[] | null>({
-        queryKey: ["roles", hotelId],
+    return useQuery<EnhancedRole[] | null>({
+        queryKey: [queryKeys.roles, hotelId],
         queryFn: async () => {
             if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
-            const res = await api.get<TGetRolesResponse[]>(getPath({ hotelId }).API.ROLES, {
+            const res = await api.get<EnhancedRole[]>(getPath({ hotelId }).API.ROLES, {
                 headers: { [AUTH_HEADER]: BEARER_PREFIX + accessToken },
             });
             return res.data;

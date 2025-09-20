@@ -1,15 +1,70 @@
-import { User as DB_USER, Hotel, Role, RoleLevel, RoleStatus } from "@prisma/client";
+import { Assignment, AssignmentStatus, Hotel, User as PrismaType_User, Role, RoleLevel, RoleStatus, Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
 
 
-export type User = Omit<DB_USER, "passwordHash"> & { roles: Role[] };
+// Prisma types re-exported
+export type { PrismaType_User };
 
+
+// Utilities
+export type SafeUser = Omit<PrismaType_User, "passwordHash">;
+
+export type SafeUserWithRoles = SafeUser & { roles: Role[] };
+
+export type TRole = Omit<Role, "userId" | "hotelId"> & { hotel: Hotel };
+
+export type PublicHotel = Omit<Hotel, "createdAt" | "updatedAt">
+
+export interface AssignmentAccessContext {
+    hotelId: string;
+    assignmentId: string;
+    userId: string;
+    assignment: Assignment,
+    roles: Role[],
+    isAdmin: boolean,
+    isHotelManager: boolean,
+    isAssignmentCleaner: boolean;
+};
+
+
+
+// Assignments
+
+export interface AssignmentResponse extends
+    Assignment {
+    room: Room;
+    users: SafeUser[];
+    assignedByUser: SafeUser | null
+}
+
+export interface AssignmentCreationBody {
+    roomId: string;
+    dueAt: Date;
+    cleaners: string[]
+}
+
+export interface AssignmentUpdateBody {
+    isActive?: boolean;
+    status?: AssignmentStatus;
+}
+
+
+// AssignmentNotes
+export interface AssignmentNoteCreationBody {
+    content: string
+};
+export interface AssignmentNoteUpdateBody {
+    content: string
+};
+
+
+// Auth
 export interface SignInRequestBody {
     email: string;
     password: string;
 }
 
 export interface SignInResponse {
-    user: { id: number; email: string; name: string; }; accessToken: string;
+    user: { id: string; email: string; name: string; }; accessToken: string;
 }
 
 export interface SignUpRequestBody {
@@ -18,24 +73,44 @@ export interface SignUpRequestBody {
     password: string;
 }
 
-export interface SignUpResponse { id: number; email: string; name: string };
+export interface SignUpResponse { id: string; email: string; name: string };
 
-export type TRole = Omit<Role, "userId" | "hotelId"> & { hotel: Hotel };
+export interface MeResponse extends SafeUser { roles: TRole[] }
 
-export type TMeResponse = Omit<User, "roles"> & { roles: TRole[] }
 
-export type TPublicHotelList = Omit<Hotel, "createdAt" | "updatedAt">[]
-
-export type TGetRolesResponse = {
-    id: number;
-    userId: number;
-    hotelId: number;
+// Hotels
+export interface HotelCreationBody {
     name: string;
-    level: RoleLevel;
-    status: RoleStatus;
-    email: string;
-    avatarUrl: string | null;
-    notes: string | null;
-    createdAt: Date;
-    updatedAt: Date;
+    address?: string;
+    phone?: string;
+    email?: string;
+    description?: string;
+}
+
+
+// Roles
+export interface EnhancedRole extends Role, SafeUser { }
+
+export interface RoleUpdateBody {
+    level?: RoleLevel;
+    status?: RoleStatus;
+}
+
+
+// Rooms
+
+interface RoomWithHotel extends Room { hotel: Hotel }
+
+export interface RoomResponse extends Array<RoomWithHotel> { }
+
+export interface RoomCreationBody {
+    number: string;
+    occupancy?: RoomOccupancy;
+    cleanliness?: RoomCleanliness;
+}
+
+export interface RoomUpdateBody {
+    number?: string;
+    occupancy?: RoomOccupancy;
+    cleanliness?: RoomCleanliness;
 }

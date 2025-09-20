@@ -1,25 +1,31 @@
+import type { AssignmentNoteParams, AssignmentNoteUpdateBody } from "@apptypes";
+import { HttpStatus } from "@constants";
+import { withErrorHandling } from "@errors";
 import { getAssignmentNoteOrThrow, getAssignmentOrThrow, getHotelOrThrow, getUserOrThrow } from "@helpers";
-import { prisma, withErrorHandling } from "@lib";
-import type { AssignmentNoteParams, UpdateAssignmentNoteBody } from "@lib/types";
+import { prisma } from "@lib/prisma";
+import { AssignmentNote } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export const PATCH = withErrorHandling(
+
+// To-Do Refactor
+export const DELETE = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentNoteParams }) => {
+
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
         const { id: assignmentId } = await getAssignmentOrThrow(params.assignmentId);
         const { id: authorId } = await getUserOrThrow(req);
+        const assignmentNote = await getAssignmentNoteOrThrow(
+            {
+                assignmentNoteId: params.assignmentNoteId,
+                expectedAssignmentId: assignmentId,
+                expectedHotelId: hotelId,
+                expectedAuthorId: authorId
+            }
+        );
 
-        const assignmentNote = await getAssignmentNoteOrThrow({ assignmentNoteIdParam: params.assignmentNoteId, expectedAssignmentId: assignmentId, expectedHotelId: hotelId, expectedAuthorId: authorId });
+        await prisma.assignmentNote.delete({ where: { id: assignmentNote.id } });
 
-        const data = (await req.json()) as UpdateAssignmentNoteBody;
-
-        const updatedAssignmentNote = await prisma.assignmentNote.update({
-            where: { id: assignmentNote.id },
-            data: {
-                content: data.content,
-            },
-        });
-
-        return NextResponse.json(updatedAssignmentNote);
+        return NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
     }
 );
+

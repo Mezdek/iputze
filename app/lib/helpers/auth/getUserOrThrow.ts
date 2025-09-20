@@ -1,13 +1,13 @@
-import { User } from "@/lib/types/api";
+import type { SafeUserWithRoles } from "@apptypes";
 import { AUTH_HEADER, AuthErrors, BEARER_PREFIX } from "@constants";
+import { APP_ERRORS } from "@errors";
 import { verifyAccessToken } from "@helpers";
-import { APP_ERRORS, prisma } from "@lib";
+import { prisma } from "@lib/prisma";
 import { NextRequest } from "next/server";
 
-export const getUserOrThrow = async (req: NextRequest): Promise<User> => {
+export const getUserOrThrow = async (req: NextRequest): Promise<SafeUserWithRoles> => {
     const authHeader = req.headers.get(AUTH_HEADER);
     if (!authHeader?.startsWith(BEARER_PREFIX)) throw APP_ERRORS.unauthorized();
-
     const token = authHeader.slice(7);
     const payload = verifyAccessToken(token);
 

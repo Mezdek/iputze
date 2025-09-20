@@ -1,7 +1,8 @@
+import type { MeResponse, TRole } from "@apptypes";
 import { HttpStatus } from "@constants";
+import { withErrorHandling } from "@errors";
 import { getUserOrThrow, isAdmin } from "@helpers";
-import { prisma, withErrorHandling } from "@lib";
-import type { TMeResponse, TRole } from "@lib/types";
+import { prisma } from "@lib/prisma";
 import type { Hotel } from "@prisma/client";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
@@ -24,7 +25,7 @@ export const GET = withErrorHandling(
                 ({ id, hotelId, level, status }) => ({ id, level, status, hotel: { ...hotels.find(h => h.id === hotelId)! } }))
         }
 
-        return NextResponse.json<TMeResponse>(
+        return NextResponse.json<MeResponse>(
             { ...user, roles: rolesWithHotels },
             { status: HttpStatus.OK }
         );

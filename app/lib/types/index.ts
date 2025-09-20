@@ -1,6 +1,5 @@
 export * from "./api";
-export * from "./next-auth";
-export * from "./params";
-export * from "./permissions";
-export * from "./registeration";
+export type * from "./next-auth";
+export type * from "./params";
+export type * from "./permissions";
 

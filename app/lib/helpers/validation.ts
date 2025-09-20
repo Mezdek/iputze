@@ -1,5 +1,5 @@
-import { AuthErrors } from "@/lib/constants";
-import { APP_ERRORS } from "@lib";
+import { AuthErrors } from "@constants";
+import { APP_ERRORS } from "@errors";
 import { z } from "zod";
 
 /**

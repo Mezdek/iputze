@@ -7,4 +7,4 @@ export interface RoleManagementModification {
     newStatus?: RoleStatus,
 }
 
-export interface RoleManagement { roles: Role[], hotelId?: number }
+export interface RoleManagement { roles: Role[], hotelId?: string }

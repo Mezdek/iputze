@@ -1,6 +1,6 @@
-import { useDeleteRoom } from "@/hooks/mutations/useDeleteRoom";
+import { useDeleteRoom } from "@hooks";
 import { Room } from "@prisma/client";
-import { RoomDelete } from "./RoomDelete";
+import { ApprovalRequest } from "../ApprovalRequest";
 import { RoomUpdate } from "./RoomUpdate";
 
 export function RoomTile({ room }: { room: Room }) {
@@ -16,7 +16,15 @@ export function RoomTile({ room }: { room: Room }) {
             </ul>
             <div className="flex w-full justify-between">
                 <RoomUpdate room={room} />
-                <RoomDelete room={room} />
+                <ApprovalRequest
+                    buttonText="Delete Room"
+                    cancelButtonText="Cancel"
+                    header="Room Deletion"
+                    question={`Are you sure you want to delete room ${room.number}?`}
+                    submitAction={deleteRoom}
+                    submitButtonText="Delete"
+                    submitVariant="danger"
+                />
             </div>
         </div>
     )

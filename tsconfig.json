@@ -33,20 +33,11 @@
       "@constants": [
         "./lib/constants/index"
       ],
-      "@constants/*": [
-        "./lib/constants/*"
-      ],
       "@components": [
         "./components/index"
       ],
-      "@components/*": [
-        "./components/*"
-      ],
       "@hooks": [
         "./hooks/index"
-      ],
-      "@hooks/*": [
-        "./hooks/*"
       ],
       "@providers": [
         "./providers/index"
@@ -57,26 +48,17 @@
       "@config": [
         "./lib/config/index"
       ],
-      "@config/*": [
-        "./lib/config/*"
-      ],
       "@helpers": [
         "./lib/helpers/index"
-      ],
-      "@helpers/*": [
-        "./lib/helpers/*"
       ],
       "@errors": [
         "./lib/errors/index"
       ],
-      "@errors/*": [
-        "./lib/errors/*"
-      ],
-      "@lib": [
-        "./lib/index"
-      ],
       "@lib/*": [
         "./lib/*"
+      ],
+      "@apptypes": [
+        "./lib/types/index"
       ],
     }
   },

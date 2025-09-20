@@ -1,8 +1,8 @@
 import { AuthErrors, GeneralErrors, PrismaErrors } from "@/lib/constants";
 import { Prisma } from "@prisma/client";
+import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
 import { APP_ERRORS } from "./factories";
 import { HttpError } from "./HttpError";
-import { JsonWebTokenError, TokenExpiredError, NotBeforeError } from "jsonwebtoken";
 
 /**
  * Centralized error handler for API routes.
@@ -25,7 +25,7 @@ export function handleError(error: unknown) {
 
     // 2. Prisma validation errors (invalid input/query shape)
     if (error instanceof Prisma.PrismaClientValidationError) {
-        return APP_ERRORS.badRequest(PrismaErrors.CLIENT_VALIDATION).nextResponse();
+        return APP_ERRORS.badRequest(PrismaErrors.INVALID_INPUT).nextResponse();
     }
 
     // 3. JSON parsing errors (invalid/malformed request body)

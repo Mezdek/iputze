@@ -1,6 +1,6 @@
-import { AssignmentErrors, AssignmentNotesErrors } from "@/lib/constants";
-import { parseId } from "@/lib/helpers";
-import { APP_ERRORS, prisma } from "@lib";
+import { AssignmentErrors, AssignmentNotesErrors } from "@constants";
+import { APP_ERRORS } from "@errors";
+import { prisma } from "@lib/prisma";
 import type { Assignment, AssignmentNote, Hotel, Room } from "@prisma/client";
 
 /**
@@ -19,10 +19,10 @@ export type AssignmentNoteWithContext = AssignmentNote & {
  * Parameters for validating an assignment note.
  */
 export type AssignmentNoteContext = {
-    assignmentNoteIdParam: string;
-    expectedAssignmentId?: number;
-    expectedHotelId?: number;
-    expectedAuthorId?: number;
+    assignmentNoteId: string;
+    expectedAssignmentId?: string;
+    expectedHotelId?: string;
+    expectedAuthorId?: string;
 };
 
 /**
@@ -42,13 +42,8 @@ export type AssignmentNoteContext = {
 export const getAssignmentNoteOrThrow = async (
     ctx: AssignmentNoteContext
 ): Promise<AssignmentNoteWithContext> => {
-    const { assignmentNoteIdParam, expectedAssignmentId, expectedHotelId, expectedAuthorId } = ctx;
+    const { assignmentNoteId, expectedAssignmentId, expectedHotelId, expectedAuthorId } = ctx;
 
-    // Parse ID
-    const assignmentNoteId = parseId(
-        assignmentNoteIdParam,
-        AssignmentNotesErrors.ASSIGNMENTNOTE_ID_NOT_VALID
-    );
 
     // Fetch note with full context
     const assignmentNote = await prisma.assignmentNote.findUnique({
@@ -69,18 +64,18 @@ export const getAssignmentNoteOrThrow = async (
     });
 
     if (!assignmentNote) {
-        throw APP_ERRORS.badRequest(AssignmentNotesErrors.ASSIGNMENTNOTE_NOT_FOUND);
+        throw APP_ERRORS.badRequest(AssignmentNotesErrors.NOT_FOUND);
     }
 
     // Ensure assignment is not floating (must be tied to a room)
-    if (!assignmentNote.assignment.room) throw APP_ERRORS.badRequest(AssignmentErrors.ASSIGNMENT_FLOATING);
+    if (!assignmentNote.assignment.room) throw APP_ERRORS.badRequest(AssignmentErrors.FLOATING);
 
     // Check assignment match
     if (
         expectedAssignmentId &&
         assignmentNote.assignment.id !== expectedAssignmentId
     ) throw APP_ERRORS.forbidden(
-        AssignmentNotesErrors.ASSIGNMENTNOTE_NOT_IN_ASSIGNMENT
+        AssignmentNotesErrors.NOT_IN_ASSIGNMENT
     );
 
     // Check hotel match
@@ -88,12 +83,12 @@ export const getAssignmentNoteOrThrow = async (
         expectedHotelId &&
         assignmentNote.assignment.room.hotel.id !== expectedHotelId
     ) throw APP_ERRORS.forbidden(
-        AssignmentNotesErrors.ASSIGNMENTNOTE_NOT_IN_HOTEL
+        AssignmentNotesErrors.NOT_IN_HOTEL
     );
 
 
     // Check author match
-    if (expectedAuthorId && assignmentNote.authorId !== expectedAuthorId) throw APP_ERRORS.forbidden(AssignmentNotesErrors.EDITING_NOT_ALLOWED);
+    if (expectedAuthorId && assignmentNote.authorId !== expectedAuthorId) throw APP_ERRORS.forbidden(AssignmentNotesErrors.EDITING_DENIED);
 
 
     return assignmentNote as AssignmentNoteWithContext;

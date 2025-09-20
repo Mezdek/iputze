@@ -1,8 +1,8 @@
+import type { AssignmentCollectionParams, AssignmentCreationBody, AssignmentResponse } from "@apptypes";
 import { GeneralErrors, HttpStatus } from "@constants";
-import { canCreateAssignment, canListAssignments, getHotelOrThrow, getPaginationFromRequest, getUserOrThrow } from "@helpers";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
-import type { AssignmentCollectionParams, CreateAssignmentBody } from "@lib/types";
-import { AssignmentStatus } from "@prisma/client";
+import { APP_ERRORS, withErrorHandling } from "@errors";
+import { canCreateAssignment, canListAssignments, getHotelOrThrow, getUserOrThrow } from "@helpers";
+import { prisma } from "@lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -15,71 +15,46 @@ export const GET = withErrorHandling(
 
         if (!canListAssignments({ roles, hotelId })) throw APP_ERRORS.forbidden();
 
-        const { page, pageSize, skip, take } = getPaginationFromRequest(req);
-        const status = req.nextUrl.searchParams.get('status') as AssignmentStatus | null;
-        const isActive = req.nextUrl.searchParams.get('active') !== 'false';
-
-        const where = {
-            room: { hotelId },
-            ...(status && { status }),
-            isActive
-        };
-
-
-        const [assignments, total] = await Promise.all([
-            prisma.assignment.findMany({
-                where,
-                skip,
-                take,
-                orderBy: { dueAt: 'asc' },
-                select: {
-                    id: true,
-                    roomNumber: true,
-                    status: true,
-                    dueAt: true,
-                    isActive: true,
-                    notes: true,
-                    room: {
-                        select: {
-                            id: true,
-                            number: true,
-                            cleanliness: true
-                        }
-                    }
-                }
-            }),
-            prisma.assignment.count({ where })
-        ]);
-
-        return NextResponse.json({
-            assignments,
-            pagination: {
-                page,
-                pageSize,
-                total,
-                totalPages: Math.ceil(total / pageSize)
+        const assignments = await prisma.assignment.findMany({
+            where: { room: { hotelId } },
+            orderBy: { dueAt: 'asc' },
+            include: {
+                room: true,
+                assignedByUser: { omit: { passwordHash: true } },
+                users: { omit: { passwordHash: true } }
             }
-        });
+        })
+
+        return NextResponse.json<AssignmentResponse[]>(assignments);
     }
 );
 
 export const POST = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentCollectionParams }) => {
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
-
         const { roles, id: userId } = await getUserOrThrow(req);
+        if (!canCreateAssignment({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
+        const json = await req.json() as AssignmentCreationBody;
 
-        if (!canCreateAssignment({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
+        const { roomId, dueAt, cleaners } = json;
 
-        const data = await req.json() as CreateAssignmentBody;
-
-        const { dueAt, roomId, roomNumber } = data;
-        if (!roomNumber || !dueAt || !roomId) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMETERS);
+        const parsedDueAt = new Date(dueAt);
+        if (!parsedDueAt || !roomId) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS);
 
         const newAssignment = await prisma.assignment.create({
-            data: { ...data, assignedBy: userId }
-        });
+            data: {
+                roomId: roomId,
+                dueAt: parsedDueAt,
+                assignedBy: userId,
+                users: { connect: cleaners.map(id => ({ id })) }
+            },
+            include: {
+                room: true,
+                assignedByUser: { omit: { passwordHash: true } },
+                users: { omit: { passwordHash: true } }
+            }
+        })
 
-        return NextResponse.json(newAssignment, { status: HttpStatus.CREATED });
+        return NextResponse.json<AssignmentResponse>(newAssignment, { status: HttpStatus.CREATED });
     }
 )

@@ -1,4 +1,4 @@
-import { handleError } from "@lib/errors/handleError";
+import { handleError } from "@errors";
 
 export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(
     fn: T

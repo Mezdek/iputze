@@ -1,7 +1,8 @@
+import type { RoomCollectionParams, RoomCreationBody, RoomResponse } from "@apptypes";
 import { HttpStatus, RoomErrors } from "@constants";
+import { APP_ERRORS, withErrorHandling } from "@errors";
 import { canCreateRoom, canListRooms, getHotelOrThrow, getUserOrThrow } from "@helpers";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
-import type { CreateRoomBody, RoomCollectionParams } from "@lib/types";
+import { prisma } from "@lib/prisma";
 import { Room } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,7 +10,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoomCollectionParams }) => {
-
 
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
 
@@ -22,8 +22,7 @@ export const GET = withErrorHandling(
             include: { hotel: true }
         });
 
-
-        return NextResponse.json(rooms);
+        return NextResponse.json<RoomResponse>(rooms);
     }
 )
 
@@ -35,17 +34,17 @@ export const POST = withErrorHandling(
 
         if (!canCreateRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
 
-        const data = await req.json() as CreateRoomBody;
+        const data = await req.json() as RoomCreationBody;
 
         const roomNumber = data.number;
-        if (!roomNumber) throw APP_ERRORS.badRequest(RoomErrors.NUMBER_REQUIRED);
+        if (!roomNumber) throw APP_ERRORS.badRequest(RoomErrors.MISSING_NUMBER);
 
         // Ensure room number is unique for this hotel
         const existingRoom = await prisma.room.findUnique({
             where: { hotelId_number: { hotelId, number: roomNumber } }
         });
 
-        if (existingRoom) throw APP_ERRORS.badRequest(RoomErrors.NUMBER_ALREADY_EXISTS);
+        if (existingRoom) throw APP_ERRORS.badRequest(RoomErrors.DUPLICATED_NUMBER);
 
         const newRoom = await prisma.room.create({
             data: { ...data, hotelId }

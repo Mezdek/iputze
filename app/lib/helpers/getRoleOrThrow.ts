@@ -1,18 +1,15 @@
-import { RolesErrors } from "@/lib/constants";
-import { parseId } from "@/lib/helpers";
-import { APP_ERRORS, prisma } from "@lib";
+import { RolesErrors } from "@constants";
+import { APP_ERRORS } from "@errors";
+import { prisma } from "@lib/prisma";
 
-export const getRoleOrThrow = async (roleIdParam: string, expectedHotelId?: number) => {
-
-
-    const roleId = parseId(roleIdParam, RolesErrors.ROLE_ID_NOT_VALID);
+export const getRoleOrThrow = async (roleId: string, expectedHotelId?: string) => {
 
     const role = await prisma.role.findUnique({ where: { id: roleId }, include: { hotel: { select: { id: true } } } });
 
 
-    if (!role) throw APP_ERRORS.notFound(RolesErrors.ROLE_NOT_FOUND);
+    if (!role) throw APP_ERRORS.notFound(RolesErrors.NOT_FOUND);
 
-    if (expectedHotelId && role.hotel.id !== expectedHotelId) throw APP_ERRORS.badRequest(RolesErrors.ROLE_NOT_IN_HOTEL);
+    if (expectedHotelId && role.hotel.id !== expectedHotelId) throw APP_ERRORS.badRequest(RolesErrors.NOT_IN_HOTEL);
 
     return role;
 };

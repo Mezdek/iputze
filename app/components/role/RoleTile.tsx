@@ -1,7 +1,7 @@
-import { TGetRolesResponse } from "@/lib/types";
+import type { EnhancedRole } from "@lib/types";
 import { RoleStatus } from "@prisma/client";
 
-export function RoleTile({ role }: { role: TGetRolesResponse }) {
+export function RoleTile({ role }: { role: EnhancedRole }) {
     const bg = role.status === RoleStatus.DISABLED ? "bg-gray-400" : "bg-cyan-400"
     return (
         <div className={`flex flex-col gap-1 border-solid border-green-900 ${bg} rounded-xl border-2 p-4 h-fit`}>

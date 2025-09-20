@@ -10,7 +10,7 @@ function Hotel() {
     const router = useRouter();
     const params = useParams<{ hotelId: string }>();
 
-    const role = user?.roles.find(r => r.hotel.id === Number(params.hotelId))
+    const role = user?.roles.find(r => r.hotel.id === params.hotelId)
 
     if (!role) return <p className="flex justify-center items-center w-full h-screen text-6xl bg-red-400">Access Denied</p>
     if (role.status === RoleStatus.DISABLED) return <DisabledView role={role} />

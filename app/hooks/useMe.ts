@@ -1,20 +1,20 @@
+import type { MeResponse } from "@apptypes";
 import { api } from "@config";
-import { AuthErrors, BEARER_PREFIX, getPath } from "@constants";
-import { APP_ERRORS } from "@lib";
-import type { TMeResponse } from "@lib/types";
+import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath, queryKeys } from "@constants";
+import { APP_ERRORS } from "@errors";
 import { useAccessToken } from "@providers/AccessTokenProvider";
 import { useQuery } from "@tanstack/react-query";
 
 export const useMe = () => {
   const { accessToken } = useAccessToken();
-  return useQuery<TMeResponse | null>({
-    queryKey: ["me"],
+  return useQuery<MeResponse | null>({
+    queryKey: [queryKeys.me],
     queryFn: async () => {
       if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
 
-      const res = await api.get<TMeResponse>(getPath().API.ME, {
+      const res = await api.get<MeResponse>(getPath().API.ME, {
         headers: {
-          Authorization: BEARER_PREFIX + accessToken,
+          [AUTH_HEADER]: BEARER_PREFIX + accessToken,
         },
       });
       return res.data;

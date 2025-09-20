@@ -1,28 +1,30 @@
+import type { RoleParams, RoleUpdateBody } from "@apptypes";
 import { GeneralErrors, RolesErrors } from "@constants";
+import { APP_ERRORS, withErrorHandling } from "@errors";
 import { canModifyRole, getRoleOrThrow, getUserOrThrow } from "@helpers";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
-import type { RoleParams, UpdateRoleBody } from "@lib/types";
+import { prisma } from "@lib/prisma";
+import type { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const PATCH = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoleParams }) => {
 
-        const data: UpdateRoleBody = await req.json();
-        if (!data.level && !data.status) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMETERS);
+        const data = await req.json() as RoleUpdateBody;
+        if (!data.level && !data.status) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS);
 
         const targetRole = await getRoleOrThrow(params.roleId);
 
         const newLevel = data.level;
         const newStatus = data.status;
 
-        const updateData: Partial<UpdateRoleBody> = {
+        const updateData: Partial<RoleUpdateBody> = {
             ...(newLevel ? { level: newLevel } : {}),
             ...(newStatus ? { status: newStatus } : {}),
         };
 
         const { roles } = await getUserOrThrow(req);
 
-        if (!canModifyRole({ roles, targetRole, newLevel, newStatus })) throw APP_ERRORS.forbidden(RolesErrors.ROLE_MODIFICATION_NOT_ALLOWED);
+        if (!canModifyRole({ roles, targetRole, newLevel, newStatus })) throw APP_ERRORS.forbidden(RolesErrors.EDITING_DENIED);
 
         // Perform update
         const updatedRole = await prisma.role.update({
@@ -30,6 +32,6 @@ export const PATCH = withErrorHandling(
             data: updateData
         });
 
-        return NextResponse.json(updatedRole);
+        return NextResponse.json<Role>(updatedRole);
     }
 )

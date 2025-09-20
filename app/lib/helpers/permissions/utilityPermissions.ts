@@ -15,7 +15,7 @@ export const isAdmin = ({ roles }: { roles: Role[] }): boolean =>
  * Checks if the user has an active MANAGER role for a specific hotel.
  *
  * @param {Role[]} params.roles - Roles of the acting user.
- * @param {number} params.hotelId - Hotel ID to check the manager role for.
+ * @param {string} params.hotelId - Hotel ID to check the manager role for.
  * @returns {boolean} True if the user is an active manager of the hotel.
  */
 export const isHotelManager = ({
@@ -23,7 +23,7 @@ export const isHotelManager = ({
     hotelId,
 }: {
     roles: Role[];
-    hotelId: number;
+    hotelId: string;
 }): boolean =>
     roles.some(
         (r) =>
@@ -35,7 +35,7 @@ export const isHotelManager = ({
 * Checks if the user has an active MANAGER role for a specific hotel.
 *
 * @param {Role[]} params.roles - Roles of the acting user.
-* @param {number} params.hotelId - Hotel ID to check the manager role for.
+* @param {string} params.hotelId - Hotel ID to check the manager role for.
 * @returns {boolean} True if the user is an active manager of the hotel.
 */
 export const hasManagerPermission = ({
@@ -43,7 +43,7 @@ export const hasManagerPermission = ({
     hotelId,
 }: {
     roles: Role[];
-    hotelId: number;
+    hotelId: string;
 }): boolean =>
     isAdmin({ roles }) || isHotelManager({ roles, hotelId })
 
@@ -54,7 +54,7 @@ export const hasManagerPermission = ({
  * Checks if the user has an active CLEANER role for a specific hotel.
  *
  * @param {Role[]} params.roles - Roles of the acting user.
- * @param {number} params.hotelId - Hotel ID to check the cleaner role for.
+ * @param {string} params.hotelId - Hotel ID to check the cleaner role for.
  * @returns {boolean} True if the user is an active cleaner of the hotel.
  */
 export const isHotelCleaner = ({
@@ -62,7 +62,7 @@ export const isHotelCleaner = ({
     hotelId,
 }: {
     roles: Role[];
-    hotelId: number;
+    hotelId: string;
 }): boolean =>
     roles.some(
         (r) =>
@@ -76,7 +76,7 @@ export const isHotelCleaner = ({
 //  *
 //  * @param {Object} params
 //  * @param {AssignmentUserLink[]} params.assignmentUsers - Users assigned to the assignment.
-//  * @param {number} params.userId - User ID to check.
+//  * @param {string} params.userId - User ID to check.
 //  * @returns {boolean} True if the user is assigned to the assignment.
 //  */
 // export const isAssignmentCleaner = ({
@@ -84,5 +84,5 @@ export const isHotelCleaner = ({
 //     userId,
 // }: {
 //     assignmentUsers: AssignmentUserLink[];
-//     userId: number;
+//     userId: string;
 // }): boolean => assignmentUsers.some((au) => au.userId === userId);

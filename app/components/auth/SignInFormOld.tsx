@@ -1,6 +1,6 @@
 "use client";
 
-import { EyeFilledIcon, EyeSlashFilledIcon } from "@components/icons";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "@components";
 import { getPath, PAGES } from "@constants";
 import { Button, Form, Input } from "@heroui/react";
 import { useSignIn } from "@hooks";

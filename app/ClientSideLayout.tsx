@@ -1,7 +1,5 @@
 'use client'
-import Navbar from "./components/Navbar";
-
-
+import { NavigationBar } from "@components";
 
 export default function ClientSideLayout({
   children,
@@ -10,7 +8,7 @@ export default function ClientSideLayout({
 }>) {
   return (
     <>
-      <Navbar />
+      <NavigationBar />
       {children}
     </>
   );

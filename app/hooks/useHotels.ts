@@ -1,17 +1,17 @@
+import type { PublicHotel } from "@apptypes";
 import { api } from "@config";
-import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath } from "@constants";
-import { APP_ERRORS } from "@lib";
-import type { TPublicHotelList } from "@lib/types";
+import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath, queryKeys } from "@constants";
+import { APP_ERRORS } from "@errors";
 import { useAccessToken } from "@providers/AccessTokenProvider";
 import { useQuery } from "@tanstack/react-query";
 
 export const useHotels = () => {
     const { accessToken } = useAccessToken();
-    return useQuery<TPublicHotelList | null>({
-        queryKey: ["hotels"],
+    return useQuery<PublicHotel[] | null>({
+        queryKey: [queryKeys.hotels],
         queryFn: async () => {
             if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
-            const res = await api.get<TPublicHotelList>(getPath().API.HOTELS, {
+            const res = await api.get<PublicHotel[]>(getPath().API.HOTELS, {
                 headers: { [AUTH_HEADER]: BEARER_PREFIX + accessToken },
             });
             return res.data;
@@ -22,7 +22,6 @@ export const useHotels = () => {
         gcTime: 1000 * 60 * 30, // 30 minutes: unused cache is kept for 30 min
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
-
     });
 
 }

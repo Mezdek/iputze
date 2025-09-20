@@ -1,10 +1,8 @@
 export enum AssignmentErrors {
-    ASSIGNMENT_ID_NOT_VALID = "Assignment ID Not Valid",
-    ASSIGNMENT_NOT_FOUND = "Assignment Not Found",
-    ASSIGNMENT_NOT_IN_HOTEL = "Assignment Not In Hotel",
-    ASSIGNMENT_FLOATING = "Assignment Does Not Belong To Any Room"
-
-
+    FLOATING = "Assignment Does Not Belong To Any Room",
+    INVALID_ID = "Assignment ID Not Valid",
+    NOT_FOUND = "Assignment Not Found",
+    NOT_IN_HOTEL = "Assignment Not In Hotel",
 }
 
 

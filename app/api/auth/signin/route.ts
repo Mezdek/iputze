@@ -2,14 +2,14 @@ import { AuthErrors, HttpStatus, RateLimitKeys, REFRESH_TOKEN_NAME } from "@cons
 import { APP_ERRORS, withErrorHandling } from "@errors";
 import { checkRateLimit, generateAccessToken, generateRefreshToken, ResponseCookieOptions } from "@helpers";
 import { prisma } from "@lib/prisma";
-import type { SignInResponse } from "@lib/types";
+import type { SignInRequestBody, SignInResponse } from "@lib/types";
 import { compare } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
     checkRateLimit(req, RateLimitKeys.SIGNIN, 5, 300_000);
 
-    const { email, password } = await req.json();
+    const { email, password } = await req.json() as SignInRequestBody;
     if (!email || !password) throw APP_ERRORS.badRequest(AuthErrors.INVALID_CREDENTIALS);
 
     const user = await prisma.user.findUnique({ where: { email } });

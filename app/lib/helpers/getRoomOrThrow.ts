@@ -1,19 +1,16 @@
-import { RoomErrors } from "@/lib/constants";
-import { parseId } from "@/lib/helpers";
-import { APP_ERRORS, prisma } from "@lib";
-import type { Prisma } from "@prisma/client";
+import { RoomErrors } from "@constants";
+import { APP_ERRORS } from "@errors";
+import { prisma } from "@lib/prisma";
+import type { Room } from "@prisma/client";
 
-type RoomWithHotel = Prisma.RoomGetPayload<{ include: { hotel: { select: { id: true } } } }>;
 
-export const getRoomOrThrow = async (roomIdParam: string, expectedHotelId?: number): Promise<RoomWithHotel> => {
-    const roomId = parseId(roomIdParam, RoomErrors.ID_NOT_VALID);
+export const getRoomOrThrow = async (roomId: string, expectedHotelId?: string): Promise<Room> => {
 
-    const room = await prisma.room.findUnique({ where: { id: roomId }, include: { hotel: { select: { id: true } } } });
-
+    const room = await prisma.room.findUnique({ where: { id: roomId } });
 
     if (!room) throw APP_ERRORS.notFound(RoomErrors.NOT_FOUND);
 
-    if (expectedHotelId && room.hotel.id !== expectedHotelId) throw APP_ERRORS.badRequest(RoomErrors.NOT_IN_HOTEL);
+    if (expectedHotelId && room.hotelId !== expectedHotelId) throw APP_ERRORS.badRequest(RoomErrors.NOT_IN_HOTEL);
 
     return room;
 };

@@ -1,7 +1,9 @@
+import type { EnhancedRole, RoleCollectionParams } from "@apptypes";
 import { GeneralErrors, HttpStatus, RolesErrors } from "@constants";
+import { APP_ERRORS, withErrorHandling } from "@errors";
 import { canCreateRole, canViewRoles, getHotelOrThrow, getUserOrThrow } from "@helpers";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
-import type { RoleCollectionParams, TGetRolesResponse } from "@lib/types";
+import { prisma } from "@lib/prisma";
+import type { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = withErrorHandling(
@@ -11,20 +13,20 @@ export const GET = withErrorHandling(
 
         const { roles } = await getUserOrThrow(req);
 
-        if (!canViewRoles({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
+        if (!canViewRoles({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
 
         const allRolesInHotel = await prisma.role.findMany({
             where: { hotelId },
             include: { user: { select: { name: true, avatarUrl: true, createdAt: true, email: true, notes: true, id: true, updatedAt: true } } }
         });
 
-        const rolesEnhanced = allRolesInHotel.map<TGetRolesResponse>
+        const rolesEnhanced = allRolesInHotel.map<EnhancedRole>
             (
                 ({ id, user: { name, id: userId, email, avatarUrl, notes, createdAt, updatedAt }, hotelId, level, status }) =>
                     ({ id, userId, hotelId, name, level, status, email, avatarUrl, notes, createdAt, updatedAt })
             )
 
-        return NextResponse.json(rolesEnhanced);
+        return NextResponse.json<EnhancedRole[]>(rolesEnhanced);
     }
 )
 
@@ -35,11 +37,10 @@ export const POST = withErrorHandling(
 
         const { roles, id } = await getUserOrThrow(req);
 
-        // To-Do fix error naming
-        if (!canCreateRole({ roles, hotelId })) throw APP_ERRORS.forbidden(RolesErrors.ROLE_ALREADY_EXISTS);
+        if (!canCreateRole({ roles, hotelId })) throw APP_ERRORS.forbidden(RolesErrors.DUPLICATED);
 
         const role = await prisma.role.create({ data: { hotelId, userId: id } })
 
-        return NextResponse.json(role, { status: HttpStatus.CREATED });
+        return NextResponse.json<Role>(role, { status: HttpStatus.CREATED });
     }
 )

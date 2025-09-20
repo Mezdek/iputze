@@ -1,7 +1,9 @@
-import { CustomSuccessMessages, DefaultMessages, GeneralErrors, HttpStatus } from "@constants";
+import { prisma } from "@/lib";
+import { DefaultMessages, GeneralErrors, HttpStatus } from "@constants";
+import { APP_ERRORS, withErrorHandling } from "@errors";
 import { canDeleteHotel, canUpdateHotel, canViewHotel, getHotelOrThrow, getUserOrThrow } from "@helpers";
-import { APP_ERRORS, prisma, withErrorHandling } from "@lib";
 import type { HotelParams } from "@lib/types";
+import type { Hotel } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -12,9 +14,9 @@ export const GET = withErrorHandling(
 
         const { roles } = await getUserOrThrow(req);
 
-        if (!canViewHotel({ roles, hotelId: hotel.id })) throw APP_ERRORS.forbidden(GeneralErrors.INSUFFICIENT_AUTHORITY);
+        if (!canViewHotel({ roles, hotelId: hotel.id })) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
 
-        return NextResponse.json(hotel);
+        return NextResponse.json<Hotel>(hotel);
     })
 
 
@@ -47,7 +49,7 @@ export const PATCH = withErrorHandling(
         const forbiddenMessage = `These Fields Are Not Allowed To Be Updated: ${forbiddenFieldsContained.reduce((acc, cur) => { acc += `${cur}, `; return acc }, "")}`;
 
 
-        return NextResponse.json(updatedHotel, { status: HttpStatus.OK, statusText: forbiddenFieldsContained.length > 0 ? forbiddenMessage : DefaultMessages[200] });
+        return NextResponse.json<Hotel>(updatedHotel, { status: HttpStatus.OK, statusText: forbiddenFieldsContained.length > 0 ? forbiddenMessage : DefaultMessages[200] });
 
     })
 
@@ -62,5 +64,5 @@ export const DELETE = withErrorHandling(
 
         await prisma.hotel.delete({ where: { id: hotelId } });
 
-        return NextResponse.json({ message: CustomSuccessMessages.HOTEL_DELETED_SUCCESSFULLY });
+        return NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
     })

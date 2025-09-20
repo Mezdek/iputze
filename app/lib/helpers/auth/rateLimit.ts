@@ -1,5 +1,5 @@
-import { AuthErrors } from "@/lib/constants";
-import { APP_ERRORS } from "@lib";
+import { AuthErrors } from "@constants";
+import { APP_ERRORS } from "@errors";
 
 type RateLimitEntry = number[];
 
@@ -64,6 +64,6 @@ export const checkRateLimit = (req: Request | any, keyPrefix: string, limit = 5,
     const identifier = `${keyPrefix}:${clientIP}`;
 
     if (!rateLimit(identifier, limit, windowMs)) {
-        throw APP_ERRORS.tooManyRequests(AuthErrors.TOO_MANY_REQUESTS_TRY_IN + Math.ceil(windowMs / 1000) + "s");
+        throw APP_ERRORS.tooManyRequests(AuthErrors.TOO_MANY_REQUESTS + Math.ceil(windowMs / 1000) + "s");
     }
 }

@@ -1,4 +1,4 @@
-import { useUpdateRoom } from "@/hooks/mutations/useUpdateRoom";
+import { RoomCollectionParams } from "@/lib/types";
 import {
     addToast,
     Button,
@@ -9,7 +9,8 @@ import {
     ModalFooter,
     ModalHeader, Select, SelectItem, useDisclosure
 } from "@heroui/react";
-import { Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
+import { useCreateRoom } from "@hooks";
+import { RoomCleanliness, RoomOccupancy } from "@prisma/client";
 import { useState } from "react";
 
 
@@ -23,39 +24,32 @@ const RoomOccupancyText: Record<RoomOccupancy, string> = {
     [RoomOccupancy.OCCUPIED]: "Occupied"
 }
 
-export function RoomUpdate({ room }: { room: Room }) {
+export function RoomCreation({ hotelId }: RoomCollectionParams) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-    const { mutateAsync: updateRoom } = useUpdateRoom({ hotelId: room.hotelId, roomId: room.id });
-    const [number, setNumber] = useState<string>(room.number)
+    const { mutateAsync: createRoom } = useCreateRoom({ hotelId });
+
+    const [number, setNumber] = useState<string>()
     const [numberError, setNumberError] = useState<string | null>()
-    const [cleanliness, setCleanliness] = useState<RoomCleanliness>(room.cleanliness)
-    const [occupancy, setOccupancy] = useState<RoomOccupancy>(room.occupancy)
+    const [cleanliness, setCleanliness] = useState<RoomCleanliness>(RoomCleanliness.CLEAN)
+    const [occupancy, setOccupancy] = useState<RoomOccupancy>(RoomOccupancy.AVAILABLE)
 
-    const handleClose = () => {
-        setNumber(room.number);
-        setNumberError("");
-        setCleanliness(room.cleanliness);
-        setOccupancy(room.occupancy);
-        onClose();
-    }
-
-    const handleUpdate = async () => {
+    const handleCreate = async () => {
         if (!number || number === "") {
             setNumberError("Please provide room number")
             return
         }
         try {
-            await updateRoom({ number, cleanliness, occupancy });
+            await createRoom({ number, cleanliness, occupancy });
             onClose();
             addToast({
-                title: "Room Updated!",
-                description: `Room has been updated successfully`,
+                title: "Room Created!",
+                description: `Room ${number} created successfully`,
                 color: "success",
             });
         } catch (e) {
             setNumberError(`Room ${number} exists already`);
             addToast({
-                title: "Room could not be updated!",
+                title: "Room could not be created!",
                 description: `Room ${number} exists already`,
                 color: "danger",
             });
@@ -64,8 +58,8 @@ export function RoomUpdate({ room }: { room: Room }) {
     }
     return (
         <>
-            <Button color="secondary" onPress={onOpen}>
-                Edit
+            <Button color="primary" onPress={onOpen}>
+                Create Room
             </Button>
             <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
                 <ModalContent>
@@ -75,20 +69,19 @@ export function RoomUpdate({ room }: { room: Room }) {
                             <ModalBody>
                                 <Input
                                     label="Room Number"
-                                    placeholder="Change room number"
+                                    placeholder="What is th room number"
                                     variant="bordered"
                                     onChange={e => { setNumberError(null); setNumber(e.target.value) }}
                                     isInvalid={!!numberError}
                                     errorMessage={numberError}
                                     isRequired
-                                    defaultValue={number}
                                     autoFocus
                                 />
                                 <Select
                                     className="max-w-xs"
                                     label="Cleanliness Status"
-                                    defaultSelectedKeys={[cleanliness]}
-                                    placeholder="Change the cleanliness status"
+                                    defaultSelectedKeys={[RoomCleanliness.CLEAN.toString()]}
+                                    placeholder="Select the cleanliness status"
                                     onChange={(e) => setCleanliness(e.target.value as RoomCleanliness)}>
                                     {
                                         Object.values(RoomCleanliness).map(
@@ -100,8 +93,8 @@ export function RoomUpdate({ room }: { room: Room }) {
                                 <Select
                                     className="max-w-xs"
                                     label="Occupancy Status"
-                                    defaultSelectedKeys={[occupancy]}
-                                    placeholder="Change the occupancy status"
+                                    defaultSelectedKeys={[RoomOccupancy.AVAILABLE.toString()]}
+                                    placeholder="Select the occupancy status"
                                     onChange={(e) => setOccupancy(e.target.value as RoomOccupancy)}>
                                     {
                                         Object.values(RoomOccupancy).map(
@@ -112,11 +105,11 @@ export function RoomUpdate({ room }: { room: Room }) {
                                 </Select>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="danger" variant="flat" onPress={handleClose}>
+                                <Button color="danger" variant="flat" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button color="primary" onPress={handleUpdate}>
-                                    Update
+                                <Button color="primary" onPress={handleCreate}>
+                                    Create
                                 </Button>
                             </ModalFooter>
                         </>

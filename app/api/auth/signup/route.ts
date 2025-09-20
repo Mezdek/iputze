@@ -2,7 +2,7 @@ import { AuthErrors, HttpStatus, RateLimitKeys } from "@constants";
 import { APP_ERRORS, withErrorHandling } from "@errors";
 import { checkRateLimit, validateRegistration } from "@helpers";
 import { prisma } from "@lib/prisma";
-import type { RegisterRequest, SignUpResponse } from "@lib/types";
+import type { SignUpRequestBody, SignUpResponse } from "@lib/types";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,14 +11,14 @@ export const POST = withErrorHandling(
 
         checkRateLimit(req, RateLimitKeys.REGISTER, 3, 600000);
 
-        const data = (await req.json()) as RegisterRequest;
+        const data = (await req.json()) as SignUpRequestBody;
 
         const { name, email, password } = validateRegistration(data);
 
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
-            throw APP_ERRORS.conflict(AuthErrors.USER_ALREADY_EXISTS);
+            throw APP_ERRORS.conflict(AuthErrors.DUPLICATED_USER);
         }
 
         // Hash password

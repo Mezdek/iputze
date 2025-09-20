@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "db:reset": "npx prisma generate && npx prisma migrate dev --name init && npx prisma db seed"
+    "db:reset": "rm -rf ./prisma/{migrations,dev.db} && prisma generate && npx prisma migrate dev --name init && npx prisma db seed"
   },
   "dependencies": {
     "@heroui/react": "^2.8.4",

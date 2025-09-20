@@ -11,7 +11,7 @@ export const REFRESH_TOKEN_EXP = process.env.REFRESH_TOKEN_EXP || "7d";
 
 /** Types for token payloads */
 export interface AccessTokenPayload {
-    sub: number;    // user id (number)
+    sub: string;    // user id (number)
     email: string;
     iat?: number;
     exp?: number;
@@ -45,7 +45,7 @@ export const parseExpiryToSeconds = (exp: string): number => {
 }
 
 /** Generate access token (short-lived) */
-export const generateAccessToken = (payload: { sub: number; email: string }): string => {
+export const generateAccessToken = (payload: { sub: string; email: string }): string => {
     return sign(
         { sub: payload.sub, email: payload.email },
         JWT_ACCESS_SECRET,
@@ -54,7 +54,7 @@ export const generateAccessToken = (payload: { sub: number; email: string }): st
 }
 
 /** Generate refresh token, persist in DB and return token string */
-export const generateRefreshToken = async (userId: number): Promise<string> => {
+export const generateRefreshToken = async (userId: string): Promise<string> => {
     const token = sign({ sub: userId }, JWT_REFRESH_SECRET, { expiresIn: REFRESH_TOKEN_EXP } as SignOptions);
 
     // compute expiresAt from REFRESH_TOKEN_EXP
@@ -82,7 +82,7 @@ export const verifyAccessToken = (token: string): AccessTokenPayload => {
     if (!maybe.sub || !maybe.email) throw new Error("Access token missing claims");
 
     // convert sub to number (token might have encoded sub as string)
-    const subNum = Number(maybe.sub);
+    const subNum = maybe.sub;
     if (Number.isNaN(subNum)) throw new Error("Invalid sub claim");
 
     return {
@@ -123,7 +123,7 @@ export const revokeRefreshToken = async (token: string): Promise<void> => {
 }
 
 /** Revoke all refresh tokens for user (e.g. logout-all-devices) */
-export const revokeUserRefreshTokens = async (userId: number): Promise<void> => {
+export const revokeUserRefreshTokens = async (userId: string): Promise<void> => {
     await prisma.refreshToken.deleteMany({ where: { userId } });
 }
 

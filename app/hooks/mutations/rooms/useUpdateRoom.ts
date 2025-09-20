@@ -1,13 +1,13 @@
-import { RoomUpdateBody } from "@/api/hotels/[hotelId]/rooms/[roomId]/route";
-import { APP_ERRORS } from "@/lib";
-import { useAccessToken } from "@/providers/AccessTokenProvider";
+import type { RoomParams, RoomUpdateBody } from "@apptypes";
 import { api } from "@config";
-import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath } from "@constants";
-import { Room } from "@prisma/client";
+import { AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath, queryKeys } from "@constants";
+import { APP_ERRORS } from "@errors";
+import type { Room } from "@prisma/client";
+import { useAccessToken } from "@providers/AccessTokenProvider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
-export const useUpdateRoom = ({ hotelId, roomId }: { hotelId: number, roomId: number }) => {
+export const useUpdateRoom = ({ hotelId, roomId }: RoomParams) => {
     const { accessToken } = useAccessToken();
     const queryClient = useQueryClient()
     return useMutation({
@@ -18,7 +18,7 @@ export const useUpdateRoom = ({ hotelId, roomId }: { hotelId: number, roomId: nu
             });
             return res.data;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["rooms", hotelId] })
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKeys.rooms, hotelId] })
     });
 
 }

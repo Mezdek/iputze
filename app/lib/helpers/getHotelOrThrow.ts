@@ -1,7 +1,6 @@
-import { HotelErrors } from "@/lib/constants";
-import { parseId } from "@/lib/helpers";
-import { APP_ERRORS, prisma } from "@lib";
-
+import { HotelErrors } from "@constants";
+import { APP_ERRORS } from "@errors";
+import { prisma } from "@lib/prisma";
 /**
  * Retrieves a hotel by ID and throws if not found or invalid.
  *
@@ -9,12 +8,11 @@ import { APP_ERRORS, prisma } from "@lib";
  * @returns The validated hotel entity.
  * @throws {HttpError} If hotelId is invalid or hotel not found.
  */
-export const getHotelOrThrow = async (hotelIdParam: string) => {
-    const hotelId = parseId(hotelIdParam, HotelErrors.HOTEL_ID_NOT_VALID);
+export const getHotelOrThrow = async (hotelId: string) => {
 
     const hotel = await prisma.hotel.findUnique({ where: { id: hotelId } });
 
-    if (!hotel) throw APP_ERRORS.badRequest(HotelErrors.HOTEL_NOT_FOUND);
+    if (!hotel) throw APP_ERRORS.badRequest(HotelErrors.NOT_FOUND);
 
     return hotel;
 };

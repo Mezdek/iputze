@@ -1,9 +1,8 @@
-import { useRoles } from "@/hooks/useRoles";
-import { RoomCreation, RoomTile } from "@components";
+import { AssignmentCreation, AssignmentTile, RoleTile, RoomCreation, RoomTile } from "@components";
 import { Tab, Tabs } from "@heroui/react";
-import { useRooms } from "@hooks";
+import { useAssignments, useRoles, useRooms } from "@hooks";
 import type { TRole } from "@lib/types";
-import { RoleTile } from "./RoleTile";
+
 
 type TSections = "ROOMS" | "WORKERS" | "ASSIGNMENTS";
 const sections: Record<TSections, string> = {
@@ -13,13 +12,14 @@ const sections: Record<TSections, string> = {
 };
 
 export function ManagerView({ role }: { role: TRole }) {
-    const hotelId = role.hotel.id
+    const hotelId = role.hotel.id;
     const { data: rooms, isLoading } = useRooms({ hotelId });
-    const { data: roles } = useRoles({ hotelId })
+    const { data: roles } = useRoles({ hotelId });
+    const { data: assignments } = useAssignments({ hotelId });
 
     return (
         <div className="h-screen w-full">
-            <Tabs className="" aria-label="Sections">
+            <Tabs className="" aria-label="Sections" defaultSelectedKey={sections.ASSIGNMENTS}>
                 <Tab key={sections.ROOMS} title={sections.ROOMS}>
                     <div className="flex flex-col gap-10 items-center w-full h-full">
                         <div className="flex justify-around items-center w-full h-1/8 bg-amber-200 px-3 py-3">
@@ -58,7 +58,24 @@ export function ManagerView({ role }: { role: TRole }) {
                         }
                     </div>
                 </Tab>
-                <Tab key={sections.ASSIGNMENTS} title={sections.ASSIGNMENTS} />
+                <Tab key={sections.ASSIGNMENTS} title={sections.ASSIGNMENTS} >
+                    <div className="flex gap-2 w-full p-4 bg-cyan-200 h-full flex-wrap">
+                        <div className="flex justify-around items-center w-full h-1/8 bg-amber-200 px-3 py-3">
+                            <p className="text-2xl font-bold">
+                                Hotel:  {role.hotel.name}
+                            </p>
+                            <AssignmentCreation hotelId={hotelId} />
+                        </div>
+                        {!!assignments && assignments.length > 0
+
+
+                            ? assignments.map(
+                                (assignment, index) => <AssignmentTile assignment={assignment} key={index} />
+                            )
+                            : isLoading ? <div>Loading</div> : <div>No Assignments</div>
+                        }
+                    </div>
+                </Tab>
             </Tabs>
         </div>
     )
