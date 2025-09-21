@@ -1,7 +1,5 @@
 import type { HotelCreationBody, PublicHotel } from "@apptypes";
-import { HotelErrors, HttpStatus } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { canCreateHotel, getUserOrThrow } from "@helpers";
+import { APP_ERRORS, canCreateHotel, getUserOrThrow, HotelErrors, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { Hotel } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";

@@ -1,7 +1,5 @@
 import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@apptypes";
-import { HttpStatus } from "@constants";
-import { withErrorHandling } from "@errors";
-import { getAssignmentAccessContext } from "@helpers";
+import { getAssignmentAccessContext, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { AssignmentNote } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";

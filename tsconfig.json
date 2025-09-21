@@ -22,16 +22,16 @@
         "name": "next"
       }
     ],
-    "baseUrl": "app",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
       ],
-      "@api/*": [
-        "./api/*"
+      "@app/*": [
+        "./app/*"
       ],
-      "@constants": [
-        "./lib/constants/index"
+      "@api/*": [
+        "./app/api/*"
       ],
       "@components": [
         "./components/index"
@@ -45,21 +45,15 @@
       "@providers/*": [
         "./providers/*"
       ],
-      "@config": [
-        "./lib/config/index"
-      ],
-      "@helpers": [
-        "./lib/helpers/index"
-      ],
-      "@errors": [
-        "./lib/errors/index"
-      ],
       "@lib/*": [
         "./lib/*"
       ],
-      "@apptypes": [
-        "./lib/types/index"
+      "@lib": [
+        "./lib/index"
       ],
+      "@apptypes": [
+        "./types/index"
+      ]
     }
   },
   "include": [

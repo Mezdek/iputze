@@ -1,8 +1,5 @@
-import { prisma } from "@/lib";
-import { DefaultMessages, GeneralErrors, HttpStatus } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { canDeleteHotel, canUpdateHotel, canViewHotel, getHotelOrThrow, getUserOrThrow } from "@helpers";
-import type { HotelParams } from "@lib/types";
+import type { HotelParams } from "@apptypes";
+import { APP_ERRORS, canDeleteHotel, canUpdateHotel, canViewHotel, DefaultMessages, GeneralErrors, getHotelOrThrow, getUserOrThrow, HttpStatus, prisma, withErrorHandling } from "@lib";
 import type { Hotel } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 

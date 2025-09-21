@@ -1,8 +1,6 @@
-import { AuthErrors, HttpStatus, RateLimitKeys, REFRESH_TOKEN_NAME } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { checkRateLimit, generateAccessToken, generateRefreshToken, ResponseCookieOptions } from "@helpers";
+import type { SignInRequestBody, SignInResponse } from "@apptypes";
+import { APP_ERRORS, AuthErrors, checkRateLimit, generateAccessToken, generateRefreshToken, HttpStatus, RateLimitKeys, REFRESH_TOKEN_NAME, ResponseCookieOptions, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
-import type { SignInRequestBody, SignInResponse } from "@lib/types";
 import { compare } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 

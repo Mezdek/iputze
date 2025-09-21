@@ -1,7 +1,5 @@
 import type { RoleParams, RoleUpdateBody } from "@apptypes";
-import { GeneralErrors, RolesErrors } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { canModifyRole, getRoleOrThrow, getUserOrThrow } from "@helpers";
+import { APP_ERRORS, canModifyRole, GeneralErrors, getRoleOrThrow, getUserOrThrow, RolesErrors, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";

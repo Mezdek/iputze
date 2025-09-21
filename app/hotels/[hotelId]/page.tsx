@@ -1,7 +1,7 @@
 'use client';
 
 import { CleanerView, DisabledView, ManagerView, PendingView, withAuthGuard } from "@components";
-import { useMe } from "@hooks";
+import { useMe } from "../../../hooks";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 

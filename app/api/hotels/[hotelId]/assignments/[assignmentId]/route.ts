@@ -1,10 +1,5 @@
 import type { AssignmentParams, AssignmentUpdateBody } from "@apptypes";
-import { GeneralErrors, HttpStatus } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import {
-    canDeleteAssignment,
-    getAssignmentAccessContext
-} from "@helpers";
+import { APP_ERRORS, canDeleteAssignment, GeneralErrors, getAssignmentAccessContext, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { Assignment } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";

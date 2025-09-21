@@ -1,7 +1,5 @@
 import type { AssignmentCollectionParams, AssignmentCreationBody, AssignmentResponse } from "@apptypes";
-import { GeneralErrors, HttpStatus } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { canCreateAssignment, canListAssignments, getHotelOrThrow, getUserOrThrow } from "@helpers";
+import { APP_ERRORS, canCreateAssignment, canListAssignments, GeneralErrors, getHotelOrThrow, getUserOrThrow, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 

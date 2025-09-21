@@ -1,6 +1,4 @@
-import { HttpStatus, REFRESH_TOKEN_NAME } from "@constants";
-import { withErrorHandling } from "@errors";
-import { ResponseCookieOptions, revokeRefreshToken } from "@helpers";
+import { HttpStatus, REFRESH_TOKEN_NAME, ResponseCookieOptions, revokeRefreshToken, withErrorHandling } from "@lib";
 import { NextResponse } from "next/server";
 
 export const POST = withErrorHandling(async (req) => {

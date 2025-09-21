@@ -1,6 +1,4 @@
-import { HttpStatus, REFRESH_TOKEN_NAME } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { generateAccessToken, generateRefreshToken, ResponseCookieOptions } from "@helpers";
+import { APP_ERRORS, generateAccessToken, generateRefreshToken, HttpStatus, REFRESH_TOKEN_NAME, ResponseCookieOptions, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 

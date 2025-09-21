@@ -1,9 +1,7 @@
 import type { RoomCollectionParams, RoomCreationBody, RoomResponse } from "@apptypes";
-import { HttpStatus, RoomErrors } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { canCreateRoom, canListRooms, getHotelOrThrow, getUserOrThrow } from "@helpers";
+import { APP_ERRORS, canCreateRoom, canListRooms, getHotelOrThrow, getUserOrThrow, HttpStatus, RoomErrors, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
-import { Room } from "@prisma/client";
+import type { Room } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 

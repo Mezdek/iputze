@@ -2,7 +2,7 @@
 
 import { withAuthGuard } from "@/components/auth/withAuthGuard";
 import { Button } from "@heroui/react";
-import { useMe, useSignOut } from "@hooks";
+import { useMe, useSignOut } from "../../hooks";
 import { RoleLevel } from "@prisma/client";
 import { useRouter } from "next/navigation";
 

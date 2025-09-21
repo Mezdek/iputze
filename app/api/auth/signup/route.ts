@@ -1,8 +1,6 @@
-import { AuthErrors, HttpStatus, RateLimitKeys } from "@constants";
-import { APP_ERRORS, withErrorHandling } from "@errors";
-import { checkRateLimit, validateRegistration } from "@helpers";
+import type { SignUpRequestBody, SignUpResponse } from "@apptypes";
+import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, RateLimitKeys, validateRegistration, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
-import type { SignUpRequestBody, SignUpResponse } from "@lib/types";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 

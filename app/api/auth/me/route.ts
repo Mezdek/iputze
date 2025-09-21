@@ -1,7 +1,5 @@
 import type { MeResponse, TRole } from "@apptypes";
-import { HttpStatus } from "@constants";
-import { withErrorHandling } from "@errors";
-import { getUserOrThrow, isAdmin } from "@helpers";
+import { getUserOrThrow, HttpStatus, isAdmin, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Hotel } from "@prisma/client";
 import { RoleLevel, RoleStatus } from "@prisma/client";
