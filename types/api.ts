@@ -1,4 +1,4 @@
-import { Assignment, AssignmentStatus, Hotel, User as PrismaType_User, Role, RoleLevel, RoleStatus, Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
+import { Assignment, AssignmentNote, AssignmentStatus, Hotel, User as PrismaType_User, Role, RoleLevel, RoleStatus, Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
 
 
 // Prisma types re-exported
@@ -29,12 +29,12 @@ export interface AssignmentAccessContext {
 
 // Assignments
 
-export interface AssignmentResponse extends
-    Assignment {
+export interface AssignmentResponse extends Assignment {
     room: Room;
-    users: SafeUser[];
-    assignedByUser: SafeUser | null
-}
+    AssignmentNote: AssignmentNote[];
+    assignedByUser: SafeUser | null,
+    cleaners: SafeUser[]
+};
 
 export interface AssignmentCreationBody {
     roomId: string;

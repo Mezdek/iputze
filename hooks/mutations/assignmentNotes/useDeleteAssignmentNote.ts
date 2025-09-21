@@ -4,11 +4,11 @@ import { useAccessToken } from "@providers/AccessTokenProvider";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
-export const useDeleteAssignmentNote = ({ hotelId, assignmentId, assignmentNoteId }: AssignmentNoteParams) => {
+export const useDeleteAssignmentNote = ({ hotelId, assignmentId }: Partial<AssignmentNoteParams>) => {
     const { accessToken } = useAccessToken();
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async (): Promise<null> => {
+        mutationFn: async ({ assignmentNoteId }: { assignmentNoteId: string }): Promise<null> => {
             if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
             const res = await api.delete<null>(getPath({ hotelId, assignmentId, assignmentNoteId }).API.ASSIGNMENTNOTE, {
                 headers: { [AUTH_HEADER]: BEARER_PREFIX + accessToken }

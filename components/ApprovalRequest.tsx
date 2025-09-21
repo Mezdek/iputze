@@ -3,27 +3,44 @@ import {
     Modal,
     ModalBody,
     ModalContent,
+    ModalFooter,
     ModalHeader,
     useDisclosure
 } from "@heroui/react";
 
-type ApprovalRequest = {
+type THeroUIButtonColors = "default" | "danger" | "primary" | "secondary" | "success" | "warning" | undefined;
+
+type ApprovalRequestProps = {
     header: string;
-    buttonText: string;
     question: string;
-    cancelButtonText: string;
-    submitButtonText: string;
-    submitAction: (props: any) => void;
-    submitVariant: "default" | "danger" | "primary" | "secondary" | "success" | "warning" | undefined;
+    cancelButton?: {
+        text?: string;
+        color?: THeroUIButtonColors
+    }
+    modalButton: {
+        text: string;
+        color?: THeroUIButtonColors;
+        isDisabled?: boolean;
+    }
+    submitButton: {
+        text?: string;
+        action: () => Promise<void>;
+        color?: THeroUIButtonColors
+    }
 }
 
-export function ApprovalRequest({ buttonText, cancelButtonText, header, question, submitAction, submitButtonText, submitVariant }: ApprovalRequest) {
+export function ApprovalRequest({
+    submitButton,
+    cancelButton,
+    header,
+    question,
+    modalButton
+}: ApprovalRequestProps) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
     return (
         <>
-            <Button color="danger" onPress={onOpen} >
-                {buttonText}
+            <Button color={modalButton.color ?? "primary"} onPress={onOpen} isDisabled={modalButton.isDisabled} >
+                {modalButton.text}
             </Button>
             <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
                 <ModalContent>
@@ -34,13 +51,15 @@ export function ApprovalRequest({ buttonText, cancelButtonText, header, question
                                 <p>
                                     {question}
                                 </p>
-                                <Button color="secondary" variant="flat" onPress={onClose}>
-                                    {cancelButtonText}
-                                </Button>
-                                <Button color={submitVariant} onPress={submitAction}>
-                                    {submitButtonText}
-                                </Button>
                             </ModalBody>
+                            <ModalFooter className="gap-3">
+                                <Button color={cancelButton?.color ?? "default"} variant="flat" onPress={onClose}>
+                                    {cancelButton?.text ?? "Cancel"}
+                                </Button>
+                                <Button color={submitButton.color ?? "primary"} onPress={async () => { await submitButton.action(); onClose(); }}>
+                                    {submitButton.text ?? "Yes"}
+                                </Button>
+                            </ModalFooter>
                         </>
                     )}
                 </ModalContent>

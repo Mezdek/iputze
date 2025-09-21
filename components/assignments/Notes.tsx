@@ -1,4 +1,4 @@
-import type { AssignmentNoteCreationBody, AssignmentResponse } from "@apptypes";
+import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@apptypes";
 import {
     addToast,
     Button,
@@ -12,30 +12,33 @@ import {
     ModalHeader, Select, SelectItem,
     useDisclosure
 } from "@heroui/react";
-import { useAssignmentNotes, useCreateAssignmentNote, useMe, useRooms } from "@hooks";
+import { useAssignmentNotes, useCreateAssignmentNote, useDeleteAssignmentNote } from "@hooks";
 import { parseFormData } from "@lib";
+import { AssignmentNote } from "@prisma/client";
 import { FormEvent, useState } from "react";
 
 
-export function AddNote({ assignment }: { assignment: AssignmentResponse }) {
+export function Notes({ assignmentId, hotelId, userId }: AssignmentNoteCollectionParams & { userId: string }) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-    const { room: { hotelId }, id: assignmentId } = assignment;
-    const { data: rooms } = useRooms({ hotelId });
+
     const { mutateAsync: add } = useCreateAssignmentNote({ assignmentId, hotelId });
-    const { data: assignmentNotes } = useAssignmentNotes({ assignmentId, hotelId })
-    const { data: user } = useMe();
+    const { mutateAsync: deleteNote } = useDeleteAssignmentNote({ assignmentId, hotelId });
+    const { data: notes } = useAssignmentNotes({ assignmentId, hotelId })
 
     const FORM = "notes_form"
     const OTHER = "Write yourself"
     const [isOther, setIsOther] = useState<boolean>(false)
-    // const [assignmentNotes, setAssignmentNotes] = useState<AssignmentNote[]>([])
+
+    const predifinedNotes = [
+        "needs blankets",
+        "broken lamp",
+        "broken bed"
+    ]
 
     const handleAddNote = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
-        if (!user) return
         const data = parseFormData<AssignmentNoteCreationBody>(e.currentTarget, { content: "" });
         try {
-            // setAssignmentNotes(e => [...e, { assignmentId, authorId: user.id, content: data.content, createdAt: new Date(), updatedAt: new Date(), id: (Math.random() * 7653928).toString() }])
             await add(data);
             onClose();
             setIsOther(false)
@@ -51,63 +54,84 @@ export function AddNote({ assignment }: { assignment: AssignmentResponse }) {
                 description: `Assignment creation failed`,
                 color: "danger",
             });
-            return;
+            setIsOther(false)
+            onClose();
         }
     }
 
-    const notes = [
-        "needs blankets",
-        "broken lamp",
-        "broken bed"
-    ]
+
+    const handleDelete = async ({ assignmentNote }: { assignmentNote: AssignmentNote }) => {
+        try {
+            if (assignmentNote.authorId === userId) {
+                await deleteNote({ assignmentNoteId: assignmentNote.id })
+                addToast({
+                    title: "Note deleted successfully!",
+                    description: `Note deletion was successfull`,
+                    color: "success",
+                });
+                return;
+            }
+            throw new Error("you are not the author")
+        } catch (e) {
+            console.error(e)
+            addToast({
+                title: "Note could not be deleted!",
+                description: `Note deletion failed`,
+                color: "danger",
+            });
+        }
+    }
 
     return (
         <>
-            <Button color="primary" onPress={onOpen} disabled={!rooms}>
+            <Button color="primary" onPress={onOpen}>
                 Notes
             </Button>
             <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1" >Add Note</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1" >Assignment Notes</ModalHeader>
                             <ModalBody>
                                 <Form id={FORM} onSubmit={handleAddNote} >
                                     <Select
-                                        name="content"
-                                        form={FORM}
                                         className="max-w-xs"
+                                        form={FORM}
                                         label="Note"
+                                        name="content"
                                         onSelectionChange={(e) => { setIsOther(e.currentKey === OTHER) }}
                                         placeholder="Choose a note or other"
                                     >
                                         {
-                                            [...notes, OTHER].map(
+                                            [...predifinedNotes, OTHER].map(
                                                 note => <SelectItem key={note}>{note}</SelectItem>
                                             )
                                         }
                                     </Select>
                                     <Input
-                                        name="content"
-                                        form={FORM}
                                         className="max-w-xs"
-                                        label="Custom note"
-                                        placeholder="Write your note"
                                         disabled={!isOther}
+                                        form={FORM}
+                                        label="Custom note"
+                                        name="content"
+                                        placeholder="Write your note"
                                         type="text"
                                     />
                                 </Form>
                                 <div className="flex gap-1 bg-lime-600 h-full py-2 px-1 rounded-xl flex-wrap">
                                     {
-                                        assignmentNotes?.map(
-                                            an =>
+                                        notes?.map(
+                                            assignmentNote =>
                                             (
                                                 <Chip
-                                                    key={an.id}
+                                                    key={assignmentNote.id}
                                                     color="secondary"
                                                     avatar
-                                                    size="md">
-                                                    {an.content}
+                                                    size="md"
+                                                    onClose={async () => { await handleDelete({ assignmentNote }) }}
+                                                    isCloseable
+                                                >
+                                                    {assignmentNote.content}
                                                 </Chip>
                                             )
                                         )

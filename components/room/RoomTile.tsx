@@ -1,10 +1,8 @@
-import { useDeleteRoom } from "../../hooks";
 import { Room } from "@prisma/client";
-import { ApprovalRequest } from "../ApprovalRequest";
+import { RoomDeletion } from "./RoomDeletion";
 import { RoomUpdate } from "./RoomUpdate";
 
 export function RoomTile({ room }: { room: Room }) {
-    const { mutate: deleteRoom } = useDeleteRoom({ roomId: room.id, hotelId: room.hotelId })
     return (
         <div className="flex flex-col gap-1 border-solid border-green-900 bg-cyan-400 rounded-xl border-2 p-4 h-fit">
             <p className="bg-amber-400 p-1.5 rounded-xl">Room</p>
@@ -16,15 +14,7 @@ export function RoomTile({ room }: { room: Room }) {
             </ul>
             <div className="flex w-full justify-between">
                 <RoomUpdate room={room} />
-                <ApprovalRequest
-                    buttonText="Delete Room"
-                    cancelButtonText="Cancel"
-                    header="Room Deletion"
-                    question={`Are you sure you want to delete room ${room.number}?`}
-                    submitAction={deleteRoom}
-                    submitButtonText="Delete"
-                    submitVariant="danger"
-                />
+                <RoomDeletion room={room} />
             </div>
         </div>
     )

@@ -1,58 +1,68 @@
 import type { AssignmentCollectionParams, AssignmentCreationBody, AssignmentResponse } from "@apptypes";
-import { APP_ERRORS, canCreateAssignment, canListAssignments, GeneralErrors, getHotelOrThrow, getUserOrThrow, HttpStatus, withErrorHandling } from "@lib";
+import { APP_ERRORS, canCreateAssignment, cleanerRole, GeneralErrors, getHotelOrThrow, getUserOrThrow, hasManagerPermission, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
+import { Assignment } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 
 export const GET = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentCollectionParams }) => {
-
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+        const { roles, id: userId } = await getUserOrThrow(req);
 
-        const { roles } = await getUserOrThrow(req);
+        let where;
 
-        if (!canListAssignments({ roles, hotelId })) throw APP_ERRORS.forbidden();
+        if (hasManagerPermission({ hotelId, roles })) {
+            where = { room: { hotelId } }
+        } else if (!!cleanerRole({ hotelId, roles })) {
+            where = { AssignmentUser: { some: { userId } } }
+        } else {
+            throw APP_ERRORS.forbidden();
+        }
 
         const assignments = await prisma.assignment.findMany({
-            where: { room: { hotelId } },
+            where,
             orderBy: { dueAt: 'asc' },
             include: {
                 room: true,
+                AssignmentNote: true,
                 assignedByUser: { omit: { passwordHash: true } },
-                users: { omit: { passwordHash: true } }
+                AssignmentUser: { include: { user: { omit: { passwordHash: true } } } }
             }
+        });
+        const assignmentsFlatened = assignments.map((a, i) => {
+            const cleaners = a.AssignmentUser.map(a => a.user)
+            return ({ ...a, cleaners })
         })
-
-        return NextResponse.json<AssignmentResponse[]>(assignments);
+        return NextResponse.json<AssignmentResponse[]>(assignmentsFlatened);
     }
 );
 
 export const POST = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentCollectionParams }) => {
+
         const { id: hotelId } = await getHotelOrThrow(params.hotelId);
         const { roles, id: userId } = await getUserOrThrow(req);
+
         if (!canCreateAssignment({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
+
         const json = await req.json() as AssignmentCreationBody;
-
         const { roomId, dueAt, cleaners } = json;
-
         const parsedDueAt = new Date(dueAt);
         if (!parsedDueAt || !roomId) throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS);
 
         const newAssignment = await prisma.assignment.create({
             data: {
-                roomId: roomId,
+                roomId,
                 dueAt: parsedDueAt,
                 assignedBy: userId,
-                users: { connect: cleaners.map(id => ({ id })) }
+                AssignmentUser: {
+                    create: cleaners.map(id => ({ userId: id })),
+                },
             },
-            include: {
-                room: true,
-                assignedByUser: { omit: { passwordHash: true } },
-                users: { omit: { passwordHash: true } }
-            }
-        })
+        });
 
-        return NextResponse.json<AssignmentResponse>(newAssignment, { status: HttpStatus.CREATED });
+
+        return NextResponse.json<Assignment>(newAssignment, { status: HttpStatus.CREATED });
     }
 )

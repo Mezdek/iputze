@@ -78,7 +78,6 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  assignments    Assignment[]     @relation("AssignmentUsers")
   roles          Role[]
   AssignmentUser AssignmentUser[]
   AssignmentNote AssignmentNote[]
@@ -112,7 +111,6 @@ model Assignment {
   assignedBy String?
 
   room           Room             @relation(fields: [roomId], references: [id], onDelete: Restrict)
-  users          User[]           @relation("AssignmentUsers")
   AssignmentUser AssignmentUser[]
   AssignmentNote AssignmentNote[]
   assignedByUser User?            @relation("AssignedBy", fields: [assignedBy], references: [id], onDelete: SetNull)

@@ -1,5 +1,5 @@
+import { adminRole, cleanerRole, managerRole } from "@/lib/helpers";
 import type { RoomManagement } from "@/types";
-import { isAdmin, isHotelCleaner, isHotelManager } from "@/lib/helpers";
 
 /**
  * Check if the actor can create a room in a specific hotel.
@@ -9,7 +9,7 @@ import { isAdmin, isHotelCleaner, isHotelManager } from "@/lib/helpers";
  * @returns {boolean} True if creation is allowed, false otherwise.
  */
 export const canCreateRoom = ({ roles, hotelId }: RoomManagement): boolean =>
-    isAdmin({ roles }) || isHotelManager({ roles, hotelId });
+    !!adminRole({ roles }) || !!managerRole({ roles, hotelId });
 
 
 
@@ -21,7 +21,7 @@ export const canCreateRoom = ({ roles, hotelId }: RoomManagement): boolean =>
  * @returns {boolean} True if update is allowed, false otherwise.
  */
 export const canUpdateRoom = ({ roles, hotelId }: RoomManagement): boolean =>
-    isAdmin({ roles }) || isHotelManager({ roles, hotelId });
+    !!adminRole({ roles }) || !!managerRole({ roles, hotelId });
 
 
 
@@ -33,7 +33,7 @@ export const canUpdateRoom = ({ roles, hotelId }: RoomManagement): boolean =>
  * @returns {boolean} True if deletion is allowed, false otherwise.
  */
 export const canDeleteRoom = ({ roles, hotelId }: RoomManagement): boolean =>
-    isAdmin({ roles }) || isHotelManager({ roles, hotelId });
+    !!adminRole({ roles }) || !!managerRole({ roles, hotelId });
 
 
 
@@ -45,4 +45,4 @@ export const canDeleteRoom = ({ roles, hotelId }: RoomManagement): boolean =>
  * @returns {boolean} True if deletion is allowed, false otherwise.
  */
 export const canViewRoom = ({ roles, hotelId }: RoomManagement): boolean =>
-    isAdmin({ roles }) || isHotelManager({ roles, hotelId }) || isHotelCleaner({ roles, hotelId });
+    !!adminRole({ roles }) || !!managerRole({ roles, hotelId }) || !!cleanerRole({ roles, hotelId });

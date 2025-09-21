@@ -22,7 +22,7 @@ export function NavigationBar() {
     const { mutate: logOut } = useSignOut();
     const pathname = usePathname();
     return (
-        <Navbar>
+        <Navbar position="static">
             <NavbarBrand>
                 <Logo />
                 <p className="font-bold text-inherit">iputze</p>
@@ -68,3 +68,5 @@ export function NavigationBar() {
         </Navbar>
     );
 }
+
+

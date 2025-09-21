@@ -65,6 +65,6 @@ export const DELETE = withErrorHandling(
 
         await prisma.assignment.delete({ where: { id: assignmentId } });
 
-        return NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
+        return new Response(null, { status: HttpStatus.NO_CONTENT });
     }
 );

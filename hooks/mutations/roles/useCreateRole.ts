@@ -11,12 +11,12 @@ export const useCreateRole = ({ hotelId }: RoleCollectionParams) => {
     return useMutation({
         mutationFn: async (): Promise<Role> => {
             if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
-            const res = await api.post<Role>(getPath({ hotelId }).API.ROLES, {
+            const res = await api.post<Role>(getPath({ hotelId }).API.ROLES, null, {
                 headers: { [AUTH_HEADER]: BEARER_PREFIX + accessToken }
             });
             return res.data;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKeys.roles, hotelId] })
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKeys.me] })
     });
 
 }

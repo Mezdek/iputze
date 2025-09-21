@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = withErrorHandling(
     async (req: NextRequest, { params }: { params: AssignmentNoteCollectionParams }) => {
+     
         const { assignmentId } = await getAssignmentAccessContext({ params, req });
 
         const assignmentNotes = await prisma.assignmentNote.findMany(

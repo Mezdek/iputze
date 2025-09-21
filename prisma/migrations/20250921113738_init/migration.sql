@@ -90,14 +90,6 @@ CREATE TABLE "RefreshToken" (
     CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- CreateTable
-CREATE TABLE "_AssignmentUsers" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
-    CONSTRAINT "_AssignmentUsers_A_fkey" FOREIGN KEY ("A") REFERENCES "Assignment" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_AssignmentUsers_B_fkey" FOREIGN KEY ("B") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 -- CreateIndex
 CREATE UNIQUE INDEX "Hotel_name_key" ON "Hotel"("name");
 
@@ -133,9 +125,3 @@ CREATE INDEX "Assignment_assignedBy_idx" ON "Assignment"("assignedBy");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RefreshToken_token_key" ON "RefreshToken"("token");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_AssignmentUsers_AB_unique" ON "_AssignmentUsers"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_AssignmentUsers_B_index" ON "_AssignmentUsers"("B");

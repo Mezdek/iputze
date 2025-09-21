@@ -22,7 +22,7 @@ export const DELETE = withErrorHandling(
 
         await prisma.assignmentNote.delete({ where: { id: assignmentNote.id } });
 
-        return NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
+        return new Response(null, { status: HttpStatus.NO_CONTENT });
     }
 );
 

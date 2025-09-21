@@ -1,5 +1,5 @@
+import { adminRole, managerRole } from "@/lib/helpers";
 import type { RoleManagement, RoleManagementModification } from "@/types";
-import { isAdmin, isHotelManager } from "@/lib/helpers";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 
 /**
@@ -25,9 +25,9 @@ export const canModifyRole = ({
     newLevel,
     newStatus,
 }: RoleManagementModification): boolean => {
-    if (isAdmin({ roles })) return true;
+    if (!!adminRole({ roles })) return true;
 
-    if (!isHotelManager({ roles, hotelId: targetRole.hotelId })) return false;
+    if (!managerRole({ roles, hotelId: targetRole.hotelId })) return false;
 
     // Approve PENDING → CLEANER
     if (targetRole.level === RoleLevel.PENDING && newLevel === RoleLevel.CLEANER) return true;
@@ -57,7 +57,7 @@ export const canModifyRole = ({
  * @returns {boolean} True if the actor can view roles, false otherwise.
  */
 export const canViewRoles = ({ roles, hotelId }: RoleManagement): boolean =>
-    isAdmin({ roles }) || (!!hotelId && isHotelManager({ roles, hotelId }));
+    !!adminRole({ roles }) || (!!hotelId && !!managerRole({ roles, hotelId }));
 
 
 

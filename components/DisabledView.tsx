@@ -1,12 +1,17 @@
-import type { TRole } from "@/types";
+import { useHotels } from "@hooks";
+import { useParams } from "next/navigation";
 
-export function DisabledView({ role }: { role: TRole }) {
+export function DisabledView() {
+    const { data: hotels } = useHotels();
+    const { hotelId } = useParams<{ hotelId: string }>();
+    const hotel = hotels?.find(hotel => hotel.id === hotelId);
+
     return (<div className="flex flex-col gap-2 items-center justify-around w-full h-screen">
         <p>
             Hotel
         </p>
         <p>
-            {role.hotel.name}
+            {hotel?.name}
         </p>
         <p>
             The hotel has disabled your position, please contact them for more information

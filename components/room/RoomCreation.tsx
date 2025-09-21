@@ -1,7 +1,8 @@
-import { RoomCollectionParams } from "@/types";
+import type { RoomCollectionParams, RoomCreationBody } from "@apptypes";
 import {
     addToast,
     Button,
+    Form,
     Input,
     Modal,
     ModalBody,
@@ -9,53 +10,50 @@ import {
     ModalFooter,
     ModalHeader, Select, SelectItem, useDisclosure
 } from "@heroui/react";
-import { useCreateRoom } from "../../hooks";
+import { useCreateRoom } from "@hooks";
+import { parseFormData } from "@lib";
 import { RoomCleanliness, RoomOccupancy } from "@prisma/client";
-import { useState } from "react";
+import { isAxiosError } from "axios";
+import { FormEvent } from "react";
+import { RoomCleanlinessText, RoomOccupancyText } from "./utils";
 
-
-const RoomCleanlinessText: Record<RoomCleanliness, string> = {
-    [RoomCleanliness.CLEAN]: "Clean",
-    [RoomCleanliness.DIRTY]: "Dirty"
-};
-
-const RoomOccupancyText: Record<RoomOccupancy, string> = {
-    [RoomOccupancy.AVAILABLE]: "Available",
-    [RoomOccupancy.OCCUPIED]: "Occupied"
-}
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const { mutateAsync: createRoom } = useCreateRoom({ hotelId });
 
-    const [number, setNumber] = useState<string>()
-    const [numberError, setNumberError] = useState<string | null>()
-    const [cleanliness, setCleanliness] = useState<RoomCleanliness>(RoomCleanliness.CLEAN)
-    const [occupancy, setOccupancy] = useState<RoomOccupancy>(RoomOccupancy.AVAILABLE)
+    const FORM = "room_creation_form"
 
-    const handleCreate = async () => {
-        if (!number || number === "") {
-            setNumberError("Please provide room number")
-            return
-        }
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const data = parseFormData<RoomCreationBody>(e.currentTarget, { number: "1", cleanliness: "CLEAN", occupancy: "AVAILABLE" });
+        console.log(data)
         try {
-            await createRoom({ number, cleanliness, occupancy });
+            const res = await createRoom(data);
             onClose();
             addToast({
                 title: "Room Created!",
-                description: `Room ${number} created successfully`,
+                description: `Room ${res.number} created successfully`,
                 color: "success",
             });
-        } catch (e) {
-            setNumberError(`Room ${number} exists already`);
+        } catch (e: unknown) {
+            if (isAxiosError(e) && e.status === 400) {
+                addToast({
+                    title: "Room could not be created!",
+                    description: `Room ${data.number} exists already`,
+                    color: "danger",
+                })
+            }
             addToast({
                 title: "Room could not be created!",
-                description: `Room ${number} exists already`,
+                description: "Unknown Error was thrown",
                 color: "danger",
-            });
+            })
+            console.error(e)
             return;
         }
     }
+
     return (
         <>
             <Button color="primary" onPress={onOpen}>
@@ -67,48 +65,57 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                         <>
                             <ModalHeader className="flex flex-col gap-1" >New room</ModalHeader>
                             <ModalBody>
-                                <Input
-                                    label="Room Number"
-                                    placeholder="What is th room number"
-                                    variant="bordered"
-                                    onChange={e => { setNumberError(null); setNumber(e.target.value) }}
-                                    isInvalid={!!numberError}
-                                    errorMessage={numberError}
-                                    isRequired
-                                    autoFocus
-                                />
-                                <Select
-                                    className="max-w-xs"
-                                    label="Cleanliness Status"
-                                    defaultSelectedKeys={[RoomCleanliness.CLEAN.toString()]}
-                                    placeholder="Select the cleanliness status"
-                                    onChange={(e) => setCleanliness(e.target.value as RoomCleanliness)}>
-                                    {
-                                        Object.values(RoomCleanliness).map(
-                                            rc => (
-                                                <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
-                                            ))
-                                    }
-                                </Select>
-                                <Select
-                                    className="max-w-xs"
-                                    label="Occupancy Status"
-                                    defaultSelectedKeys={[RoomOccupancy.AVAILABLE.toString()]}
-                                    placeholder="Select the occupancy status"
-                                    onChange={(e) => setOccupancy(e.target.value as RoomOccupancy)}>
-                                    {
-                                        Object.values(RoomOccupancy).map(
-                                            ro => (
-                                                <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
-                                            ))
-                                    }
-                                </Select>
+                                <Form id={FORM} onSubmit={handleSubmit}>
+
+                                    <Input
+                                        autoFocus
+                                        errorMessage="Please provide room number"
+                                        form={FORM}
+                                        isRequired
+                                        label="Room Number"
+                                        name="number"
+                                        placeholder="What is th room number"
+                                        variant="bordered"
+                                    />
+                                    <Select
+                                        className="max-w-xs"
+                                        form={FORM}
+                                        isRequired
+                                        label="Cleanliness Status"
+                                        name="cleanliness"
+                                        placeholder="Select the cleanliness status"
+                                        defaultSelectedKeys={[RoomCleanliness.CLEAN.toString()]}
+                                    >
+                                        {
+                                            Object.values(RoomCleanliness).map(
+                                                rc => (
+                                                    <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
+                                                ))
+                                        }
+                                    </Select>
+                                    <Select
+                                        className="max-w-xs"
+                                        form={FORM}
+                                        isRequired
+                                        label="Occupancy Status"
+                                        name="occupancy"
+                                        placeholder="Select the occupancy status"
+                                        defaultSelectedKeys={[RoomOccupancy.AVAILABLE.toString()]}
+                                    >
+                                        {
+                                            Object.values(RoomOccupancy).map(
+                                                ro => (
+                                                    <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
+                                                ))
+                                        }
+                                    </Select>
+                                </Form>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="flat" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button color="primary" onPress={handleCreate}>
+                                <Button color="primary" type="submit" form={FORM}>
                                     Create
                                 </Button>
                             </ModalFooter>

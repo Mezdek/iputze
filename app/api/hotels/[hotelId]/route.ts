@@ -61,5 +61,5 @@ export const DELETE = withErrorHandling(
 
         await prisma.hotel.delete({ where: { id: hotelId } });
 
-        return NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
+        return new Response(null, { status: HttpStatus.NO_CONTENT });
     })

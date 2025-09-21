@@ -5,11 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useMe = () => {
   const { accessToken } = useAccessToken();
-  return useQuery<MeResponse | null>({
+  return useQuery<MeResponse>({
     queryKey: [queryKeys.me],
     queryFn: async () => {
       if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
-
       const res = await api.get<MeResponse>(getPath().API.ME, {
         headers: {
           [AUTH_HEADER]: BEARER_PREFIX + accessToken,

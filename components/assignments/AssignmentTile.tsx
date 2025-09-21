@@ -1,18 +1,18 @@
-import { useMe, useUpdateAssignment } from "../../hooks";
-import { AssignmentResponse } from "@/types";
+import type { AssignmentResponse } from "@apptypes";
 import { addToast, Button } from "@heroui/react";
-import { AssignmentStatus, RoleLevel, RoleStatus, User } from "@prisma/client";
-import { AddNote } from "./AddNote";
+import { useMe, useUpdateAssignment } from "@hooks";
+import { AssignmentStatus, RoleLevel, RoleStatus } from "@prisma/client";
+import { ClickableNames } from "./ClickableNames";
+import { Notes } from "./Notes";
+import { dateAndTime, statusString } from "./utils";
 
 export function AssignmentTile({ assignment }: { assignment: AssignmentResponse }) {
-    const { createdAt, dueAt, id, isActive, notes, room, status, users, assignedByUser } = assignment;
-    const { mutateAsync } = useUpdateAssignment({ assignmentId: id, hotelId: room.hotelId })
+    const { createdAt, dueAt, id: assignmentId, isActive, room: { hotelId, number }, status, assignedByUser, cleaners } = assignment;
+    const { mutateAsync } = useUpdateAssignment({ assignmentId, hotelId })
     const { data: user } = useMe();
-    const role =
-        user &&
-        user.roles.find(r => r.hotel.id === room.hotelId);
-    const isManager = role && role.level === RoleLevel.MANAGER && role.status === RoleStatus.ACTIVE;
 
+    const role = user && user.roles.find(r => r.hotel.id === hotelId);
+    const isManager = role && role.level === RoleLevel.MANAGER && role.status === RoleStatus.ACTIVE;
     const isAssignmentCleaner = role && role.level === RoleLevel.CLEANER && role.status === RoleStatus.ACTIVE;
 
     const handleArchiving = async () => {
@@ -33,20 +33,20 @@ export function AssignmentTile({ assignment }: { assignment: AssignmentResponse 
         }
     }
 
+    const nextStatus: Record<AssignmentStatus, AssignmentStatus | null> = {
+        [AssignmentStatus.PENDING]: AssignmentStatus.IN_PROGRESS,
+        [AssignmentStatus.IN_PROGRESS]: AssignmentStatus.DONE,
+        [AssignmentStatus.DONE]: null,
+    };
+
     const handleStatus = async () => {
+        const newStatus = nextStatus[status];
+        if (!newStatus) return;
         try {
-            let newStatus: AssignmentStatus;
-            if (status === AssignmentStatus.PENDING) {
-                newStatus = AssignmentStatus.IN_PROGRESS;
-            } else if (status === AssignmentStatus.IN_PROGRESS) {
-                newStatus = AssignmentStatus.DONE;
-            } else {
-                return
-            }
             await mutateAsync({ status: newStatus });
             addToast({
                 title: "Status Changed!",
-                description: `Assignment was set on ${statusString[newStatus]}`,
+                description: `Assignment was set to ${statusString[newStatus]}`,
                 color: "success",
             });
         } catch (e) {
@@ -60,70 +60,40 @@ export function AssignmentTile({ assignment }: { assignment: AssignmentResponse 
     }
     return (
         <div
-            className={`flex flex-col gap-1 border-solid border-green-900 rounded-xl border-2 p-4 h-fit ${isActive ? "bg-cyan-400" : "bg-gray-400"} `}>
+            className=
+            {`flex flex-col gap-1 border-2 border-green-900 rounded-xl p-4 h-fit transition-opacity ${isActive ? "bg-cyan-400" : "bg-gray-400 opacity-70 italic"}`}>
             <div className="flex justify-between bg-fuchsia-600 p-1.5 rounded-xl items-center">
                 <p className="">Assignment</p>
                 {isManager && isActive && <Button onPress={handleArchiving} color="warning">Archive</Button>}
                 {!isActive && <p className="">Archived</p>}
             </div>
+
             <ul className="p-2.5">
-                <li>Room number: {room.number}</li>
                 <li>
-                    Due: <DateAndTime dateTime={dueAt} />
+                    Room number: {number}
                 </li>
-                <div className="flex justify-between items-center">
+                <li>
+                    Due: {dateAndTime({ dateTime: dueAt })}
+                </li>
+                <li className="flex justify-between items-center">
                     <span>
                         Status: {statusString[status]}
                     </span>
-                    {!(status === AssignmentStatus.DONE) && isActive && isAssignmentCleaner && <span className="bg-green-600 rounded-2xl py-2 px-1 cursor-pointer" onClick={handleStatus}>Update Process</span>}
-                </div>
-                <li>Assignees: <Cleaners users={users} /></li>
-                <li>Assigned by: {assignedByUser === null ? "Deleted Account" : assignedByUser.name}</li>
-                <p>Notes: {!notes || notes === "" ? "No Notes" : notes}</p>
-                <li>
-                    Created: <DateAndTime dateTime={createdAt} />
+                    {!(status === AssignmentStatus.DONE) && isActive && isAssignmentCleaner && (
+                        <Button className="bg-green-600 rounded-2xl py-2 px-1 cursor-pointer" onClick={handleStatus}>
+                            Update Process
+                        </Button>
+                    )}
                 </li>
-                <li>Id: {id}</li>
+                <li>Cleaners: <ClickableNames users={cleaners} /></li>
+                <li>Assigned by: {assignedByUser === null ? "Deleted Account" : assignedByUser.name}</li>
+                <li>Created: {dateAndTime({ dateTime: createdAt })}</li>
             </ul>
             <div className="flex w-full justify-between">
-                <AddNote assignment={assignment} />
+                <Notes assignmentId={assignmentId} hotelId={hotelId} userId={user?.id!} />
             </div>
         </div>
     )
 }
 
-const statusString: Record<AssignmentStatus, string> = {
-    DONE: "done",
-    IN_PROGRESS: "in progress",
-    PENDING: "pending"
-}
 
-function DateAndTime({ dateTime, locale, options }: { dateTime: string | number | Date; locale?: Intl.Locale; options?: Intl.DateTimeFormatOptions }) {
-    const parsedOtions: Intl.DateTimeFormatOptions = {
-        hour12: false,
-        minute: "numeric",
-        hour: "numeric",
-        hourCycle: "h23",
-        day: "numeric",
-        weekday: "long",
-        month: "short",
-        ...options
-    };
-    const dateString = new Date(dateTime).toLocaleDateString(locale ?? "de-DE", parsedOtions);
-    return dateString
-
-}
-
-function Cleaners({ users }: { users: Omit<User, "passwordHash">[] }) {
-    const clickableUserNames = users.map
-        (
-            (user, index, array) =>
-                <span key={index}>
-                    <i onClick={() => console.log(user.id)} style={{ fontStyle: "normal", cursor: "pointer" }}>
-                        {user.name}
-                    </i>
-                    {index < array.length - 1 ? ", " : ""}
-                </span>
-        )
-    return clickableUserNames
-}

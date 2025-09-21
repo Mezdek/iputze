@@ -6,7 +6,7 @@ export const POST = withErrorHandling(async (req) => {
 
     if (cookie?.value) await revokeRefreshToken(cookie.value);
 
-    const res = NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
+    const res = NextResponse.json(null, { status: HttpStatus.OK });
 
     res.cookies.set(REFRESH_TOKEN_NAME, "", { ...ResponseCookieOptions, maxAge: 0 });
 

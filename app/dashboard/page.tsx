@@ -1,59 +1,58 @@
 'use client';
 
-import { withAuthGuard } from "@/components/auth/withAuthGuard";
+import { NavigationBar, withAuthGuard } from "@components";
 import { Button } from "@heroui/react";
-import { useMe, useSignOut } from "../../hooks";
-import { RoleLevel } from "@prisma/client";
+import { useMe } from "@hooks";
+import { getPath } from "@lib";
 import { useRouter } from "next/navigation";
+import JoinHotel from "./JoinHotel";
 
 function Dashboard() {
     const { data: user } = useMe();
-    const { mutate: signOut, isPending, isSuccess } = useSignOut();
     const router = useRouter();
 
-    // Redirect to home once signOut succeeds
-    if (isSuccess) {
-        router.replace("/");
-    }
 
-    const R: Record<RoleLevel, string> = { ADMIN: "Administer", CLEANER: "Check", MANAGER: "Manage", PENDING: "" }
+    if (!user) {
+        console.error("No logged user was found, please clear your browser cache if this problem persists")
+        router.replace("/");
+        return;
+    }
+    const { name, roles } = user
 
     return (
-        <div className="flex gap-5 items-center justify-around w-full h-screen">
-            <div className="flex flex-col gap-3 justify-around w-1/4 h-1/2">
-                <p className="text-center font-bold text-4xl">Dashboard</p>
-                <p className="text-center font-bold text-xl text-blue-700">
-                    Hello {user?.name}
-                </p>
+        <>
+            <NavigationBar />
+            <div className="flex gap-5 items-center justify-around w-full h-screen">
+                <div className="flex h-full w-full items-center">
+                    <p className="text-center font-bold text-5xl w-full">Hello {name}</p>
+                </div>
+                <div className="flex items-center h-full w-full">
+                    <div className="bg-blue-200 w-full h-3/4 p-8 flex flex-wrap gap-4 rounded-2xl">
 
-                {
-                    (user?.roles && user?.roles.length > 0)
-                        ?
-                        user.roles.map((r, i) => (
-                            <div key={i}>
-                                {
-                                    r.level === "PENDING"
-                                        ? null
-                                        : <Button color="secondary" className="p-7 text-medium" onPress={() => router.push("/hotels/" + r.hotel.id)}> {R[r.level]} {r.hotel.name}</Button>
-                                }
-                            </div>
-                        ))
-                        :
-                        <div className="flex flex-col justify-between gap-4 text-center">
-                            <p>You havent joined any hotel!</p>
-                            <Button color="primary" onPress={() => alert("not implemented")}>Join</Button>
-                        </div>
-                }
+                        {
+                            roles.length > 0
+                                ?
+                                roles.map((role) => (
+                                    <Button
+                                        color="secondary"
+                                        className="p-7 text-medium h-16"
+                                        onPress={() => router.push(getPath({ hotelId: role.hotel.id }).HOTEL)}
+                                        key={role.id}
+                                    >
+                                        {role.hotel.name}
+                                    </Button>
 
-                <Button
-                    color="danger"
-                    onPress={() => signOut()}
-                    isDisabled={isPending}
-                >
-                    Sign Out
-                </Button>
+                                ))
+                                :
+                                <div className="flex flex-col justify-between gap-4 text-center">
+                                    <p>You havent joined any hotel!</p>
+                                </div>
+                        }
+                        <JoinHotel />
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

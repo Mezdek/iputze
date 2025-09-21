@@ -29,5 +29,6 @@ export const getPath = (props?: getPathProps) => {
         DASHBOARD: "dashboard",
         HOME: "/",
         HOTELS: "hotels",
+        HOTEL: `hotels/${props?.hotelId}`,
     })
 }

@@ -1,6 +1,8 @@
+import type { RoomUpdateBody } from "@apptypes";
 import {
     addToast,
     Button,
+    Form,
     Input,
     Modal,
     ModalBody,
@@ -8,60 +10,50 @@ import {
     ModalFooter,
     ModalHeader, Select, SelectItem, useDisclosure
 } from "@heroui/react";
-import { useUpdateRoom } from "../../hooks";
+import { useUpdateRoom } from "@hooks";
+import { parseFormData } from "@lib";
 import { Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
-import { useState } from "react";
+import { isAxiosError } from "axios";
+import { FormEvent } from "react";
+import { RoomCleanlinessText, RoomOccupancyText } from "./utils";
 
-
-const RoomCleanlinessText: Record<RoomCleanliness, string> = {
-    [RoomCleanliness.CLEAN]: "Clean",
-    [RoomCleanliness.DIRTY]: "Dirty"
-};
-
-const RoomOccupancyText: Record<RoomOccupancy, string> = {
-    [RoomOccupancy.AVAILABLE]: "Available",
-    [RoomOccupancy.OCCUPIED]: "Occupied"
-}
 
 export function RoomUpdate({ room }: { room: Room }) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const { mutateAsync: updateRoom } = useUpdateRoom({ hotelId: room.hotelId, roomId: room.id });
-    const [number, setNumber] = useState<string>(room.number)
-    const [numberError, setNumberError] = useState<string | null>()
-    const [cleanliness, setCleanliness] = useState<RoomCleanliness>(room.cleanliness)
-    const [occupancy, setOccupancy] = useState<RoomOccupancy>(room.occupancy)
 
-    const handleClose = () => {
-        setNumber(room.number);
-        setNumberError("");
-        setCleanliness(room.cleanliness);
-        setOccupancy(room.occupancy);
-        onClose();
-    }
+    const FORM = "room_update_form";
 
-    const handleUpdate = async () => {
-        if (!number || number === "") {
-            setNumberError("Please provide room number")
-            return
-        }
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const data = parseFormData<RoomUpdateBody>(e.currentTarget, {})
         try {
-            await updateRoom({ number, cleanliness, occupancy });
+            await updateRoom(data);
             onClose();
             addToast({
                 title: "Room Updated!",
                 description: `Room has been updated successfully`,
                 color: "success",
             });
-        } catch (e) {
-            setNumberError(`Room ${number} exists already`);
-            addToast({
-                title: "Room could not be updated!",
-                description: `Room ${number} exists already`,
-                color: "danger",
-            });
-            return;
+        } catch (e: unknown) {
+            if (isAxiosError(e) && e.status === 409) {
+                addToast({
+                    title: "Room could not be updated!",
+                    description: `Room ${data.number} exists already`,
+                    color: "danger",
+                });
+            } else {
+                addToast({
+                    title: "Room could not be updated!",
+                    description: "An unknown error was thrown",
+                    color: "danger",
+                });
+            }
+            onClose()
         }
     }
+
+
     return (
         <>
             <Button color="secondary" onPress={onOpen}>
@@ -73,49 +65,54 @@ export function RoomUpdate({ room }: { room: Room }) {
                         <>
                             <ModalHeader className="flex flex-col gap-1" >New room</ModalHeader>
                             <ModalBody>
-                                <Input
-                                    label="Room Number"
-                                    placeholder="Change room number"
-                                    variant="bordered"
-                                    onChange={e => { setNumberError(null); setNumber(e.target.value) }}
-                                    isInvalid={!!numberError}
-                                    errorMessage={numberError}
-                                    isRequired
-                                    defaultValue={number}
-                                    autoFocus
-                                />
-                                <Select
-                                    className="max-w-xs"
-                                    label="Cleanliness Status"
-                                    defaultSelectedKeys={[cleanliness]}
-                                    placeholder="Change the cleanliness status"
-                                    onChange={(e) => setCleanliness(e.target.value as RoomCleanliness)}>
-                                    {
-                                        Object.values(RoomCleanliness).map(
-                                            rc => (
-                                                <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
-                                            ))
-                                    }
-                                </Select>
-                                <Select
-                                    className="max-w-xs"
-                                    label="Occupancy Status"
-                                    defaultSelectedKeys={[occupancy]}
-                                    placeholder="Change the occupancy status"
-                                    onChange={(e) => setOccupancy(e.target.value as RoomOccupancy)}>
-                                    {
-                                        Object.values(RoomOccupancy).map(
-                                            ro => (
-                                                <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
-                                            ))
-                                    }
-                                </Select>
+                                <Form id={FORM} onSubmit={handleSubmit}>
+                                    <Input
+                                        autoFocus
+                                        defaultValue={room.number}
+                                        errorMessage="Please provide room number"
+                                        form={FORM}
+                                        label="Room Number"
+                                        name="number"
+                                        placeholder="Change room number"
+                                        variant="bordered"
+                                    />
+                                    <Select
+                                        className="max-w-xs"
+                                        defaultSelectedKeys={[room.cleanliness]}
+                                        form={FORM}
+                                        label="Cleanliness Status"
+                                        name="cleanliness"
+                                        placeholder="Change the cleanliness status"
+                                    >
+                                        {
+                                            Object.values(RoomCleanliness).map(
+                                                rc => (
+                                                    <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
+                                                ))
+                                        }
+                                    </Select>
+                                    <Select
+                                        className="max-w-xs"
+                                        defaultSelectedKeys={[room.occupancy]}
+                                        form={FORM}
+                                        label="Occupancy Status"
+                                        name="occupancy"
+                                        placeholder="Change the occupancy status"
+                                    >
+                                        {
+                                            Object.values(RoomOccupancy).map(
+                                                ro => (
+                                                    <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
+                                                ))
+                                        }
+                                    </Select>
+                                </Form>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="danger" variant="flat" onPress={handleClose}>
+                                <Button color="danger" variant="flat" onPress={onClose}>
                                     Cancel
                                 </Button>
-                                <Button color="primary" onPress={handleUpdate}>
+                                <Button color="primary" form={FORM} type="submit">
                                     Update
                                 </Button>
                             </ModalFooter>

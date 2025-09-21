@@ -1,5 +1,5 @@
 import type { MeResponse, TRole } from "@apptypes";
-import { getUserOrThrow, HttpStatus, isAdmin, withErrorHandling } from "@lib";
+import { adminRole, getUserOrThrow, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Hotel } from "@prisma/client";
 import { RoleLevel, RoleStatus } from "@prisma/client";
@@ -8,13 +8,14 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = withErrorHandling(
     async (req: NextRequest) => {
         const user = await getUserOrThrow(req);
-        const userIsAdmin = isAdmin({ roles: user.roles });
+        const userIsAdmin = !!adminRole({ roles: user.roles });
 
         let hotels: Hotel[], rolesWithHotels: TRole[];
 
         if (userIsAdmin) {
             hotels = await prisma.hotel.findMany();
             rolesWithHotels = hotels.map(
+
                 hotel => ({ id: user.id, level: RoleLevel.ADMIN, status: RoleStatus.ACTIVE, hotel }))
         } else {
             const hotelIds = user.roles.map(r => r.hotelId);

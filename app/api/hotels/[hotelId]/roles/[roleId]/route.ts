@@ -24,6 +24,7 @@ export const PATCH = withErrorHandling(
 
         if (!canModifyRole({ roles, targetRole, newLevel, newStatus })) throw APP_ERRORS.forbidden(RolesErrors.EDITING_DENIED);
 
+
         // Perform update
         const updatedRole = await prisma.role.update({
             where: { id: targetRole.id },

@@ -36,7 +36,7 @@ export const DELETE = withErrorHandling(
         const room = await getRoomOrThrow(params.roomId, hotelId);
         const { roles } = await getUserOrThrow(req);
         if (!canDeleteRoom({ roles, hotelId })) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
-        await prisma.room.delete({ where: { id: room.id, hotelId } });
-        return NextResponse.json(null, { status: HttpStatus.NO_CONTENT });
+        const res = await prisma.room.delete({ where: { id: room.id, hotelId } });
+        return new Response(null, { status: HttpStatus.NO_CONTENT });
     }
 )
