@@ -10,7 +10,7 @@ export function LoadingScreen() {
             <Image
                 src="/download.gif"
                 alt="Loading..."
-                width={200} // approximate displayed size
+                width={200}
                 height={200}
                 className="object-contain"
             />

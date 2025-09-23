@@ -20,7 +20,7 @@ import { parseFormData } from "@lib";
 import { Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
 import { isAxiosError } from "axios";
 import { FormEvent } from "react";
-import { RoomCleanlinessText, RoomOccupancyText } from "./utils";
+import { RoomCleanlinessText, RoomOccupancyText } from "../utils";
 
 export function RoomUpdate({ room }: { room: Room }) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();

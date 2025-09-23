@@ -2,7 +2,7 @@
 
 import { Input } from "@heroui/react";
 import { useState } from "react";
-import { EyeFilledIcon, EyeSlashFilledIcon } from "../icons";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "./icons";
 
 type PasswordInputProps = { formId?: string, name?: string, label?: string, placeholder?: string, autoComplete?: "new-password" | "current-password" }
 

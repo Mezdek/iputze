@@ -1,0 +1,11 @@
+.card-container {
+  @apply flex flex-col gap-3 border-2 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow;
+}
+
+.card-header {
+  @apply flex justify-between items-center gap-4 bg-emerald-500 px-4 py-2 rounded-lg text-black font-semibold border-b;
+}
+
+.ac {
+  @apply bg-white text-gray-900 border-emerald-400;
+}

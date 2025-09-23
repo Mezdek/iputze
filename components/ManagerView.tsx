@@ -1,20 +1,14 @@
 'use client';
 
 import type { EnhancedRole } from "@/types";
-import { AssignmentCreation, AssignmentTile, RoleTile, RoomCreation, RoomTile } from "@components";
-import { Spinner, Tab, Tabs } from "@heroui/react";
+import { AssignmentCreation, AssignmentTile, EntityTab, ListRenderer, RoleTile, RoomCreation, RoomTile } from "@components";
+import { Tab, Tabs } from "@heroui/react";
 import { useAssignments, useRoles, useRooms } from "@hooks";
 import type { Room } from "@prisma/client";
 import { useParams } from "next/navigation";
-import { HotelBanner } from "./HotelBanner";
-import { ListRenderer } from "./ListRenderer";
-import { SpecialViewProps, TabProps } from "./types";
+import { SpecialViewProps } from "./types";
+import { sections } from "./utils";
 
-const sections = {
-    ASSIGNMENTS: "Assignments",
-    ROOMS: "Rooms",
-    WORKERS: "Workers",
-} as const;
 
 export function ManagerView({ user }: SpecialViewProps) {
 
@@ -80,37 +74,6 @@ export function ManagerView({ user }: SpecialViewProps) {
                     </EntityTab>
                 </Tab>
             </Tabs>
-        </div>
-    );
-}
-
-/**
- * Generic wrapper for hotel tab sections.
- */
-interface EntityTabProps extends TabProps {
-    isLoading: boolean;
-    emptyMessage: string;
-    children: React.ReactNode;
-    button?: React.ReactNode;
-}
-
-function EntityTab({ hotelName, isLoading, emptyMessage, children, button }: EntityTabProps) {
-    return (
-        <div className="flex flex-col gap-10 items-center w-full min-h-full">
-            <HotelBanner hotelName={hotelName}>
-                {button}
-            </HotelBanner>
-            {isLoading ? (
-                <div className="flex justify-center items-center py-10">
-                    <Spinner label="Loading..." />
-                </div>
-            ) : (
-                <div className="w-full">
-                    {children ?? (
-                        <p className="text-gray-500 text-center italic">{emptyMessage}</p>
-                    )}
-                </div>
-            )}
         </div>
     );
 }

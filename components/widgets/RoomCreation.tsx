@@ -20,7 +20,7 @@ import { parseFormData } from "@lib";
 import { RoomCleanliness, RoomOccupancy } from "@prisma/client";
 import { isAxiosError } from "axios";
 import { FormEvent } from "react";
-import { RoomCleanlinessText, RoomOccupancyText } from "./utils";
+import { RoomCleanlinessText, RoomOccupancyText } from "../utils";
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
