@@ -1,3 +1,5 @@
+'use client'
+
 import {
     Button,
     Modal,
@@ -8,26 +10,33 @@ import {
     useDisclosure
 } from "@heroui/react";
 
-type THeroUIButtonColors = "default" | "danger" | "primary" | "secondary" | "success" | "warning" | undefined;
+type THeroUIButtonColors =
+    | "default"
+    | "danger"
+    | "primary"
+    | "secondary"
+    | "success"
+    | "warning"
+    | undefined;
 
 type ApprovalRequestProps = {
     header: string;
     question: string;
     cancelButton?: {
         text?: string;
-        color?: THeroUIButtonColors
-    }
+        color?: THeroUIButtonColors;
+    };
     modalButton: {
         text: string;
         color?: THeroUIButtonColors;
         isDisabled?: boolean;
-    }
+    };
     submitButton: {
         text?: string;
         action: () => Promise<void>;
-        color?: THeroUIButtonColors
-    }
-}
+        color?: THeroUIButtonColors;
+    };
+};
 
 export function ApprovalRequest({
     submitButton,
@@ -36,32 +45,55 @@ export function ApprovalRequest({
     question,
     modalButton
 }: ApprovalRequestProps) {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+    const handleSubmit = async () => {
+        try {
+            await submitButton.action();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            onClose();
+        }
+    };
+
     return (
         <>
-            <Button color={modalButton.color ?? "primary"} onPress={onOpen} isDisabled={modalButton.isDisabled} >
+            <Button
+                color={modalButton.color ?? "primary"}
+                onPress={onOpen}
+                isDisabled={modalButton.isDisabled}
+            >
                 {modalButton.text}
             </Button>
-            <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
+
+            <Modal
+                isOpen={isOpen}
+                placement="top-center"
+                onOpenChange={onOpenChange}
+                disableAnimation
+                aria-label={header}
+            >
                 <ModalContent>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1" >{header}</ModalHeader>
-                            <ModalBody>
-                                <p>
-                                    {question}
-                                </p>
-                            </ModalBody>
-                            <ModalFooter className="gap-3">
-                                <Button color={cancelButton?.color ?? "default"} variant="flat" onPress={onClose}>
-                                    {cancelButton?.text ?? "Cancel"}
-                                </Button>
-                                <Button color={submitButton.color ?? "primary"} onPress={async () => { await submitButton.action(); onClose(); }}>
-                                    {submitButton.text ?? "Yes"}
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
+                    <ModalHeader className="text-lg font-semibold">{header}</ModalHeader>
+                    <ModalBody>
+                        <p className="text-base">{question}</p>
+                    </ModalBody>
+                    <ModalFooter className="flex justify-end gap-3">
+                        <Button
+                            color={cancelButton?.color ?? "default"}
+                            variant="flat"
+                            onPress={onClose}
+                        >
+                            {cancelButton?.text ?? "Cancel"}
+                        </Button>
+                        <Button
+                            color={submitButton.color ?? "primary"}
+                            onPress={handleSubmit}
+                        >
+                            {submitButton.text ?? "Yes"}
+                        </Button>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </>

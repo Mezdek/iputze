@@ -1,4 +1,4 @@
-import type { RoomParams, RoomUpdateBody } from "@apptypes";
+import type { RoomParams, RoomUpdateBody } from "@/types";
 import { APP_ERRORS, canDeleteRoom, canUpdateRoom, canViewRoom, GeneralErrors, getHotelOrThrow, getRoomOrThrow, getUserOrThrow, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Room } from "@prisma/client";

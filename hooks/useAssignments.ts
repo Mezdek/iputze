@@ -1,21 +1,15 @@
-import type { AssignmentCollectionParams, AssignmentResponse } from "@apptypes";
-import { api, APP_ERRORS, AUTH_HEADER, AuthErrors, BEARER_PREFIX, getPath, queryKeys } from "@lib";
-import { useAccessToken } from "@providers/AccessTokenProvider";
+import type { AssignmentCollectionParams, AssignmentResponse } from "@/types";
+import { api, getPath, queryKeys } from "@lib";
 import { useQuery } from "@tanstack/react-query";
 
 export const useAssignments = ({ hotelId }: AssignmentCollectionParams) => {
-    const { accessToken } = useAccessToken();
     return useQuery<AssignmentResponse[] | null>({
         queryKey: [queryKeys.assignments, hotelId],
         queryFn: async () => {
-            if (!accessToken) throw APP_ERRORS.unauthorized(AuthErrors.INVALID_ACCESS_TOKEN);
-            const res = await api.get<AssignmentResponse[]>(getPath({ hotelId }).API.ASSIGNMENTS, {
-                headers: { [AUTH_HEADER]: BEARER_PREFIX + accessToken },
-            });
+            const res = await api.get<AssignmentResponse[]>(getPath({ hotelId }).API.ASSIGNMENTS);
             return res.data;
         },
         retry: false, // do not retry on 401
-        enabled: !!accessToken, // only fetch if token exists
         staleTime: 1000 * 60 * 60 * 24,
         gcTime: 1000 * 60 * 30, // 30 minutes: unused cache is kept for 30 min
         refetchOnWindowFocus: false,

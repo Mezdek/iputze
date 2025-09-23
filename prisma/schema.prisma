@@ -83,6 +83,7 @@ model User {
   AssignmentNote AssignmentNote[]
   RefreshToken   RefreshToken[]
   assignedTasks  Assignment[]     @relation("AssignedBy") // Assignments this user created
+  Session        Session[]
 }
 
 model Role {
@@ -152,4 +153,19 @@ model RefreshToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model Session {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  ipAddress String?
+  userAgent String?
+
+  @@index([userId])
+  @@index([expiresAt]) // useful for cleanup jobs
 }

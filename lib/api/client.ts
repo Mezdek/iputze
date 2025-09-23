@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const api = axios.create({
     baseURL: "/api",
-    withCredentials: true, // important for cookies
+    withCredentials: true,
     headers: {
         "Content-Type": "application/json",
     },

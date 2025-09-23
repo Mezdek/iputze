@@ -1,4 +1,6 @@
-import type { RoomCollectionParams, RoomCreationBody } from "@apptypes";
+'use client'
+
+import type { RoomCollectionParams, RoomCreationBody } from "@/types";
 import {
     addToast,
     Button,
@@ -8,7 +10,10 @@ import {
     ModalBody,
     ModalContent,
     ModalFooter,
-    ModalHeader, Select, SelectItem, useDisclosure
+    ModalHeader,
+    Select,
+    SelectItem,
+    useDisclosure
 } from "@heroui/react";
 import { useCreateRoom } from "@hooks";
 import { parseFormData } from "@lib";
@@ -17,17 +22,20 @@ import { isAxiosError } from "axios";
 import { FormEvent } from "react";
 import { RoomCleanlinessText, RoomOccupancyText } from "./utils";
 
-
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const { mutateAsync: createRoom } = useCreateRoom({ hotelId });
 
-    const FORM = "room_creation_form"
+    const FORM = "room_creation_form";
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const data = parseFormData<RoomCreationBody>(e.currentTarget, { number: "1", cleanliness: "CLEAN", occupancy: "AVAILABLE" });
-        console.log(data)
+        e.preventDefault();
+        const data = parseFormData<RoomCreationBody>(e.currentTarget, {
+            number: "1",
+            cleanliness: RoomCleanliness.CLEAN,
+            occupancy: RoomOccupancy.AVAILABLE,
+        });
+
         try {
             const res = await createRoom(data);
             onClose();
@@ -40,19 +48,19 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
             if (isAxiosError(e) && e.status === 400) {
                 addToast({
                     title: "Room could not be created!",
-                    description: `Room ${data.number} exists already`,
+                    description: `Room ${data.number} already exists`,
                     color: "danger",
-                })
+                });
+            } else {
+                addToast({
+                    title: "Room could not be created!",
+                    description: "An unknown error occurred",
+                    color: "danger",
+                });
             }
-            addToast({
-                title: "Room could not be created!",
-                description: "Unknown Error was thrown",
-                color: "danger",
-            })
-            console.error(e)
-            return;
+            console.error(e);
         }
-    }
+    };
 
     return (
         <>
@@ -63,55 +71,56 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1" >New room</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1 text-lg font-semibold">
+                                New Room
+                            </ModalHeader>
                             <ModalBody>
-                                <Form id={FORM} onSubmit={handleSubmit}>
-
+                                <Form id={FORM} onSubmit={handleSubmit} className="flex flex-col gap-4">
                                     <Input
                                         autoFocus
-                                        errorMessage="Please provide room number"
-                                        form={FORM}
                                         isRequired
+                                        errorMessage="Please provide a room number"
+                                        form={FORM}
                                         label="Room Number"
                                         name="number"
-                                        placeholder="What is th room number"
+                                        placeholder="Enter room number"
                                         variant="bordered"
                                     />
+
                                     <Select
                                         className="max-w-xs"
                                         form={FORM}
                                         isRequired
                                         label="Cleanliness Status"
                                         name="cleanliness"
-                                        placeholder="Select the cleanliness status"
+                                        placeholder="Select cleanliness status"
                                         defaultSelectedKeys={[RoomCleanliness.CLEAN.toString()]}
                                     >
-                                        {
-                                            Object.values(RoomCleanliness).map(
-                                                rc => (
-                                                    <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
-                                                ))
-                                        }
+                                        {Object.values(RoomCleanliness).map(
+                                            (rc) => (
+                                                <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
+                                            )
+                                        )}
                                     </Select>
+
                                     <Select
                                         className="max-w-xs"
                                         form={FORM}
                                         isRequired
                                         label="Occupancy Status"
                                         name="occupancy"
-                                        placeholder="Select the occupancy status"
+                                        placeholder="Select occupancy status"
                                         defaultSelectedKeys={[RoomOccupancy.AVAILABLE.toString()]}
                                     >
-                                        {
-                                            Object.values(RoomOccupancy).map(
-                                                ro => (
-                                                    <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
-                                                ))
-                                        }
+                                        {Object.values(RoomOccupancy).map(
+                                            (ro) => (
+                                                <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
+                                            )
+                                        )}
                                     </Select>
                                 </Form>
                             </ModalBody>
-                            <ModalFooter>
+                            <ModalFooter className="gap-3">
                                 <Button color="danger" variant="flat" onPress={onClose}>
                                     Cancel
                                 </Button>

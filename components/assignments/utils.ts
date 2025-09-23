@@ -1,3 +1,5 @@
+'use client'
+
 import { AssignmentStatus } from "@prisma/client";
 
 type Props = { dateTime: string | number | Date; locale?: Intl.Locale; options?: Intl.DateTimeFormatOptions };

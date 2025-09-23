@@ -1,56 +1,47 @@
 'use client';
 
+import type { InjectedAuthProps, MeResponse } from "@/types";
 import {
     CleanerView,
+    DeniedAccessView,
     DisabledView,
-    LoadingScreen,
     ManagerView,
     NavigationBar,
     PendingView,
-    withAuthGuard,
+    withAuthGuard
 } from "@components";
-import { useMe } from "@hooks";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 import { useParams } from "next/navigation";
-import { FC } from "react";
+import type { FC } from "react";
 
-const ViewSelector: Record<RoleLevel, FC> = {
+// Map role levels to views
+const ViewSelector: Record<RoleLevel, FC<InjectedAuthProps>> = {
     [RoleLevel.ADMIN]: ManagerView,
     [RoleLevel.MANAGER]: ManagerView,
     [RoleLevel.CLEANER]: CleanerView,
     [RoleLevel.PENDING]: PendingView,
 };
 
-const AccessDeniedView: FC = () => (
-    <p className="flex justify-center items-center w-full h-screen text-6xl bg-red-400">
-        Access Denied
-    </p>
-);
+// Helper function: select component based on user role & hotel
+function getViewForRole(user: MeResponse, hotelId: string): FC<InjectedAuthProps> {
+    const role = user.roles.find(r => r.hotel.id === hotelId);
 
-function Hotel() {
-    const { data: user } = useMe();
-    const params = useParams<{ hotelId: string }>();
+    if (!role) return DeniedAccessView;
+    if (role.status === RoleStatus.DISABLED) return DisabledView;
 
-    let Component: FC;
+    return ViewSelector[role.level];
+}
 
-    if (!user) {
-        Component = LoadingScreen;
-    } else {
-        const role = user.roles.find((r) => r.hotel.id === params.hotelId);
-
-        if (!role) {
-            Component = AccessDeniedView;
-        } else if (role.status === RoleStatus.DISABLED) {
-            Component = DisabledView;
-        } else {
-            Component = ViewSelector[role.level];
-        }
-    }
+function Hotel({ user }: InjectedAuthProps) {
+    const { hotelId } = useParams<{ hotelId: string }>();
+    const Component = getViewForRole(user, hotelId);
 
     return (
         <>
             <NavigationBar />
-            <Component />
+            <main role="main" aria-label={`Hotel ${hotelId} view`}>
+                <Component user={user} />
+            </main>
         </>
     );
 }

@@ -1,6 +1,8 @@
-import { AssignmentResponse } from "@apptypes";
+import { AssignmentResponse, InjectedAuthProps } from "@/types";
 
-export interface TabProps {
+export interface SpecialViewProps extends InjectedAuthProps { }
+
+export interface TabProps extends SpecialViewProps {
     hotelName: string;
     hotelId: string;
     isLoading?: boolean

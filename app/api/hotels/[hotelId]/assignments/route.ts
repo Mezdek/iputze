@@ -1,7 +1,7 @@
-import type { AssignmentCollectionParams, AssignmentCreationBody, AssignmentResponse } from "@apptypes";
-import { APP_ERRORS, canCreateAssignment, cleanerRole, GeneralErrors, getHotelOrThrow, getUserOrThrow, hasManagerPermission, HttpStatus, withErrorHandling } from "@lib";
+import type { AssignmentCollectionParams, AssignmentCreationBody, AssignmentResponse } from "@/types";
+import { APP_ERRORS, canCreateAssignment, GeneralErrors, getHotelOrThrow, getUserOrThrow, hasManagerPermission, HttpStatus, isHotelCleaner, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
-import { Assignment } from "@prisma/client";
+import type { Assignment } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -14,7 +14,7 @@ export const GET = withErrorHandling(
 
         if (hasManagerPermission({ hotelId, roles })) {
             where = { room: { hotelId } }
-        } else if (!!cleanerRole({ hotelId, roles })) {
+        } else if (isHotelCleaner({ hotelId, roles })) {
             where = { AssignmentUser: { some: { userId } } }
         } else {
             throw APP_ERRORS.forbidden();

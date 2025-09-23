@@ -64,7 +64,7 @@ export interface SignInRequestBody {
 }
 
 export interface SignInResponse {
-    user: { id: string; email: string; name: string; }; accessToken: string;
+    user: { id: string; email: string; name: string; };
 }
 
 export interface SignUpRequestBody {

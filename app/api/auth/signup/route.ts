@@ -1,4 +1,4 @@
-import type { SignUpRequestBody, SignUpResponse } from "@apptypes";
+import type { SignUpRequestBody, SignUpResponse } from "@/types";
 import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, RateLimitKeys, validateRegistration, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { hash } from "bcrypt";
@@ -15,9 +15,7 @@ export const POST = withErrorHandling(
 
         // Check if user already exists
         const existingUser = await prisma.user.findUnique({ where: { email } });
-        if (existingUser) {
-            throw APP_ERRORS.conflict(AuthErrors.DUPLICATED_USER);
-        }
+        if (existingUser) throw APP_ERRORS.conflict(AuthErrors.DUPLICATED_USER);
 
         // Hash password
         const passwordHash = await hash(password, 10);

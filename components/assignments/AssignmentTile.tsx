@@ -1,23 +1,43 @@
-import type { AssignmentResponse } from "@apptypes";
+'use client'
+
+import { roleCheck } from "@/lib";
+import type { AssignmentResponse, InjectedAuthProps } from "@/types";
 import { addToast, Button } from "@heroui/react";
-import { useMe, useUpdateAssignment } from "@hooks";
-import { AssignmentStatus, RoleLevel, RoleStatus } from "@prisma/client";
+import { useUpdateAssignment } from "@hooks";
+import { AssignmentStatus } from "@prisma/client";
 import { ClickableNames } from "./ClickableNames";
 import { Notes } from "./Notes";
 import { dateAndTime, statusString } from "./utils";
 
-export function AssignmentTile({ assignment }: { assignment: AssignmentResponse }) {
-    const { createdAt, dueAt, id: assignmentId, isActive, room: { hotelId, number }, status, assignedByUser, cleaners } = assignment;
-    const { mutateAsync } = useUpdateAssignment({ assignmentId, hotelId })
-    const { data: user } = useMe();
+export function AssignmentTile({
+    assignment,
+    user,
+}: { assignment: AssignmentResponse } & InjectedAuthProps) {
+    const {
+        createdAt,
+        dueAt,
+        id: assignmentId,
+        isActive,
+        room: { hotelId, number },
+        status,
+        assignedByUser,
+        cleaners,
+    } = assignment;
 
-    const role = user && user.roles.find(r => r.hotel.id === hotelId);
-    const isManager = role && role.level === RoleLevel.MANAGER && role.status === RoleStatus.ACTIVE;
-    const isAssignmentCleaner = role && role.level === RoleLevel.CLEANER && role.status === RoleStatus.ACTIVE;
+    const { mutateAsync: update, isPending } = useUpdateAssignment({
+        assignmentId,
+        hotelId,
+    });
+
+    const { isAssignmentCleaner, isHotelManager } = roleCheck({
+        user,
+        hotelId,
+        cleaners,
+    });
 
     const handleArchiving = async () => {
         try {
-            await mutateAsync({ isActive: false });
+            await update({ isActive: false });
             addToast({
                 title: "Archived",
                 description: "Assignment was successfully archived!",
@@ -31,7 +51,7 @@ export function AssignmentTile({ assignment }: { assignment: AssignmentResponse 
                 color: "warning",
             });
         }
-    }
+    };
 
     const nextStatus: Record<AssignmentStatus, AssignmentStatus | null> = {
         [AssignmentStatus.PENDING]: AssignmentStatus.IN_PROGRESS,
@@ -43,7 +63,7 @@ export function AssignmentTile({ assignment }: { assignment: AssignmentResponse 
         const newStatus = nextStatus[status];
         if (!newStatus) return;
         try {
-            await mutateAsync({ status: newStatus });
+            await update({ status: newStatus });
             addToast({
                 title: "Status Changed!",
                 description: `Assignment was set to ${statusString[newStatus]}`,
@@ -57,43 +77,91 @@ export function AssignmentTile({ assignment }: { assignment: AssignmentResponse 
                 color: "danger",
             });
         }
-    }
+    };
+
+    // 🎨 Color coding for statuses
+    const statusColors: Record<AssignmentStatus, string> = {
+        [AssignmentStatus.PENDING]: "bg-yellow-100 text-yellow-800 border-yellow-300",
+        [AssignmentStatus.IN_PROGRESS]: "bg-blue-100 text-blue-800 border-blue-300",
+        [AssignmentStatus.DONE]: "bg-green-100 text-green-800 border-green-300",
+    };
+
     return (
-        <div
-            className=
-            {`flex flex-col gap-1 border-2 border-green-900 rounded-xl p-4 h-fit transition-opacity ${isActive ? "bg-cyan-400" : "bg-gray-400 opacity-70 italic"}`}>
-            <div className="flex justify-between bg-fuchsia-600 p-1.5 rounded-xl items-center">
-                <p className="">Assignment</p>
-                {isManager && isActive && <Button onPress={handleArchiving} color="warning">Archive</Button>}
-                {!isActive && <p className="">Archived</p>}
-            </div>
+        <article
+            className={`flex flex-col gap-4 rounded-2xl border shadow-md p-5 transition-opacity ${isActive ? "bg-white" : "bg-gray-100 opacity-70 italic"
+                }`}
+            aria-labelledby={`assignment-${assignmentId}-title`}
+        >
+            {/* Header */}
+            <header className="flex justify-between items-center bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white px-4 py-2 rounded-xl">
+                <h2
+                    id={`assignment-${assignmentId}-title`}
+                    className="font-semibold text-lg"
+                >
+                    Assignment
+                </h2>
+                {isHotelManager && isActive && (
+                    <Button
+                        disabled={isPending}
+                        onPress={handleArchiving}
+                        color="warning"
+                        className="rounded-lg text-sm font-medium"
+                        aria-label="Archive assignment"
+                    >
+                        Archive
+                    </Button>
+                )}
+                {!isActive && <p className="text-sm font-medium">Archived</p>}
+            </header>
 
-            <ul className="p-2.5">
-                <li>
-                    Room number: {number}
-                </li>
-                <li>
-                    Due: {dateAndTime({ dateTime: dueAt })}
-                </li>
-                <li className="flex justify-between items-center">
-                    <span>
-                        Status: {statusString[status]}
+            {/* Content */}
+            <section className="space-y-2 text-gray-800 text-sm">
+                <p>
+                    <span className="font-semibold">Room:</span> {number}
+                </p>
+                <p>
+                    <span className="font-semibold">Due:</span>{" "}
+                    {dateAndTime({ dateTime: dueAt })}
+                </p>
+                <p className="flex justify-between items-center">
+                    <span
+                        className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium border ${statusColors[status]}`}
+                    >
+                        {statusString[status]}
                     </span>
-                    {!(status === AssignmentStatus.DONE) && isActive && isAssignmentCleaner && (
-                        <Button className="bg-green-600 rounded-2xl py-2 px-1 cursor-pointer" onClick={handleStatus}>
-                            Update Process
-                        </Button>
-                    )}
-                </li>
-                <li>Cleaners: <ClickableNames users={cleaners} /></li>
-                <li>Assigned by: {assignedByUser === null ? "Deleted Account" : assignedByUser.name}</li>
-                <li>Created: {dateAndTime({ dateTime: createdAt })}</li>
-            </ul>
-            <div className="flex w-full justify-between">
-                <Notes assignmentId={assignmentId} hotelId={hotelId} userId={user?.id!} />
-            </div>
-        </div>
-    )
+                    {!(status === AssignmentStatus.DONE) &&
+                        isActive &&
+                        isAssignmentCleaner && (
+                            <Button
+                                disabled={isPending}
+                                className="bg-green-600 hover:bg-green-700 text-white rounded-lg px-3 py-1 text-xs font-medium shadow-sm"
+                                onClick={handleStatus}
+                                aria-label="Update assignment status"
+                            >
+                                Update Progress
+                            </Button>
+                        )}
+                </p>
+                <p>
+                    <span className="font-semibold">Cleaners:</span>{" "}
+                    <ClickableNames users={cleaners} isDisabled={!isActive} />
+                </p>
+                <p>
+                    <span className="font-semibold">Assigned by:</span>{" "}
+                    {assignedByUser === null
+                        ? "Deleted Account"
+                        : assignedByUser.name}
+                </p>
+                <p>
+                    <span className="font-semibold">Created:</span>{" "}
+                    {dateAndTime({ dateTime: createdAt })}
+                </p>
+            </section>
+
+            {/* Footer / Notes */}
+            <footer className="border-t border-gray-200 pt-3">
+                <Notes assignmentId={assignmentId} hotelId={hotelId} userId={user.id} isDisabled={!isActive} />
+            </footer>
+        </article>
+    );
 }
-
-

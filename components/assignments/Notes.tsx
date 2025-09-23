@@ -1,4 +1,6 @@
-import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@apptypes";
+'use client'
+
+import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@/types";
 import {
     addToast,
     Button,
@@ -18,7 +20,7 @@ import { AssignmentNote } from "@prisma/client";
 import { FormEvent, useState } from "react";
 
 
-export function Notes({ assignmentId, hotelId, userId }: AssignmentNoteCollectionParams & { userId: string }) {
+export function Notes({ assignmentId, hotelId, userId, isDisabled = false }: AssignmentNoteCollectionParams & { isDisabled?: boolean } & { userId: string }) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
     const { mutateAsync: add } = useCreateAssignmentNote({ assignmentId, hotelId });
@@ -39,6 +41,7 @@ export function Notes({ assignmentId, hotelId, userId }: AssignmentNoteCollectio
         e.preventDefault();
         const data = parseFormData<AssignmentNoteCreationBody>(e.currentTarget, { content: "" });
         try {
+            if (data.content === "") return
             await add(data);
             onClose();
             setIsOther(false)
@@ -48,6 +51,14 @@ export function Notes({ assignmentId, hotelId, userId }: AssignmentNoteCollectio
                 color: "success",
             });
         } catch (e: unknown) {
+            if (e instanceof Error && e.message === "EMPTY_NOTE") {
+                addToast({
+                    title: "Empty note!",
+                    description: `You submitted an empty note!`,
+                    color: "warning",
+                });
+                return;
+            }
             console.error(e);
             addToast({
                 title: "Assignment could not be created!",
@@ -71,8 +82,16 @@ export function Notes({ assignmentId, hotelId, userId }: AssignmentNoteCollectio
                 });
                 return;
             }
-            throw new Error("you are not the author")
-        } catch (e) {
+            throw new Error("NOT_AUTHOR")
+        } catch (e: unknown) {
+            if ((e as any).message === "NOT_AUTHOR") {
+                addToast({
+                    title: "You are not the author!",
+                    description: `Notes can only be deleted by their author`,
+                    color: "warning",
+                });
+                return;
+            }
             console.error(e)
             addToast({
                 title: "Note could not be deleted!",
@@ -84,7 +103,7 @@ export function Notes({ assignmentId, hotelId, userId }: AssignmentNoteCollectio
 
     return (
         <>
-            <Button color="primary" onPress={onOpen}>
+            <Button color="primary" onPress={onOpen} isDisabled={isDisabled}>
                 Notes
             </Button>
             <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>

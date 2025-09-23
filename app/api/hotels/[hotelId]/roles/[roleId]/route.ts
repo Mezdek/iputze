@@ -1,4 +1,4 @@
-import type { RoleParams, RoleUpdateBody } from "@apptypes";
+import type { RoleParams, RoleUpdateBody } from "@/types";
 import { APP_ERRORS, canModifyRole, GeneralErrors, getRoleOrThrow, getUserOrThrow, RolesErrors, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Role } from "@prisma/client";

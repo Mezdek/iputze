@@ -1,14 +1,14 @@
-import { HttpStatus, REFRESH_TOKEN_NAME, ResponseCookieOptions, revokeRefreshToken, withErrorHandling } from "@lib";
+import { HttpStatus, prisma, SESSION_COOKIE_KEY, withErrorHandling } from "@lib";
 import { NextResponse } from "next/server";
 
 export const POST = withErrorHandling(async (req) => {
-    const cookie = req.cookies.get(REFRESH_TOKEN_NAME);
+    const sessionId = req.cookies.get(SESSION_COOKIE_KEY);
 
-    if (cookie?.value) await revokeRefreshToken(cookie.value);
+    await prisma.session.delete({ where: { id: sessionId } });
 
     const res = NextResponse.json(null, { status: HttpStatus.OK });
 
-    res.cookies.set(REFRESH_TOKEN_NAME, "", { ...ResponseCookieOptions, maxAge: 0 });
+    res.cookies.set(SESSION_COOKIE_KEY, "", { maxAge: 0 });
 
     return res;
 });

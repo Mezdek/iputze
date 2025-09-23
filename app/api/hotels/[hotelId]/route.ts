@@ -1,4 +1,4 @@
-import type { HotelParams } from "@apptypes";
+import type { HotelParams } from "@/types";
 import { APP_ERRORS, canDeleteHotel, canUpdateHotel, canViewHotel, DefaultMessages, GeneralErrors, getHotelOrThrow, getUserOrThrow, HttpStatus, prisma, withErrorHandling } from "@lib";
 import type { Hotel } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";

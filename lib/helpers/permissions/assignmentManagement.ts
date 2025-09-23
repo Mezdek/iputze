@@ -1,4 +1,4 @@
-import { adminRole, managerRole } from "@/lib/helpers";
+import { isAdmin, isHotelManager } from "@/lib/helpers";
 import type { AdminRights, AssignmentManagement } from "@/types";
 
 
@@ -8,7 +8,7 @@ import type { AdminRights, AssignmentManagement } from "@/types";
  * Admins or managers of the hotel may create assignments.
 */
 export const canCreateAssignment = ({ roles, hotelId }: AssignmentManagement): boolean => {
-    return !!adminRole({ roles }) || !!managerRole({ roles, hotelId });
+    return isAdmin({ roles }) || isHotelManager({ roles, hotelId });
 };
 
 
@@ -18,7 +18,7 @@ export const canCreateAssignment = ({ roles, hotelId }: AssignmentManagement): b
  * Admins, hotel managers, or assigned cleaners.
  */
 export const canListAssignments = ({ roles, hotelId }: AssignmentManagement): boolean => {
-    return !!adminRole({ roles }) || !!managerRole({ roles, hotelId });
+    return isAdmin({ roles }) || isHotelManager({ roles, hotelId });
 };
 
 
@@ -26,4 +26,4 @@ export const canListAssignments = ({ roles, hotelId }: AssignmentManagement): bo
  * Determines whether the actor can delete an assignment.
  * Only admins or hotel managers.
  */
-export const canDeleteAssignment = ({ roles }: AdminRights): boolean => !!adminRole({ roles });
+export const canDeleteAssignment = ({ roles }: AdminRights): boolean => isAdmin({ roles });

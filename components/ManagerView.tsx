@@ -1,77 +1,116 @@
-import type { EnhancedRole } from "@apptypes";
-import { RoleTile, RoomCreation, RoomTile } from "@components";
-import { Tab, Tabs } from "@heroui/react";
-import { useAssignments, useMe, useRoles, useRooms } from "@hooks";
+'use client';
+
+import type { EnhancedRole } from "@/types";
+import { AssignmentCreation, AssignmentTile, RoleTile, RoomCreation, RoomTile } from "@components";
+import { Spinner, Tab, Tabs } from "@heroui/react";
+import { useAssignments, useRoles, useRooms } from "@hooks";
 import type { Room } from "@prisma/client";
 import { useParams } from "next/navigation";
-import { AssignmentsTab } from "./AssignmentsTab";
 import { HotelBanner } from "./HotelBanner";
 import { ListRenderer } from "./ListRenderer";
-import { TabProps } from "./types";
-
+import { SpecialViewProps, TabProps } from "./types";
 
 const sections = {
     ASSIGNMENTS: "Assignments",
     ROOMS: "Rooms",
-    WORKERS: "Workers"
+    WORKERS: "Workers",
 } as const;
 
+export function ManagerView({ user }: SpecialViewProps) {
 
-export function ManagerView() {
-    const { data: user } = useMe();
-    if (!user) return;
     const { hotelId } = useParams<{ hotelId: string }>();
-    const role = user.roles.find(r => r.hotel.id === hotelId)
-    if (!role) return
-    const { data: workers } = useRoles({ hotelId })
-    const { data: rooms, isLoading } = useRooms({ hotelId });
-    const { data: assignments } = useAssignments({ hotelId });
+    const role = user.roles.find((r) => r.hotel.id === hotelId);
+    if (!role) return null;
+
+    const { data: workers, isLoading: workersLoading } = useRoles({ hotelId });
+    const { data: rooms, isLoading: roomsLoading } = useRooms({ hotelId });
+    const { data: assignments, isLoading: assignmentsLoading } = useAssignments({ hotelId });
 
     return (
-        <div className="h-screen w-full">
-            <Tabs className="" aria-label="Sections" defaultSelectedKey={sections.ASSIGNMENTS}>
+        <div className="min-h-screen w-full flex flex-col">
+            <Tabs
+                aria-label="Hotel management sections"
+                destroyInactiveTabPanel
+                className="flex"
+            >
                 <Tab key={sections.ROOMS} title={sections.ROOMS}>
-                    <RoomsTab hotelName={role.hotel.name} hotelId={hotelId} rooms={rooms} isLoading={isLoading} />
+                    <EntityTab
+                        hotelName={role.hotel.name}
+                        isLoading={roomsLoading}
+                        emptyMessage="No rooms have been created yet."
+                        hotelId={hotelId}
+                        user={user}
+                        button={
+                            <RoomCreation hotelId={hotelId} />
+                        }
+                    >
+                        <ListRenderer data={rooms} isLoading={roomsLoading} empty={<></>}>
+                            {(room: Room) => <RoomTile key={room.id} room={room} />}
+                        </ListRenderer>
+                    </EntityTab>
                 </Tab>
+
                 <Tab key={sections.WORKERS} title={sections.WORKERS}>
-                    <WorkersTab hotelName={role.hotel.name} hotelId={hotelId} workers={workers} isLoading={isLoading} />
+                    <EntityTab
+                        hotelName={role.hotel.name}
+                        isLoading={workersLoading}
+                        emptyMessage="No workers are assigned to this hotel yet."
+                        hotelId={hotelId}
+                        user={user}
+                    >
+                        <ListRenderer data={workers} isLoading={workersLoading} empty={<></>}>
+                            {(worker: EnhancedRole) => <RoleTile key={worker.id} role={worker} />}
+                        </ListRenderer>
+                    </EntityTab>
                 </Tab>
-                <Tab key={sections.ASSIGNMENTS} title={sections.ASSIGNMENTS} >
-                    <AssignmentsTab hotelName={role.hotel.name} hotelId={hotelId} assignments={assignments} isLoading={isLoading} />
+                <Tab key={sections.ASSIGNMENTS} title={sections.ASSIGNMENTS}>
+                    <EntityTab
+                        hotelName={role.hotel.name}
+                        isLoading={assignmentsLoading}
+                        emptyMessage="No assignments have been created yet."
+                        hotelId={hotelId}
+                        user={user}
+                        button={
+                            < AssignmentCreation hotelId={hotelId} />
+                        }
+                    >
+                        <ListRenderer data={assignments} isLoading={assignmentsLoading} empty={<div>No Assignments</div>}>
+                            {(assignment) => <AssignmentTile assignment={assignment} key={assignment.id} user={user} />}
+                        </ListRenderer>
+                    </EntityTab>
                 </Tab>
             </Tabs>
         </div>
-    )
+    );
 }
 
+/**
+ * Generic wrapper for hotel tab sections.
+ */
+interface EntityTabProps extends TabProps {
+    isLoading: boolean;
+    emptyMessage: string;
+    children: React.ReactNode;
+    button?: React.ReactNode;
+}
 
-
-interface RoomsTabProps extends TabProps { rooms: Room[] | null | undefined }
-
-function RoomsTab({ hotelName, rooms, isLoading, hotelId }: RoomsTabProps) {
+function EntityTab({ hotelName, isLoading, emptyMessage, children, button }: EntityTabProps) {
     return (
-        <div className="flex flex-col gap-10 items-center w-full h-full">
+        <div className="flex flex-col gap-10 items-center w-full min-h-full">
             <HotelBanner hotelName={hotelName}>
-                < RoomCreation hotelId={hotelId} />
+                {button}
             </HotelBanner>
-            <ListRenderer data={rooms} isLoading={isLoading} empty={<div>No Rooms</div>}>
-                {(room) => <RoomTile room={room} key={room.id} />}
-            </ListRenderer>
+            {isLoading ? (
+                <div className="flex justify-center items-center py-10">
+                    <Spinner label="Loading..." />
+                </div>
+            ) : (
+                <div className="w-full">
+                    {children ?? (
+                        <p className="text-gray-500 text-center italic">{emptyMessage}</p>
+                    )}
+                </div>
+            )}
         </div>
-    )
+    );
 }
-
-
-interface WorkersTabProps extends TabProps { workers: EnhancedRole[] | null | undefined }
-
-function WorkersTab({ hotelName, workers, isLoading }: WorkersTabProps) {
-    return (
-        <div className="flex flex-col gap-10 items-center w-full h-full">
-            <HotelBanner hotelName={hotelName} />
-            <ListRenderer data={workers} isLoading={isLoading} empty={<div>No Workers</div>}>
-                {(worker) => <RoleTile role={worker} key={worker.id} />}
-            </ListRenderer>
-        </div>
-    )
-}
-

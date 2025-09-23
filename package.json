@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit",
+    "tsc": "tsc --noEmit",
     "db:reset": "rm -rf ./prisma/{migrations,dev.db} && prisma generate && npx prisma migrate dev --name init && npx prisma db seed"
   },
   "dependencies": {

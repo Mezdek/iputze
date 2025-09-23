@@ -1,3 +1,4 @@
+'use client'
 import { useHotels } from "@hooks";
 import { useParams } from "next/navigation";
 

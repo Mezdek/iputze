@@ -1,4 +1,4 @@
-import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@apptypes";
+import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@/types";
 import { getAssignmentAccessContext, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { AssignmentNote } from "@prisma/client";

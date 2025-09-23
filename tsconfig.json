@@ -50,12 +50,6 @@
       ],
       "@lib": [
         "./lib/index"
-      ],
-      "@style/*": [
-        "./styles/*"
-      ],
-      "@apptypes": [
-        "./types/index"
       ]
     }
   },

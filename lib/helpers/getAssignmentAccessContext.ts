@@ -1,5 +1,5 @@
-import type { AssignmentAccessContext, AssignmentNoteCollectionParams, } from "@apptypes";
-import { adminRole, APP_ERRORS, AssignmentErrors, GeneralErrors, getAssignmentOrThrow, getHotelOrThrow, getUserOrThrow, managerRole } from "@lib";
+import type { AssignmentAccessContext, AssignmentNoteCollectionParams, } from "@/types";
+import { APP_ERRORS, AssignmentErrors, GeneralErrors, getAssignmentOrThrow, getHotelOrThrow, getUserOrThrow, isAdmin as isAdminCheck, isHotelManager as isHotelManagerCheck } from "@lib";
 import { prisma } from "@lib/prisma";
 import { NextRequest } from "next/server";
 
@@ -22,8 +22,8 @@ export const getAssignmentAccessContext = async ({
 
     const { roles, id: userId } = await getUserOrThrow(req);
 
-    const isAdmin = !!adminRole({ roles });
-    const isHotelManager = !!managerRole({ roles, hotelId });
+    const isAdmin = isAdminCheck({ roles });
+    const isHotelManager = isHotelManagerCheck({ roles, hotelId });
     let isAssignmentCleaner = false;
 
     const returnable = {

@@ -1,4 +1,4 @@
-import type { AssignmentNoteParams } from "@apptypes";
+import type { AssignmentNoteParams } from "@/types";
 import { getAssignmentNoteOrThrow, getAssignmentOrThrow, getHotelOrThrow, getUserOrThrow, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { NextRequest, NextResponse } from "next/server";

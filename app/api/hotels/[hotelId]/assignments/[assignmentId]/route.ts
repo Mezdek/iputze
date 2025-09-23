@@ -1,4 +1,4 @@
-import type { AssignmentParams, AssignmentUpdateBody } from "@apptypes";
+import type { AssignmentParams, AssignmentUpdateBody } from "@/types";
 import { APP_ERRORS, canDeleteAssignment, GeneralErrors, getAssignmentAccessContext, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { Assignment } from "@prisma/client";

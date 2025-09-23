@@ -1,4 +1,4 @@
-import type { HotelCreationBody, PublicHotel } from "@apptypes";
+import type { HotelCreationBody, PublicHotel } from "@/types";
 import { APP_ERRORS, canCreateHotel, getUserOrThrow, HotelErrors, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { Hotel } from "@prisma/client";

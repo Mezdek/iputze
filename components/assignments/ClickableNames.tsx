@@ -1,21 +1,22 @@
-import { SafeUser } from "@apptypes";
+import { SafeUser } from "@/types";
 
-export function ClickableNames({ users }: { users: SafeUser[] }) {
+export function ClickableNames({ users, isDisabled = false }: { users: SafeUser[], isDisabled?: boolean }) {
+    const tw = isDisabled ? "cursor-text" : "cursor-pointer hover:underline"
     return (
         <>
             {
                 users.map
                     (
                         (user, index) =>
-                            <span key={user.id}>
+                            <button key={user.id} disabled={isDisabled}>
                                 <i
                                     onClick={() => console.log(user.id)}
-                                    className="not-italic cursor-pointer hover:underline"
+                                    className={"not-italic " + tw}
                                 >
                                     {user.name}
                                 </i>
                                 {index < users.length - 1 && ", "}
-                            </span>
+                            </button>
                     )
             }
         </>

@@ -1,4 +1,4 @@
-import type { EnhancedRole, RoleCollectionParams } from "@apptypes";
+import type { EnhancedRole, RoleCollectionParams } from "@/types";
 import { APP_ERRORS, canCreateRole, canViewRoles, GeneralErrors, getHotelOrThrow, getUserOrThrow, HttpStatus, RolesErrors, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Role } from "@prisma/client";

@@ -1,2 +1,14 @@
-export const AUTH_HEADER = "Authorization";
-export const BEARER_PREFIX = "Bearer ";
+import { parseExpiryToMilliSeconds } from "@lib";
+import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+
+export const SESSION_COOKIE_EXP = process.env.SESSION_COOKIE_EXP || "7d";
+
+export const SESSION_COOKIE_KEY = "session_id";
+
+export const ResponseCookieOptions: Partial<ResponseCookie> = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: parseExpiryToMilliSeconds(SESSION_COOKIE_EXP)
+}

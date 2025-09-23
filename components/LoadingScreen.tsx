@@ -2,8 +2,19 @@ import Image from "next/image";
 
 export function LoadingScreen() {
     return (
-        <div className="h-screen w-full flex items-center justify-center text-5xl">
-            <Image src={"/download.gif"} alt="loading" width={10} height={10} className="h-1/2 w-fit flex items-center" />
+        <div
+            className="h-screen w-full flex flex-col items-center justify-center"
+            role="status"
+            aria-live="polite"
+        >
+            <Image
+                src="/download.gif"
+                alt="Loading..."
+                width={200} // approximate displayed size
+                height={200}
+                className="object-contain"
+            />
+            <span className="sr-only">Loading…</span>
         </div>
-    )
+    );
 }

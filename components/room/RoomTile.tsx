@@ -1,21 +1,24 @@
-import { Room } from "@prisma/client";
-import { RoomDeletion } from "./RoomDeletion";
-import { RoomUpdate } from "./RoomUpdate";
+import { RoomDeletion, RoomUpdate } from "@components";
+import type { Room } from "@prisma/client";
 
 export function RoomTile({ room }: { room: Room }) {
     return (
-        <div className="flex flex-col gap-1 border-solid border-green-900 bg-cyan-400 rounded-xl border-2 p-4 h-fit">
-            <p className="bg-amber-400 p-1.5 rounded-xl">Room</p>
-            <ul className="p-2.5">
-                <li>Number: {room.number}</li>
-                <li>Cleanliness: {room.cleanliness}</li>
-                <li>Occupancy: {room.occupancy}</li>
-                <p>{!room.notes || room.notes === "" ? "No Notes" : room.notes}</p>
-            </ul>
-            <div className="flex w-full justify-between">
+        <article className="flex flex-col gap-3 border-2 border-green-900 bg-cyan-400 rounded-xl p-4 shadow-md transition hover:shadow-lg">
+            <header className="bg-amber-400 p-2 rounded-xl text-lg font-semibold">
+                Room
+            </header>
+            <section className="p-2 flex flex-col gap-1">
+                <p><strong>Number:</strong> {room.number}</p>
+                <p><strong>Cleanliness:</strong> {room.cleanliness}</p>
+                <p><strong>Occupancy:</strong> {room.occupancy}</p>
+                <p>
+                    <strong>Notes:</strong> {room.notes && room.notes.trim() !== "" ? room.notes : "No notes"}
+                </p>
+            </section>
+            <footer className="flex w-full justify-between gap-2 mt-2">
                 <RoomUpdate room={room} />
                 <RoomDeletion room={room} />
-            </div>
-        </div>
+            </footer>
+        </article>
     )
 }

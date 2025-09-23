@@ -1,4 +1,4 @@
-import type { SignUpRequestBody, SignUpResponse } from "@apptypes";
+import type { SignUpRequestBody, SignUpResponse } from "@/types";
 import { api, getPath } from "@lib";
 import { useMutation } from "@tanstack/react-query";
 
