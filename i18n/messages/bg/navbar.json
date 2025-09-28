@@ -1,0 +1,19 @@
+{
+    "name": "navbar",
+    "pages": {
+        "dashboard": "Табло",
+        "hotels": "Хотели"
+    },
+    "logout": "Изход",
+    "settings": "Настройки",
+    "locales": {
+        "ar": "ع",
+        "bg": "бг",
+        "de": "DE",
+        "el": "Ελ",
+        "en": "EN",
+        "sq": "SH"
+    },
+    "profile_header": "Влезли сте като {name}",
+    "image_alt": "Аватар на {name}"
+}

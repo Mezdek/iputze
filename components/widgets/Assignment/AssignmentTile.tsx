@@ -1,12 +1,13 @@
 'use client'
 
 import type { AssignmentResponse, InjectedAuthProps } from "@/types";
-import { ClickableNames, Notes, Tile } from "@components";
+import { ClickableNames, Notes, RichText, Tile } from "@components";
 import { addToast, Button } from "@heroui/react";
-import { useUpdateAssignment } from "@hooks";
+import { useErrorToast, useUpdateAssignment } from "@hooks";
 import { roleCheck } from "@lib";
 import { AssignmentStatus } from "@prisma/client";
-import { dateAndTime, nextStatus, statusString } from "../utils";
+import { useTranslations } from "next-intl";
+import { dateAndTime, nextStatus, statusString } from "../../utils";
 
 export function AssignmentTile({
     assignment,
@@ -23,6 +24,9 @@ export function AssignmentTile({
         cleaners,
     } = assignment;
 
+    const t = useTranslations("assignment")
+    const { showErrorToast } = useErrorToast()
+
     const { mutateAsync: update, isPending } = useUpdateAssignment({
         assignmentId,
         hotelId,
@@ -38,8 +42,8 @@ export function AssignmentTile({
         try {
             await update({ isActive: false });
             addToast({ title: "Archived", description: "Assignment successfully archived!", color: "success" });
-        } catch {
-            addToast({ title: "Oops!", description: "Assignment could not be archived!", color: "warning" });
+        } catch (e) {
+            showErrorToast(e)
         }
     };
 
@@ -55,8 +59,8 @@ export function AssignmentTile({
                 description: `Assignment set to ${statusString[newStatus]}`,
                 color: "success",
             });
-        } catch {
-            addToast({ title: "Oops!", description: "Assignment status could not be changed!", color: "danger" });
+        } catch (e) {
+            showErrorToast(e)
         }
     };
 
@@ -65,29 +69,33 @@ export function AssignmentTile({
             header={
                 <>
                     <div className="flex flex-col">
-                        <h2 id={`assignment-${assignmentId}-title`}>Room {number}</h2>
-                        <h3 className="text-sm italic">{statusString[status].state}</h3>
+                        <h2 id={`assignment-${assignmentId}-title`}>{t("header", { number })}</h2>
+                        <h3 className="text-sm italic">
+                            {t(`status.${statusString[status].state}`)}
+                        </h3>
                     </div>
-                    {isActive && !isAssignmentCleaner && status !== AssignmentStatus.DONE && (
+                    {isActive && isAssignmentCleaner && status !== AssignmentStatus.DONE && (
                         <Button
                             disabled={isPending}
                             color="success"
                             className="rounded-lg text-sm font-medium"
                             onPress={handleStatus}
                         >
-                            {statusString[status].button}
+                            {t(`status_update.${statusString[status].button}`)}
                         </Button>
                     )}
-                    {(!isHotelManager || !isActive) && (
+                    {(isHotelManager || !isActive) && (
                         <Button
                             disabled={isPending || !isActive}
                             isDisabled={isPending || !isActive}
                             onPress={handleArchiving}
-                            variant="solid"
-                            color="default"
+                            variant={isActive ? "solid" : "bordered"}
+                            color={isActive ? "danger" : "default"}
                             className="rounded-lg text-sm font-medium"
                         >
-                            {isActive ? "Archive" : "Archived"}
+                            {
+                                isActive ? t("archive") : t("archived")
+                            }
                         </Button>
                     )}
                 </>
@@ -95,12 +103,31 @@ export function AssignmentTile({
 
             body={
                 <>
-                    <p><strong>Due:</strong> {dateAndTime({ dateTime: dueAt })}</p>
+                    <p>
+                        {t.rich("due_at", {
+                            strong:
+                                (chunks) => <strong>{chunks}</strong>,
+                            dueAt: dateAndTime({ dateTime: dueAt })
+                        })}
+                    </p>
                     <p className="flex justify-between items-center">
                     </p>
-                    <p><strong>Cleaners:</strong> <ClickableNames users={cleaners} isDisabled={!isActive} /></p>
-                    <p><strong>Assigned by:</strong> {assignedByUser ? assignedByUser.name : "Deleted Account"}</p>
-                    <p><strong>Created:</strong> {dateAndTime({ dateTime: createdAt })}</p>
+                    <div>
+                        <RichText>
+                            {(tags) => t.rich("cleaners", { ...tags })}
+                        </RichText>
+                        <ClickableNames users={cleaners} isDisabled={!isActive} />
+                    </div>
+                    <RichText>
+                        {(tags) => t.rich("assigned_by", { ...tags, name: assignedByUser?.name ?? t("deleted") })}
+                    </RichText>
+                    <p>
+                        {t.rich("created_at", {
+                            strong:
+                                (chunks) => <strong>{chunks}</strong>,
+                            createdAt: dateAndTime({ dateTime: createdAt })
+                        })}
+                    </p>
                 </>
             }
 

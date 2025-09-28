@@ -1,3 +1,5 @@
-// hero.ts
 import { heroui } from "@heroui/react";
-export default heroui();
+
+import theme from "./theme.json";
+
+export default heroui(theme);

@@ -6,10 +6,12 @@ import { Button, Card, CardBody, Form, Input, Link, Tab, Tabs } from "@heroui/re
 import { useSignIn, useSignUp } from "@hooks";
 import { getPath, parseFormData } from "@lib";
 import { isAxiosError } from "axios";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 export function LoginWidget() {
+  const t = useTranslations("login")
   const router = useRouter();
   const [selected, setSelected] = useState("sign_in");
 
@@ -55,40 +57,46 @@ export function LoginWidget() {
           size="lg"
           onSelectionChange={(key) => setSelected(key as string)}
         >
-          <Tab key="sign_in" title="Login" className="h-full bg">
+          <Tab key="sign_in" title={t("signin_tab_title")} className="h-full bg">
             <Form className="flex flex-col gap-4 h-full justify-between" onSubmit={handleSignIn} id={SIGNIN_FORM}>
               <div className="flex flex-col gap-4 h-full w-full">
-                <Input isRequired label="Email" placeholder="Enter your email" type="email" name="email" form={SIGNIN_FORM} />
+                <Input isRequired label={t("email_input.label")} placeholder={t("email_input.placeholder")} type="email" name="email" form={SIGNIN_FORM} />
                 <PasswordInput formId={SIGNIN_FORM} autoComplete="current-password" />
                 <FormError message={apiError} />
                 <p className="text-small">
-                  Need to create an account?{" "}
-                  <Link size="sm" onPress={() => setSelected("sign_up")}>
-                    Sign up
-                  </Link>
+                  {
+                    t.rich("signup_invite", {
+                      Link: (chunks) => <Link className="cursor-pointer" size="sm" onPress={() => setSelected("sign_up")}>
+                        {chunks}
+                      </Link>
+                    })
+                  }
                 </p>
               </div>
               <Button fullWidth color="primary" type="submit" isLoading={isPending} form={SIGNIN_FORM} size="lg">
-                Sign In
+                {t("signin_button")}
               </Button>
             </Form>
           </Tab>
-          <Tab key="sign_up" title="Sign up" className="h-full">
+          <Tab key="sign_up" title={t("signup_tab_title")} className="h-full">
             <Form className="flex flex-col gap-4 h-full justify-between" onSubmit={handleSignUp} id={SIGNUP_FORM}>
               <div className="flex flex-col gap-4 h-full w-full">
-                <Input isRequired label="Name" placeholder="Enter your name" name="name" form={SIGNUP_FORM} />
-                <Input isRequired label="Email" placeholder="Enter your email" type="email" name="email" form={SIGNUP_FORM} />
+                <Input isRequired label={t("name_input.label")} placeholder={t("name_input.placeholder")} name="name" form={SIGNUP_FORM} />
+                <Input isRequired label={t("email_input.label")} placeholder={t("email_input.placeholder")} type="email" name="email" form={SIGNUP_FORM} />
                 <PasswordInput formId={SIGNUP_FORM} autoComplete="new-password" />
                 <FormError message={apiError} />
                 <p className="text-small">
-                  Already have an account?{" "}
-                  <Link size="sm" onPress={() => setSelected("sign_in")}>
-                    Sign in
-                  </Link>
+                  {
+                    t.rich("signin_invite", {
+                      Link: (chunks) => <Link className="cursor-pointer" size="sm" onPress={() => setSelected("sign_in")}>
+                        {chunks}
+                      </Link>
+                    })
+                  }
                 </p>
               </div>
               <Button fullWidth color="primary" type="submit" form={SIGNUP_FORM} size="lg">
-                Sign up
+                {t("signup_button")}
               </Button>
             </Form>
           </Tab>

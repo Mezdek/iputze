@@ -2,13 +2,15 @@
 
 import { ApprovalRequest } from "@components";
 import { addToast } from "@heroui/react";
-import { useDeleteRoom } from "@hooks";
+import { useDeleteRoom, useErrorToast } from "@hooks";
 import { Room } from "@prisma/client";
-import { isAxiosError } from "axios";
+import { useTranslations } from "next-intl";
 
 export function RoomDeletion({ room }: { room: Room }) {
     const { hotelId, id: roomId, number: roomNumber } = room;
     const { mutateAsync: deleteRoom } = useDeleteRoom({ hotelId, roomId });
+    const t = useTranslations("room.deletion_panel");
+    const { showErrorToast } = useErrorToast();
 
     const handleDelete = async () => {
         try {
@@ -19,33 +21,20 @@ export function RoomDeletion({ room }: { room: Room }) {
                 color: "success",
             });
         } catch (e) {
-            if (isAxiosError(e) && e.status === 400) {
-                addToast({
-                    title: "Room could not be deleted!",
-                    description: "There are still assignments attached to this room!",
-                    color: "warning",
-                });
-            } else {
-                console.error(e);
-                addToast({
-                    title: "Room could not be deleted!",
-                    description: "An unknown error occurred!",
-                    color: "danger",
-                });
-            }
+            showErrorToast(e)
         }
     };
 
     return (
         <ApprovalRequest
-            header="Room Deletion"
+            header={t("header")}
             modalButton={{
-                text: "Delete",
+                text: t("buttons.open"),
                 color: "warning",
             }}
-            question={`Are you sure you want to delete room ${roomNumber}?`}
+            question={t("approval_question", { number: room.number })}
             submitButton={{
-                text: "Delete",
+                text: t("buttons.submit"),
                 color: "warning",
                 action: handleDelete,
             }}

@@ -1,22 +1,29 @@
 'use client'
 
 import { Input } from "@heroui/react";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { EyeFilledIcon, EyeSlashFilledIcon } from "./icons";
 
-type PasswordInputProps = { formId?: string, name?: string, label?: string, placeholder?: string, autoComplete?: "new-password" | "current-password" }
+type PasswordInputProps = { formId?: string, name?: string, autoComplete?: "new-password" | "current-password" }
 
 export function PasswordInput(props: PasswordInputProps) {
-    const { formId = "", name = "password", label = "Password", placeholder = "Enter your password", autoComplete } = props
+    const t = useTranslations("login");
     const [isVisible, setIsVisible] = useState<boolean>(false);
+    const locale = useLocale();
+
+    const className = locale === "ar" ? "placeholder-rtl" : ""
+
     return (
         <Input
-            autoComplete={autoComplete}
-            form={formId}
+            dir="ltr"
+            className={className}
+            autoComplete={props.autoComplete}
+            form={props.formId}
             isRequired
-            label={label}
-            name={name}
-            placeholder={placeholder}
+            label={t("password_input.label")}
+            name={props.name || "password"}
+            placeholder={t("password_input.placeholder")}
             type={isVisible ? "text" : "password"}
             endContent={
                 <button

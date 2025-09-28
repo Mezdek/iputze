@@ -1,0 +1,19 @@
+{
+    "name": "navbar",
+    "pages": {
+        "dashboard": "Dashboard",
+        "hotels": "Hotels"
+    },
+    "logout": "Log out",
+    "settings": "My settings",
+    "locales": {
+        "ar": "ع",
+        "bg": "бг",
+        "de": "DE",
+        "el": "Ελ",
+        "en": "EN",
+        "sq": "SH"
+    },
+    "profile_header": "Signed in as {name}",
+    "image_alt": "Avatar of {name}"
+}

@@ -1,5 +1,3 @@
-export * from "./factories";
-export * from "./handleError";
-export * from "./HttpError";
-export * from "./withErrorHandling";
+export * from "./api";
+export * from "./client";
 

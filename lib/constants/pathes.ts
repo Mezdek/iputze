@@ -24,6 +24,7 @@ export const getPath = (props?: getPathProps) => {
             ASSIGNMENT: `/hotels/${props?.hotelId}/assignments/${props?.assignmentId}`,
             ASSIGNMENTNOTES: `/hotels/${props?.hotelId}/assignments/${props?.assignmentId}/assignmentNotes`,
             ASSIGNMENTNOTE: `/hotels/${props?.hotelId}/assignments/${props?.assignmentId}/assignmentNotes/${props?.assignmentNoteId}`,
+            LOCALE:"/set-locale"
 
         },
         DASHBOARD: "/dashboard",

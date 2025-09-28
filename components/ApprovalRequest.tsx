@@ -9,6 +9,7 @@ import {
     ModalHeader,
     useDisclosure
 } from "@heroui/react";
+import { useTranslations } from "next-intl";
 
 type THeroUIButtonColors =
     | "default"
@@ -46,7 +47,7 @@ export function ApprovalRequest({
     modalButton
 }: ApprovalRequestProps) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
+    const t = useTranslations("ApprovalRequest");
     const handleSubmit = async () => {
         try {
             await submitButton.action();
@@ -85,13 +86,13 @@ export function ApprovalRequest({
                             variant="flat"
                             onPress={onClose}
                         >
-                            {cancelButton?.text ?? "Cancel"}
+                            {cancelButton?.text ?? t("closeButton")}
                         </Button>
                         <Button
                             color={submitButton.color ?? "primary"}
                             onPress={handleSubmit}
                         >
-                            {submitButton.text ?? "Yes"}
+                            {submitButton.text ?? t("submitButton")}
                         </Button>
                     </ModalFooter>
                 </ModalContent>

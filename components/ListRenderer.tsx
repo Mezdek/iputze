@@ -1,13 +1,12 @@
-export function ListRenderer<T>({ data, isLoading, empty, children }: {
+export function ListRenderer<T>({ data, isLoading, children }: {
     data?: T[] | null;
     isLoading?: boolean;
-    empty: React.ReactNode;
     children: (item: T) => React.ReactNode;
 }) {
     if (isLoading) return <div>Loading...</div>;
-    if (!data || data.length === 0) return <>{empty}</>;
+    if (!data || data.length === 0) return <></>;
     return (
-        <div className="flex gap-2 w-full p-4 h-full flex-wrap">
+        <div className="flex gap-4 w-full p-2 h-full flex-wrap">
             {data.map(children)}
         </div>
     )

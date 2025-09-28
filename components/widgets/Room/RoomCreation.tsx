@@ -15,23 +15,24 @@ import {
     SelectItem,
     useDisclosure
 } from "@heroui/react";
-import { useCreateRoom } from "@hooks";
+import { useCreateRoom, useErrorToast } from "@hooks";
 import { parseFormData } from "@lib";
 import { RoomCleanliness, RoomOccupancy } from "@prisma/client";
-import { isAxiosError } from "axios";
+import { useTranslations } from "next-intl";
 import { FormEvent } from "react";
-import { RoomCleanlinessText, RoomOccupancyText } from "../utils";
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const { mutateAsync: createRoom } = useCreateRoom({ hotelId });
+    const t = useTranslations("room");
+    const { showErrorToast } = useErrorToast();
 
     const FORM = "room_creation_form";
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = parseFormData<RoomCreationBody>(e.currentTarget, {
-            number: "1",
+            number: "",
             cleanliness: RoomCleanliness.CLEAN,
             occupancy: RoomOccupancy.AVAILABLE,
         });
@@ -44,46 +45,36 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                 description: `Room ${res.number} created successfully`,
                 color: "success",
             });
-        } catch (e: unknown) {
-            if (isAxiosError(e) && e.status === 400) {
-                addToast({
-                    title: "Room could not be created!",
-                    description: `Room ${data.number} already exists`,
-                    color: "danger",
-                });
-            } else {
-                addToast({
-                    title: "Room could not be created!",
-                    description: "An unknown error occurred",
-                    color: "danger",
-                });
-            }
-            console.error(e);
+        }
+        catch (error) {
+            showErrorToast(error)
         }
     };
 
     return (
         <>
             <Button color="primary" onPress={onOpen}>
-                Create Room
+                {
+                    t("creation_panel.buttons.open")
+                }
             </Button>
             <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1 text-lg font-semibold">
-                                New Room
+                                {t("creation_panel.header")}
                             </ModalHeader>
                             <ModalBody>
                                 <Form id={FORM} onSubmit={handleSubmit} className="flex flex-col gap-4">
                                     <Input
                                         autoFocus
                                         isRequired
-                                        errorMessage="Please provide a room number"
+                                        errorMessage={t("creation_panel.inputs.room_number.error_message")}
                                         form={FORM}
-                                        label="Room Number"
+                                        label={t("creation_panel.inputs.room_number.label")}
                                         name="number"
-                                        placeholder="Enter room number"
+                                        placeholder={t("creation_panel.inputs.room_number.placeholder")}
                                         variant="bordered"
                                     />
 
@@ -91,14 +82,16 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                                         className="max-w-xs"
                                         form={FORM}
                                         isRequired
-                                        label="Cleanliness Status"
+                                        label={t("creation_panel.inputs.cleanliness.label")}
                                         name="cleanliness"
-                                        placeholder="Select cleanliness status"
-                                        defaultSelectedKeys={[RoomCleanliness.CLEAN.toString()]}
+                                        placeholder={t("creation_panel.inputs.cleanliness.placeholder")}
+                                        defaultSelectedKeys={[RoomCleanliness.CLEAN]}
                                     >
                                         {Object.values(RoomCleanliness).map(
-                                            (rc) => (
-                                                <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
+                                            (status) => (
+                                                <SelectItem key={status}>
+                                                    {t(`cleanliness_status.${status}`)}
+                                                </SelectItem>
                                             )
                                         )}
                                     </Select>
@@ -107,14 +100,16 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                                         className="max-w-xs"
                                         form={FORM}
                                         isRequired
-                                        label="Occupancy Status"
+                                        label={t("creation_panel.inputs.occupancy.label")}
                                         name="occupancy"
-                                        placeholder="Select occupancy status"
-                                        defaultSelectedKeys={[RoomOccupancy.AVAILABLE.toString()]}
+                                        placeholder={t("creation_panel.inputs.occupancy.placeholder")}
+                                        defaultSelectedKeys={[RoomOccupancy.AVAILABLE]}
                                     >
                                         {Object.values(RoomOccupancy).map(
-                                            (ro) => (
-                                                <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
+                                            (status) => (
+                                                <SelectItem key={status}>
+                                                    {t(`occupancy_status.${status}`)}
+                                                </SelectItem>
                                             )
                                         )}
                                     </Select>
@@ -122,10 +117,10 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                             </ModalBody>
                             <ModalFooter className="gap-3">
                                 <Button color="danger" variant="flat" onPress={onClose}>
-                                    Cancel
+                                    {t("creation_panel.buttons.close")}
                                 </Button>
                                 <Button color="primary" type="submit" form={FORM}>
-                                    Create
+                                    {t("creation_panel.buttons.submit")}
                                 </Button>
                             </ModalFooter>
                         </>
@@ -135,3 +130,5 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
         </>
     );
 }
+
+

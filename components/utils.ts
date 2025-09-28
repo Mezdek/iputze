@@ -1,18 +1,35 @@
 import { AssignmentStatus, RoomCleanliness, RoomOccupancy } from "@prisma/client";
 
-type Props = { dateTime: string | number | Date; locale?: Intl.Locale; options?: Intl.DateTimeFormatOptions };
 
-export const nextStatus: Record<AssignmentStatus, AssignmentStatus | null> = {
+export const nextStatus = {
     [AssignmentStatus.PENDING]: AssignmentStatus.IN_PROGRESS,
     [AssignmentStatus.IN_PROGRESS]: AssignmentStatus.DONE,
     [AssignmentStatus.DONE]: null,
-};
+} as const;
 
 export const sections = {
     ASSIGNMENTS: "Assignments",
     ROOMS: "Rooms",
     WORKERS: "Workers",
 } as const;
+
+export const statusString = {
+    DONE: { button: "", state: "done" },
+    IN_PROGRESS: { button: "finish", state: "in_progress" },
+    PENDING: { button: "start", state: "pending" }
+} as const;
+
+export const RoomCleanlinessText = {
+    [RoomCleanliness.CLEAN]: "Clean",
+    [RoomCleanliness.DIRTY]: "Dirty"
+} as const;
+
+export const RoomOccupancyText = {
+    [RoomOccupancy.AVAILABLE]: "Available",
+    [RoomOccupancy.OCCUPIED]: "Occupied"
+} as const;
+
+type Props = { dateTime: string | number | Date; locale?: Intl.Locale; options?: Intl.DateTimeFormatOptions };
 
 export function dateAndTime({ dateTime, locale, options }: Props) {
     const parsedOtions: Intl.DateTimeFormatOptions = {
@@ -28,20 +45,3 @@ export function dateAndTime({ dateTime, locale, options }: Props) {
     return new Date(dateTime).toLocaleDateString(locale ?? "de-DE", parsedOtions);
 }
 
-export const statusString: Record<AssignmentStatus, Record<"state" | "button", string>> = {
-    DONE: { button: "", state: "Done" },
-    IN_PROGRESS: { button: "Finish", state: "In progress" },
-    PENDING: { button: "Start", state: "Pending" }
-}
-
-
-
-export const RoomCleanlinessText: Record<RoomCleanliness, string> = {
-    [RoomCleanliness.CLEAN]: "Clean",
-    [RoomCleanliness.DIRTY]: "Dirty"
-};
-
-export const RoomOccupancyText: Record<RoomOccupancy, string> = {
-    [RoomOccupancy.AVAILABLE]: "Available",
-    [RoomOccupancy.OCCUPIED]: "Occupied"
-}

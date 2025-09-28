@@ -19,8 +19,7 @@ export function withAuthGuard<P extends object>(Component: ComponentType<P & Inj
 
     if (isFetching || isLoading) return <LoadingScreen />;
 
-    if (!user) return null; // already redirected
-
+    if (!user) return null;
     return <Component {...props} user={user} />;
   };
 }

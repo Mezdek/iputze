@@ -6,7 +6,6 @@ import {
     DeniedAccessView,
     DisabledView,
     ManagerView,
-    NavigationBar,
     PendingView,
     withAuthGuard
 } from "@components";
@@ -38,10 +37,7 @@ function Hotel({ user }: InjectedAuthProps) {
 
     return (
         <>
-            <NavigationBar />
-            <main role="main" aria-label={`Hotel ${hotelId} view`}>
                 <Component user={user} />
-            </main>
         </>
     );
 }

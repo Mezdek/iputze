@@ -84,7 +84,7 @@ export function Notes({
 
     return (
         <>
-            <Button color="primary" onPress={onOpen} isDisabled={isDisabled}>
+            <Button color="secondary" onPress={onOpen} isDisabled={isDisabled}>
                 Notes
             </Button>
 
@@ -130,12 +130,14 @@ export function Notes({
                                     />
                                 </Form>
 
-                                <div className="flex flex-wrap gap-2 bg-emerald-50 border border-emerald-200 rounded-lg p-2 min-h-12">
+                                <div className="flex flex-wrap gap-2 bg-primary-50 border border-primary-600 rounded-lg p-2 min-h-12">
                                     {notes?.map((assignmentNote) => (
                                         <Chip
                                             key={assignmentNote.id}
+                                            className="px-2 py-5 text-medium border-1 border-default"
                                             color="secondary"
                                             size="md"
+                                            radius="sm"
                                             onClose={() => handleDelete(assignmentNote)}
                                             isCloseable
                                         >
@@ -146,7 +148,7 @@ export function Notes({
                             </ModalBody>
 
                             <ModalFooter>
-                                <Button color="danger" variant="flat" onPress={onClose}>
+                                <Button color="warning" variant="solid" onPress={onClose}>
                                     Close
                                 </Button>
                                 <Button color="primary" type="submit" form={FORM}>

@@ -7,7 +7,7 @@ function createErrorFactory(status: HttpStatus, code?: string) {
 
 type ErrorFactory = (msg?: string) => HttpError;
 
-const APP_ERRORS_NAMES = [
+const API_ERRORS_NAMES = [
     "badRequest",
     "conflict",
     "forbidden",
@@ -18,7 +18,7 @@ const APP_ERRORS_NAMES = [
     "unauthorized",
 ] as const
 
-export const APP_ERRORS: Record<typeof APP_ERRORS_NAMES[number], ErrorFactory> = {
+export const APP_ERRORS: Record<typeof API_ERRORS_NAMES[number], ErrorFactory> = {
     badRequest: createErrorFactory(HttpStatus.BAD_REQUEST, "BAD_REQUEST"),
     conflict: createErrorFactory(HttpStatus.CONFLICT, "CONFLICT"),
     forbidden: createErrorFactory(HttpStatus.FORBIDDEN, "FORBIDDEN"),

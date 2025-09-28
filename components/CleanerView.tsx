@@ -16,7 +16,7 @@ export function CleanerView({ user }: SpecialViewProps) {
     return (
         <div className="flex flex-col gap-2 items-center justify-around w-full h-screen">
             <HotelBanner hotelName={role.hotel.name} />
-            <ListRenderer data={assignments} isLoading={isLoading} empty={<div>No Assignments</div>}>
+            <ListRenderer data={assignments} isLoading={isLoading}>
                 {(assignment) => <AssignmentTile assignment={assignment} key={assignment.id} user={user} />}
             </ListRenderer>
         </div>)

@@ -1,0 +1,87 @@
+{
+    "name": "Стая",
+    "cleanliness": "<strong>Чистота: </strong> {status}",
+    "cleanliness_status": {
+        "CLEAN": "Чист",
+        "DIRTY": "Мръсен"
+    },
+    "occupancy": "<strong>Заетост: </strong> {status}",
+    "occupancy_status": {
+        "AVAILABLE": "На разположение",
+        "OCCUPIED": "Зает"
+    },
+    "notes": "<strong>Бележки: </strong> {notes}",
+    "no_notes": "Няма бележки",
+    "update_panel": {
+        "header": "Редактиране на стая {number}",
+        "inputs": {
+            "room_number": {
+                "label": "Номер на стаята",
+                "placeholder": "Въведете нов номер на стаята",
+                "error_message": "Моля, предоставете номер на стаята"
+            },
+            "cleanliness": {
+                "label": "Статус на чистота",
+                "placeholder": "Изберете статус на чистота"
+            },
+            "occupancy": {
+                "label": "Статус на заетост",
+                "placeholder": "Изберете статус на заетост"
+            }
+        },
+        "buttons": {
+            "open": "Редактирай",
+            "close": "Отказ",
+            "submit": "Актуализирай"
+        }
+    },
+    "deletion_panel": {
+        "header": "Изтриване на стая",
+        "buttons": {
+            "open": "Изтрий",
+            "submit": "Изтрий"
+        },
+        "approval_question": "Сигурни ли сте, че искате да изтриете стая {number}?"
+    },
+    "creation_panel": {
+        "buttons": {
+            "close": "Отказ",
+            "open": "Създаване на стая",
+            "submit": "Създай"
+        },
+        "header": "Нова стая",
+        "inputs": {
+            "room_number": {
+                "error_message": "Моля, предоставете номер на стаята",
+                "label": "Номер на стаята",
+                "placeholder": "Въведете нов номер на стаята"
+            },
+            "cleanliness": {
+                "label": "Статус на чистота",
+                "placeholder": "Изберете статус на чистота"
+            },
+            "occupancy": {
+                "label": "Статус на заетост",
+                "placeholder": "Изберете статус на заетост"
+            }
+        }
+    },
+    "errors": {
+        "duplicate_room_number_creation": {
+            "title": "Не можа да се създаде стая!",
+            "description": "Номерът на стаята вече съществува"
+        },
+        "unknown": {
+            "title": "Възникна грешка",
+            "description": "Моля, опитайте отново по-късно"
+        },
+        "room_has_assignments": {
+            "title": "Не може да се изтрие стая!",
+            "description": "Има все още задачи свързани с тази стая!"
+        },
+        "duplicate_room_number_update": {
+            "title": "Не може да се актуализира стая!",
+            "description": "Номерът на стаята вече съществува"
+        }
+    }
+}

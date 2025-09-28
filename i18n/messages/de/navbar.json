@@ -1,0 +1,19 @@
+{
+    "name": "navbar",
+    "pages": {
+        "dashboard": "Übersicht",
+        "hotels": "Hotels"
+    },
+    "logout": "Abmelden",
+    "settings": "Einstellungen",
+    "locales": {
+        "ar": "ع",
+        "bg": "бг",
+        "de": "DE",
+        "el": "Ελ",
+        "en": "EN",
+        "sq": "SH"
+    },
+    "profile_header": "Angemeldet als {name}",
+    "image_alt": "Avatar von {name}"
+}

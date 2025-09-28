@@ -1,7 +1,7 @@
 'use client';
 
 import { InjectedAuthProps } from "@/types";
-import { JoinHotel, NavigationBar, withAuthGuard } from "@components";
+import { JoinHotel, withAuthGuard } from "@components";
 import { Button, Card } from "@heroui/react";
 import { getPath } from "@lib";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,6 @@ function Dashboard({ user }: InjectedAuthProps) {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <NavigationBar />
             <main className="flex flex-col flex-1 items-center justify-center gap-10 p-6 bg-gray-50">
                 <h1 className="text-4xl font-bold text-center">
                     Hello {name}

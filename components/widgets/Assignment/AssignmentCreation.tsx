@@ -15,10 +15,11 @@ import {
     SelectItem,
     useDisclosure,
 } from "@heroui/react";
-import { useCreateAssignment, useRoles, useRooms } from "@hooks";
+import { useCreateAssignment, useErrorToast, useRoles, useRooms } from "@hooks";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { parseFormData } from "@lib";
 import { RoleLevel, RoleStatus } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import { FormEvent } from "react";
 
 export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
@@ -26,6 +27,8 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
     const { data: rooms } = useRooms({ hotelId });
     const { data: roles } = useRoles({ hotelId });
     const { mutateAsync: createAssignment } = useCreateAssignment({ hotelId });
+    const t = useTranslations("assignment.creation")
+    const { showErrorToast } = useErrorToast();
 
     const allCleaners =
         roles?.filter(
@@ -51,12 +54,7 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                 color: "success",
             });
         } catch (e: unknown) {
-            console.error(e);
-            addToast({
-                title: "Assignment could not be created!",
-                description: "Assignment creation failed",
-                color: "danger",
-            });
+            showErrorToast(e)
         }
     };
 
@@ -68,7 +66,7 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                 disabled={!rooms}
                 aria-label="Create assignment"
             >
-                Create Assignment
+                {t("modal_button")}
             </Button>
 
             <Modal
@@ -81,7 +79,7 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                     {(onClose) => (
                         <>
                             <ModalHeader id="create-assignment-title">
-                                New Assignment
+                                {t("header")}
                             </ModalHeader>
 
                             <ModalBody>
@@ -91,9 +89,9 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                                         form="assignment_creation_form"
                                         isRequired
                                         fullWidth
-                                        label="Room number"
-                                        placeholder="Select a room"
-                                        errorMessage="Please select a room"
+                                        label={t("inputs.room_number.label")}
+                                        placeholder={t("inputs.room_number.placeholder")}
+                                        errorMessage={t("inputs.room_number.error_message")}
                                         isDisabled={!rooms || rooms.length === 0}
                                     >
                                         {rooms && rooms.length > 0
@@ -109,10 +107,10 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                                         form="assignment_creation_form"
                                         isRequired
                                         fullWidth
-                                        label="Cleaners"
-                                        placeholder="Assign cleaners"
+                                        label={t("inputs.cleaners.label")}
+                                        placeholder={t("inputs.cleaners.placeholder")}
                                         selectionMode="multiple"
-                                        errorMessage="Please select at least one cleaner"
+                                        errorMessage={t("inputs.cleaners.error_message")}
                                         isDisabled={allCleaners.length === 0}
                                     >
                                         {allCleaners.map((cl) => (
@@ -124,25 +122,25 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                                         name="dueAt"
                                         form="assignment_creation_form"
                                         isRequired
-                                        label="Due Date"
-                                        description="Choose when the cleaning should be completed"
+                                        label={t("inputs.dua_date.label")}
+                                        description={t("inputs.dua_date.description")}
                                         minValue={today(getLocalTimeZone())}
                                         defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
-                                        errorMessage="Please select a due date"
+                                        errorMessage={t("inputs.dua_date.error_message")}
                                     />
                                 </Form>
                             </ModalBody>
 
                             <ModalFooter>
                                 <Button color="danger" variant="flat" onPress={onClose}>
-                                    Cancel
+                                    {t("inputs.close_button")}
                                 </Button>
                                 <Button
                                     color="primary"
                                     type="submit"
                                     form="assignment_creation_form"
                                 >
-                                    Create
+                                    {t("inputs.submit_button")}
                                 </Button>
                             </ModalFooter>
                         </>

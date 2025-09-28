@@ -15,17 +15,17 @@ import {
     SelectItem,
     useDisclosure
 } from "@heroui/react";
-import { useUpdateRoom } from "@hooks";
+import { useErrorToast, useUpdateRoom } from "@hooks";
 import { parseFormData } from "@lib";
 import { Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
-import { isAxiosError } from "axios";
+import { useTranslations } from "next-intl";
 import { FormEvent } from "react";
-import { RoomCleanlinessText, RoomOccupancyText } from "../utils";
 
 export function RoomUpdate({ room }: { room: Room }) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const { mutateAsync: updateRoom } = useUpdateRoom({ hotelId: room.hotelId, roomId: room.id });
-
+    const t = useTranslations("room")
+    const { showErrorToast } = useErrorToast()
     const FORM = `room_update_form_${room.id}`;
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -40,16 +40,7 @@ export function RoomUpdate({ room }: { room: Room }) {
                 color: "success",
             });
         } catch (e: unknown) {
-            const description = isAxiosError(e) && e.status === 409
-                ? `Room #${data.number} already exists`
-                : "An unknown error occurred";
-
-            addToast({
-                title: "Room could not be updated!",
-                description,
-                color: "danger",
-            });
-            onClose();
+            showErrorToast(e);
         }
     }
 
@@ -60,62 +51,71 @@ export function RoomUpdate({ room }: { room: Room }) {
                 onPress={onOpen}
                 aria-label={`Edit room ${room.number}`}
             >
-                Edit
+                {
+                    t("update_panel.buttons.open")
+                }
             </Button>
             <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
                 <ModalContent>
                     {(onCloseModal) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1" >
-                                Edit Room #{room.number}
+                                {
+                                    t("update_panel.header", { number: room.number })
+                                }
                             </ModalHeader>
                             <ModalBody>
                                 <Form id={FORM} onSubmit={handleSubmit}>
                                     <Input
                                         autoFocus
+                                        className="w-full"
                                         defaultValue={room.number}
-                                        errorMessage="Please provide room number"
+                                        errorMessage={t("update_panel.inputs.room_number.error_message")}
                                         form={FORM}
-                                        label="Room Number"
+                                        label={t("update_panel.inputs.room_number.label")}
                                         name="number"
-                                        placeholder="Enter new room number"
-                                        variant="bordered"
+                                        placeholder={t("update_panel.inputs.room_number.placeholder")}
                                         required
+                                        variant="bordered"
                                     />
                                     <Select
-                                        className="max-w-xs"
+                                        className="w-full"
                                         defaultSelectedKeys={[room.cleanliness]}
                                         form={FORM}
-                                        label="Cleanliness Status"
+                                        label={t("update_panel.inputs.cleanliness.label")}
                                         name="cleanliness"
-                                        placeholder="Select cleanliness status"
+                                        placeholder={t("update_panel.inputs.cleanliness.placeholder")}
                                         required
                                     >
-                                        {Object.values(RoomCleanliness).map(rc => (
-                                            <SelectItem key={rc}>{RoomCleanlinessText[rc]}</SelectItem>
+                                        {Object.values(RoomCleanliness).map(status => (
+                                            <SelectItem key={status}>
+                                                {t(`cleanliness_status.${status}`)}
+                                            </SelectItem>
                                         ))}
                                     </Select>
                                     <Select
-                                        className="max-w-xs"
+                                        className="w-full"
                                         defaultSelectedKeys={[room.occupancy]}
                                         form={FORM}
-                                        label="Occupancy Status"
+                                        label={t("update_panel.inputs.occupancy.label")}
                                         name="occupancy"
-                                        placeholder="Select occupancy status"
+                                        placeholder={t("update_panel.inputs.occupancy.placeholder")}
                                         required
                                     >
-                                        {Object.values(RoomOccupancy).map(ro => (
-                                            <SelectItem key={ro}>{RoomOccupancyText[ro]}</SelectItem>
+                                        {Object.values(RoomOccupancy).map(status => (
+                                            <SelectItem key={status}>
+                                                {t(`occupancy_status.${status}`)}
+                                            </SelectItem>
                                         ))}
                                     </Select>
                                 </Form>
                             </ModalBody>
                             <ModalFooter className="gap-3">
                                 <Button color="danger" variant="flat" onPress={onCloseModal}>
-                                    Cancel
+                                    {t("update_panel.buttons.close")}
                                 </Button>
                                 <Button color="primary" form={FORM} type="submit">
-                                    Update
+                                    {t("update_panel.buttons.submit")}
                                 </Button>
                             </ModalFooter>
                         </>

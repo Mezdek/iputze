@@ -2,6 +2,7 @@
 
 import { Button, Form, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, useDisclosure } from "@heroui/react";
 import { useCreateRole, useHotels } from "@hooks";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 
@@ -12,7 +13,7 @@ export function JoinHotel() {
 
     const { data: hotels } = useHotels();
     const hotel = hotels?.find(h => h.id === selectedHotelId);
-
+    const t = useTranslations("join")
     const { mutateAsync: join } = useCreateRole({ hotelId: selectedHotelId });
 
     const handleJoin = async (e: FormEvent<HTMLFormElement>) => {
@@ -27,25 +28,25 @@ export function JoinHotel() {
 
     return (
         <div>
-            <Button color="primary" onPress={onOpen}>Join</Button>
+            <Button color="primary" onPress={onOpen}>{t("buttons.open")}</Button>
 
             <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="text-lg font-semibold">Join a Hotel</ModalHeader>
+                            <ModalHeader className="text-lg font-semibold">{t("header")}</ModalHeader>
                             <ModalBody className="flex flex-col gap-4">
                                 {hotels ? (
                                     <>
                                         <Form id={FORM} onSubmit={handleJoin}>
                                             <Select
-                                                name="hotelId"
-                                                form={FORM}
-                                                label="Select Hotel"
-                                                placeholder="Choose a hotel"
-                                                isRequired
                                                 className="max-w-xs"
+                                                form={FORM}
+                                                isRequired
+                                                label={t("inputs.hotel_name.label")}
+                                                name="hotelId"
                                                 onSelectionChange={(e) => setSelectedHotelId(e.currentKey!)}
+                                                placeholder={t("inputs.hotel_name.placeholder")}
                                             >
                                                 {hotels.map(h => (
                                                     <SelectItem key={h.id}>{h.name}</SelectItem>
@@ -75,13 +76,13 @@ export function JoinHotel() {
                                         )}
                                     </>
                                 ) : (
-                                    <p>Loading hotels...</p>
+                                    <p>{t("loading_message")}</p>
                                 )}
                             </ModalBody>
 
                             <ModalFooter className="gap-3">
-                                <Button color="danger" variant="flat" onPress={onClose}>Cancel</Button>
-                                <Button color="primary" type="submit" form={FORM} disabled={!hotel}>Join</Button>
+                                <Button color="danger" variant="flat" onPress={onClose}>{t("buttons.close")}</Button>
+                                <Button color="primary" type="submit" form={FORM} disabled={!hotel}>{t("buttons.submit")} </Button>
                             </ModalFooter>
                         </>
                     )}
