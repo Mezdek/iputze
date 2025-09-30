@@ -1,11 +1,11 @@
 import type { SignInRequestBody, SignInResponse } from "@/types";
-import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, parseExpiryToMilliSeconds, RateLimitKeys, ResponseCookieOptions, SESSION_COOKIE_EXP, SESSION_COOKIE_KEY, withErrorHandling } from "@lib";
+import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, parseExpiryToMilliSeconds, RATE_LIMIT_KEYS, ResponseCookieOptions, SESSION_COOKIE_EXP, SESSION_COOKIE_KEY, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { compare } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
-    checkRateLimit(req, RateLimitKeys.SIGNIN, 5, 300_000);
+    checkRateLimit(req, RATE_LIMIT_KEYS.SIGNIN, 5, 300_000);
 
     const { email, password } = await req.json() as SignInRequestBody;
     if (!email || !password) throw APP_ERRORS.badRequest(AuthErrors.INVALID_CREDENTIALS);
@@ -17,7 +17,7 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
     if (!isValid) throw APP_ERRORS.unauthorized();
 
     const expiresAt = new Date(Date.now() + parseExpiryToMilliSeconds(SESSION_COOKIE_EXP));
-    console.log({ expiresAt })
+
     const session = await prisma.session.create({
         data: {
             userId: user.id,

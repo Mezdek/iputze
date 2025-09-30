@@ -3,7 +3,7 @@
 import type { SignInRequestBody, SignUpRequestBody } from "@/types";
 import { FormError, PasswordInput } from "@components";
 import { Button, Card, CardBody, Form, Input, Link, Tab, Tabs } from "@heroui/react";
-import { useSignIn, useSignUp } from "@hooks";
+import { useErrorToast, useSignIn, useSignUp } from "@hooks";
 import { getPath, parseFormData } from "@lib";
 import { isAxiosError } from "axios";
 import { useTranslations } from "next-intl";
@@ -20,6 +20,7 @@ export function LoginWidget() {
 
   const { mutate: signIn, isPending } = useSignIn();
   const { mutateAsync: signUp } = useSignUp();
+  const { showErrorToast } = useErrorToast();
 
   const [apiError, setApiError] = useState<string>();
 
@@ -42,7 +43,7 @@ export function LoginWidget() {
       setSelected("sign_in");
     } catch (e: any) {
       const message = handleLoginErrors(e)
-      console.error(e);
+      showErrorToast(e);
       setApiError(message);
     }
   };

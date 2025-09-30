@@ -1,5 +1,6 @@
 'use client'
 
+import { useErrorToast } from "@/hooks";
 import {
     Button,
     Modal,
@@ -48,11 +49,12 @@ export function ApprovalRequest({
 }: ApprovalRequestProps) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
     const t = useTranslations("ApprovalRequest");
+    const { showErrorToast } = useErrorToast()
     const handleSubmit = async () => {
         try {
             await submitButton.action();
-        } catch (err) {
-            console.error(err);
+        } catch (e) {
+            showErrorToast(e);
         } finally {
             onClose();
         }

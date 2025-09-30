@@ -8,7 +8,7 @@ import type { Room } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { SpecialViewProps } from "./types";
-import { sections } from "./utils";
+import { SECTIONS } from "./utils";
 
 
 export function ManagerView({ user }: SpecialViewProps) {
@@ -29,7 +29,7 @@ export function ManagerView({ user }: SpecialViewProps) {
                 destroyInactiveTabPanel
                 className="flex"
             >
-                <Tab key={sections.ROOMS} title={sections.ROOMS} className="py-0">
+                <Tab key={SECTIONS.ROOMS} title={SECTIONS.ROOMS} className="py-0">
                     <EntityTab
                         isLoading={roomsLoading}
                         emptyMessage={t("no_rooms_message")}
@@ -43,7 +43,7 @@ export function ManagerView({ user }: SpecialViewProps) {
                     </EntityTab>
                 </Tab>
 
-                <Tab key={sections.WORKERS} title={sections.WORKERS} className="py-0">
+                <Tab key={SECTIONS.WORKERS} title={SECTIONS.WORKERS} className="py-0">
                     <EntityTab
                         isLoading={workersLoading}
                         emptyMessage={t("no_workers_message")}
@@ -53,7 +53,7 @@ export function ManagerView({ user }: SpecialViewProps) {
                         </ListRenderer>
                     </EntityTab>
                 </Tab>
-                <Tab key={sections.ASSIGNMENTS} title={sections.ASSIGNMENTS} className="py-0">
+                <Tab key={SECTIONS.ASSIGNMENTS} title={SECTIONS.ASSIGNMENTS} className="py-0">
                     <EntityTab
                         isLoading={assignmentsLoading}
                         emptyMessage={t("mo_assignments_message")}

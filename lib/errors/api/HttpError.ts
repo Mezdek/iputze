@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 
 export interface IHttpError {
     status: HttpStatus;
-    code?: string;
+    code: string;
 }
 
 export class HttpError extends Error implements IHttpError {
     readonly status: HttpStatus;
-    readonly code?: string;
+    readonly code: string;
 
     constructor(
         status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR,
@@ -26,7 +26,15 @@ export class HttpError extends Error implements IHttpError {
     }
 
     json() {
-        return { error: this.message, code: this.code, status: this.status };
+        const errorObj: Record<string, any> = {
+            code: this.code,
+            message: this.message,
+            status: this.status,
+        };
+        if (process.env.NODE_ENV === "development" && this.stack) {
+            errorObj.stack = this.stack;
+        }
+        return errorObj;
     }
 
     nextResponse() {

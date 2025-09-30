@@ -1,33 +1,24 @@
-import { AssignmentStatus, RoomCleanliness, RoomOccupancy } from "@prisma/client";
+import { AssignmentStatus } from "@prisma/client";
 
 
-export const nextStatus = {
+export const NEXT_STATUS = {
     [AssignmentStatus.PENDING]: AssignmentStatus.IN_PROGRESS,
     [AssignmentStatus.IN_PROGRESS]: AssignmentStatus.DONE,
     [AssignmentStatus.DONE]: null,
 } as const;
 
-export const sections = {
+export const SECTIONS = {
     ASSIGNMENTS: "Assignments",
     ROOMS: "Rooms",
     WORKERS: "Workers",
 } as const;
 
-export const statusString = {
+export const STATUS_STRING = {
     DONE: { button: "", state: "done" },
     IN_PROGRESS: { button: "finish", state: "in_progress" },
     PENDING: { button: "start", state: "pending" }
 } as const;
 
-export const RoomCleanlinessText = {
-    [RoomCleanliness.CLEAN]: "Clean",
-    [RoomCleanliness.DIRTY]: "Dirty"
-} as const;
-
-export const RoomOccupancyText = {
-    [RoomOccupancy.AVAILABLE]: "Available",
-    [RoomOccupancy.OCCUPIED]: "Occupied"
-} as const;
 
 type Props = { dateTime: string | number | Date; locale?: Intl.Locale; options?: Intl.DateTimeFormatOptions };
 

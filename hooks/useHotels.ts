@@ -11,7 +11,7 @@ export const useHotels = () => {
         },
         retry: false, // do not retry on 401
         staleTime: 1000 * 60 * 60 * 24,
-        gcTime: 1000 * 60 * 30, // 30 minutes: unused cache is kept for 30 min
+        gcTime: 1000 * 60 * 30,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
     });

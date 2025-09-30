@@ -1,5 +1,9 @@
 'use client'
 
+
+
+//TODO add showErrorToast here
+//TODO replace all strings with constants
 import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@/types";
 import {
     addToast,
@@ -59,7 +63,7 @@ export function Notes({
         try {
             await add(data);
             addToast({ title: "Note added!", description: "Note created successfully", color: "success" });
-        } catch (err) {
+        } catch (err: unknown) {
             console.error(err);
             addToast({ title: "Error!", description: "Note could not be created", color: "danger" });
         }
@@ -72,8 +76,8 @@ export function Notes({
             }
             await deleteNote({ assignmentNoteId: assignmentNote.id });
             addToast({ title: "Deleted!", description: "Note deleted successfully", color: "success" });
-        } catch (err: any) {
-            if (err.message === "NOT_AUTHOR") {
+        } catch (err: unknown) {
+            if (err instanceof Error && err.message === "NOT_AUTHOR") {
                 addToast({ title: "Not allowed", description: "Only the author can delete this note", color: "warning" });
             } else {
                 console.error(err);

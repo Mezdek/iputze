@@ -10,8 +10,8 @@ export const useAssignments = ({ hotelId }: AssignmentCollectionParams) => {
             return res.data;
         },
         retry: false, // do not retry on 401
-        staleTime: 1000 * 60 * 60 * 24,
-        gcTime: 1000 * 60 * 30, // 30 minutes: unused cache is kept for 30 min
+        staleTime: 1000 * 60 * 15,
+        gcTime: 1000 * 60 * 30,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
     });

@@ -1,5 +1,5 @@
 import { ClientSideProviders } from './ClientSideProviders';
-import { ServerSideProviders } from './ServerSideProviders copy';
+import { ServerSideProviders } from './ServerSideProviders';
 
 export function Providers({ children }: { children: React.ReactNode }) {
 

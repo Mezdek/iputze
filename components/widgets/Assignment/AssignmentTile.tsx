@@ -7,7 +7,7 @@ import { useErrorToast, useUpdateAssignment } from "@hooks";
 import { roleCheck } from "@lib";
 import { AssignmentStatus } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import { dateAndTime, nextStatus, statusString } from "../../utils";
+import { dateAndTime, NEXT_STATUS, STATUS_STRING } from "../../utils";
 
 export function AssignmentTile({
     assignment,
@@ -50,13 +50,13 @@ export function AssignmentTile({
 
 
     const handleStatus = async () => {
-        const newStatus = nextStatus[status];
+        const newStatus = NEXT_STATUS[status];
         if (!newStatus) return;
         try {
             await update({ status: newStatus });
             addToast({
                 title: "Status Changed!",
-                description: `Assignment set to ${statusString[newStatus]}`,
+                description: `Assignment set to ${STATUS_STRING[newStatus]}`,
                 color: "success",
             });
         } catch (e) {
@@ -71,7 +71,7 @@ export function AssignmentTile({
                     <div className="flex flex-col">
                         <h2 id={`assignment-${assignmentId}-title`}>{t("header", { number })}</h2>
                         <h3 className="text-sm italic">
-                            {t(`status.${statusString[status].state}`)}
+                            {t(`status.${STATUS_STRING[status].state}`)}
                         </h3>
                     </div>
                     {isActive && isAssignmentCleaner && status !== AssignmentStatus.DONE && (
@@ -81,7 +81,7 @@ export function AssignmentTile({
                             className="rounded-lg text-sm font-medium"
                             onPress={handleStatus}
                         >
-                            {t(`status_update.${statusString[status].button}`)}
+                            {t(`status_update.${STATUS_STRING[status].button}`)}
                         </Button>
                     )}
                     {(isHotelManager || !isActive) && (

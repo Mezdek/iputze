@@ -1,3 +1,4 @@
+//TODO try to replace with a react hook
 export function parseFormData<T extends Record<string, any>>(form: HTMLFormElement, defaultValue: T): T {
     const formData = new FormData(form);
 

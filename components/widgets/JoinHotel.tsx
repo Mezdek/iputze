@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Form, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, useDisclosure } from "@heroui/react";
-import { useCreateRole, useHotels } from "@hooks";
+import { useCreateRole, useErrorToast, useHotels } from "@hooks";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
@@ -20,6 +20,7 @@ export function JoinHotel(props: Props) {
     const FORM = "join_hotel_form";
 
     const { data: hotels } = useHotels();
+    const { showErrorToast } = useErrorToast()
     const hotel = hotels?.find(h => h.id === selectedHotelId);
     const t = useTranslations("join")
     const { mutateAsync: join } = useCreateRole({ hotelId: selectedHotelId });
@@ -29,8 +30,8 @@ export function JoinHotel(props: Props) {
         try {
             await join();
             onOpenChange(false);
-        } catch (err) {
-            console.error(err);
+        } catch (e) {
+            showErrorToast(e)
         }
     };
 

@@ -8,6 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/**
+ * suggested alternative for enums
+ * model Role {
+ * level Int @default(0) // 0=PENDING, 1=CLEANER, 2=MANAGER, 3=ADMIN
+ * }
+ */
 // ---------- Enums ----------
 enum RoleLevel {
   ADMIN
@@ -121,6 +127,7 @@ model Assignment {
   @@index([roomId])
   @@index([isActive])
   @@index([assignedBy])
+  @@index([roomId, status, isActive])
 }
 
 model AssignmentUser {
@@ -142,6 +149,8 @@ model AssignmentNote {
 
   assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
   author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([assignmentId, createdAt])
 }
 
 // ---------- Auth models (NextAuth Prisma Adapter) ----------

@@ -1,5 +1,5 @@
 import type { SignUpRequestBody, SignUpResponse } from "@/types";
-import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, RateLimitKeys, validateRegistration, withErrorHandling } from "@lib";
+import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, RATE_LIMIT_KEYS, validateRegistration, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { hash } from "bcrypt";
 import { NextRequest, NextResponse } from "next/server";
@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = withErrorHandling(
     async (req: NextRequest) => {
 
-        checkRateLimit(req, RateLimitKeys.REGISTER, 3, 600000);
+        checkRateLimit(req, RATE_LIMIT_KEYS.REGISTER, 3, 600000);
 
         const data = (await req.json()) as SignUpRequestBody;
 

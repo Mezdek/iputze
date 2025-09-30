@@ -1,7 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
 import { cookies } from 'next/headers';
 import { FALLBACK_LOCALE, Locale, locales } from '.';
-import messagess from "./messages/en/index"
 
 export default getRequestConfig(async () => {
   const store = await cookies();
