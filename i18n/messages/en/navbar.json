@@ -4,8 +4,11 @@
         "dashboard": "Dashboard",
         "hotels": "Hotels"
     },
-    "logout": "Log out",
-    "settings": "My settings",
+    "buttons": {
+        "join": "Join a hotel",
+        "logout": "Log out",
+        "settings": "My settings"
+    },
     "locales": {
         "ar": "ع",
         "bg": "бг",

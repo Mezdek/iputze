@@ -40,12 +40,9 @@ function Dashboard({ user }: InjectedAuthProps) {
                         <div className="flex flex-col items-center gap-4 text-center text-gray-600">
                             <p className="text-lg">You haven’t joined any hotel yet.</p>
                             <p className="text-sm">Join one to get started.</p>
+                            <JoinHotel />
                         </div>
                     )}
-
-                    <div className="mt-8 flex justify-center">
-                        <JoinHotel />
-                    </div>
                 </Card>
             </main>
         </div>

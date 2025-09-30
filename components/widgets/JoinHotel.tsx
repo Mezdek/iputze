@@ -6,8 +6,16 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 
-export function JoinHotel() {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+type controlledProps = { isOpen: boolean, onOpenChange: (open: boolean) => void }
+type noProps = { isOpen?: never, onOpenChange?: never }
+type Props = controlledProps | noProps
+
+export function JoinHotel(props: Props) {
+
+    const { isOpen: isOpenInternal, onOpen, onOpenChange: onOpenChangeInternal } = useDisclosure();
+    const isOpen = props ? props.isOpen : isOpenInternal;
+    const onOpenChange = props.onOpenChange ? props.onOpenChange : onOpenChangeInternal
+
     const [selectedHotelId, setSelectedHotelId] = useState<string>("");
     const FORM = "join_hotel_form";
 
@@ -20,21 +28,22 @@ export function JoinHotel() {
         e.preventDefault();
         try {
             await join();
-            onOpenChange();
+            onOpenChange(false);
         } catch (err) {
             console.error(err);
         }
     };
 
     return (
-        <div>
-            <Button color="primary" onPress={onOpen}>{t("buttons.open")}</Button>
+        <>
+            {!props && <Button color="primary" onPress={onOpen}>{t("buttons.open")}</Button>}
 
-            <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
+            <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="text-lg font-semibold">{t("header")}</ModalHeader>
+
                             <ModalBody className="flex flex-col gap-4">
                                 {hotels ? (
                                     <>
@@ -88,6 +97,6 @@ export function JoinHotel() {
                     )}
                 </ModalContent>
             </Modal>
-        </div>
+        </>
     );
 }

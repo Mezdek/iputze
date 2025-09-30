@@ -1,14 +1,15 @@
 {
     "name": "Room",
-    "cleanliness": "<strong>Cleanliness: </strong> {status}",
+    "header": "<b>Room</b> {number}",
+    "cleanliness": "<strong>Status: </strong> {status}",
     "cleanliness_status": {
-        "CLEAN": "Clean",
-        "DIRTY": "Dirty"
+        "CLEAN": "clean",
+        "DIRTY": "dirty"
     },
     "occupancy": "<strong>Occupancy: </strong> {status}",
     "occupancy_status": {
-        "AVAILABLE": "Available",
-        "OCCUPIED": "Occupied"
+        "AVAILABLE": "available",
+        "OCCUPIED": "occupied"
     },
     "notes": "<strong>Notes: </strong> {notes}",
     "no_notes": "No Notes",

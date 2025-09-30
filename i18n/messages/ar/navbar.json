@@ -4,8 +4,11 @@
         "dashboard": "لوحة التحكم",
         "hotels": "الفنادق"
     },
-    "logout": "تسجيل الخروج",
-    "settings": "إعداداتي",
+    "buttons": {
+        "join": "انضم",
+        "logout": "تسجيل الخروج",
+        "settings": "إعداداتي"
+    },
     "locales": {
         "ar": "ع",
         "bg": "бг",

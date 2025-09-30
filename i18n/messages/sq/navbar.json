@@ -4,8 +4,11 @@
         "dashboard": "Paneli kryesor",
         "hotels": "Hotellet"
     },
-    "logout": "Dil",
-    "settings": "Cilësimet e mia",
+    "buttons": {
+        "join": "Bashko",
+        "logout": "Dil",
+        "settings": "Cilësimet e mia"
+    },
     "locales": {
         "ar": "ع",
         "bg": "бг",

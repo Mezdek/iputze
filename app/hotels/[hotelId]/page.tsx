@@ -13,7 +13,6 @@ import { RoleLevel, RoleStatus } from "@prisma/client";
 import { useParams } from "next/navigation";
 import type { FC } from "react";
 
-// Map role levels to views
 const ViewSelector: Record<RoleLevel, FC<InjectedAuthProps>> = {
     [RoleLevel.ADMIN]: ManagerView,
     [RoleLevel.MANAGER]: ManagerView,
@@ -21,7 +20,6 @@ const ViewSelector: Record<RoleLevel, FC<InjectedAuthProps>> = {
     [RoleLevel.PENDING]: PendingView,
 };
 
-// Helper function: select component based on user role & hotel
 function getViewForRole(user: MeResponse, hotelId: string): FC<InjectedAuthProps> {
     const role = user.roles.find(r => r.hotel.id === hotelId);
 

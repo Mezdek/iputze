@@ -4,8 +4,11 @@
         "dashboard": "Табло",
         "hotels": "Хотели"
     },
-    "logout": "Изход",
-    "settings": "Настройки",
+    "buttons": {
+        "join": "Присъединяване",
+        "logout": "Изход",
+        "settings": "Настройки"
+    },
     "locales": {
         "ar": "ع",
         "bg": "бг",
