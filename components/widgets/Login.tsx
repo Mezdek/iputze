@@ -35,7 +35,7 @@ export function LoginWidget() {
     const data = parseFormData<SignInRequestBody>(e.currentTarget, { email: "", password: "" });
     signIn(data, {
       onSuccess: () => router.push(getPath().DASHBOARD),
-      onError: (err: any) => setApiError(err.message || "Failed to sign in"),
+      onError: (error: Error) => setApiError(error.message || "Failed to sign in"),
     });
   };
 
@@ -46,7 +46,7 @@ export function LoginWidget() {
     try {
       await signUp(data);
       setSelected("sign_in");
-    } catch (e: any) {
+    } catch (e: unknown) {
       const message = handleLoginErrors(e)
       showErrorToast(e);
       setApiError(message);

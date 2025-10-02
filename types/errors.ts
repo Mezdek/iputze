@@ -3,9 +3,9 @@ export class ApiError extends Error {
     public readonly statusText: string;
     public readonly url: string;
     public readonly response?: Response;
-    public readonly data?: any;
+    public readonly data?: unknown;
 
-    constructor(response: Response, data?: any) {
+    constructor(response: Response, data?: unknown) {
         const message = `API Error: ${response.status} ${response.statusText}`;
         super(message);
 
@@ -61,11 +61,4 @@ export class ApiError extends Error {
 
         return new ApiError(response, data);
     }
-}
-
-// Type for API error responses
-export interface ErrorResponse {
-    message?: string;
-    code?: string;
-    details?: any;
 }

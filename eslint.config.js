@@ -108,6 +108,7 @@ export default [
       '*.min.js',
       '*.config.js',
       'public/',
+      'temp/',
       'coverage/',
       '**/*.d.ts',
     ],

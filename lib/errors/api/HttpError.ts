@@ -27,7 +27,7 @@ export class HttpError extends Error implements IHttpError {
     }
 
     json() {
-        const errorObj: Record<string, any> = {
+        const errorObj: Record<string, unknown> = {
             code: this.code,
             message: this.message,
             status: this.status,

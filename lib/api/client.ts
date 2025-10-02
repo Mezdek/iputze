@@ -10,15 +10,19 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 
-
+const API_BASE_ROUTE = "/api";
+function route(url:string, base?:string):string{
+    const baseUrl = base??API_BASE_ROUTE;
+    return baseUrl+url;
+}
 
 async function get<T>(url: string) {
-    const response = await fetch(`/api${url}`, { credentials: 'include' });
+    const response = await fetch(route(url), { credentials: 'include' });
     return handleResponse<T>(response);
 };
 
-async function post<T>(url: string, data?: any) {
-    const response = await fetch(`/api${url}`, {
+async function post<T>(url: string, data?: unknown) {
+    const response = await fetch(route(url), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -27,8 +31,8 @@ async function post<T>(url: string, data?: any) {
     return handleResponse<T>(response);
 };
 
-async function patch<T>(url: string, data?: any) {
-    const response = await fetch(`/ api${url}`, {
+async function patch<T>(url: string, data?: unknown) {
+    const response = await fetch(route(url), {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -38,7 +42,7 @@ async function patch<T>(url: string, data?: any) {
 };
 
 async function _delete<T>(url: string) {
-    const response = await fetch(`/ api${url} `, {
+    const response = await fetch(route(url), {
         method: 'DELETE',
         credentials: 'include'
     });
