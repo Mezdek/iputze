@@ -1,6 +1,6 @@
 'use client'
 
-import type { RoomCollectionParams, RoomCreationBody } from "@/types";
+
 import {
     addToast,
     Button,
@@ -19,7 +19,10 @@ import { useCreateRoom, useErrorToast } from "@hooks";
 import { parseFormData } from "@lib";
 import { RoomCleanliness, RoomOccupancy } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import { FormEvent } from "react";
+import type { FormEvent } from "react";
+
+import type { RoomCollectionParams, RoomCreationBody } from "@/types";
+
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -58,7 +61,7 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                     t("creation_panel.buttons.open")
                 }
             </Button>
-            <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
+            <Modal disableAnimation isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
                         <>
@@ -66,7 +69,7 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                                 {t("creation_panel.header")}
                             </ModalHeader>
                             <ModalBody>
-                                <Form id={FORM} onSubmit={handleSubmit} className="flex flex-col gap-4">
+                                <Form className="flex flex-col gap-4" id={FORM} onSubmit={handleSubmit}>
                                     <Input
                                         autoFocus
                                         isRequired
@@ -79,13 +82,13 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                                     />
 
                                     <Select
-                                        className="max-w-xs"
-                                        form={FORM}
                                         isRequired
+                                        className="max-w-xs"
+                                        defaultSelectedKeys={[RoomCleanliness.CLEAN]}
+                                        form={FORM}
                                         label={t("creation_panel.inputs.cleanliness.label")}
                                         name="cleanliness"
                                         placeholder={t("creation_panel.inputs.cleanliness.placeholder")}
-                                        defaultSelectedKeys={[RoomCleanliness.CLEAN]}
                                     >
                                         {Object.values(RoomCleanliness).map(
                                             (status) => (
@@ -97,13 +100,13 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                                     </Select>
 
                                     <Select
-                                        className="max-w-xs"
-                                        form={FORM}
                                         isRequired
+                                        className="max-w-xs"
+                                        defaultSelectedKeys={[RoomOccupancy.AVAILABLE]}
+                                        form={FORM}
                                         label={t("creation_panel.inputs.occupancy.label")}
                                         name="occupancy"
                                         placeholder={t("creation_panel.inputs.occupancy.placeholder")}
-                                        defaultSelectedKeys={[RoomOccupancy.AVAILABLE]}
                                     >
                                         {Object.values(RoomOccupancy).map(
                                             (status) => (
@@ -119,7 +122,7 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                                 <Button color="danger" variant="flat" onPress={onClose}>
                                     {t("creation_panel.buttons.close")}
                                 </Button>
-                                <Button color="primary" type="submit" form={FORM}>
+                                <Button color="primary" form={FORM} type="submit">
                                     {t("creation_panel.buttons.submit")}
                                 </Button>
                             </ModalFooter>

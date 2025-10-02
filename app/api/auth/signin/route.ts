@@ -1,8 +1,12 @@
-import type { SignInRequestBody, SignInResponse } from "@/types";
+
 import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, parseExpiryToMilliSeconds, RATE_LIMIT_KEYS, ResponseCookieOptions, SESSION_COOKIE_EXP, SESSION_COOKIE_KEY, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { compare } from "bcrypt";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { SignInRequestBody, SignInResponse } from "@/types";
+
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
     checkRateLimit(req, RATE_LIMIT_KEYS.SIGNIN, 5, 300_000);

@@ -2,6 +2,7 @@
 import { useHotels } from "@hooks";
 import { useParams } from "next/navigation";
 
+
 export function DisabledView() {
     const { data: hotels } = useHotels();
     const { hotelId } = useParams<{ hotelId: string }>();

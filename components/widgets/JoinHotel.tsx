@@ -1,10 +1,13 @@
 'use client'
 
+
+
 import { Button, Form, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, useDisclosure } from "@heroui/react";
 import { useCreateRole, useErrorToast, useHotels } from "@hooks";
-import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
+import type { FormEvent} from "react";
+import { useState } from "react";
 
 type controlledProps = { isOpen: boolean, onOpenChange: (open: boolean) => void }
 type noProps = { isOpen?: never, onOpenChange?: never }
@@ -50,13 +53,13 @@ export function JoinHotel(props: Props) {
                                     <>
                                         <Form id={FORM} onSubmit={handleJoin}>
                                             <Select
+                                                isRequired
                                                 className="max-w-xs"
                                                 form={FORM}
-                                                isRequired
                                                 label={t("inputs.hotel_name.label")}
                                                 name="hotelId"
-                                                onSelectionChange={(e) => setSelectedHotelId(e.currentKey!)}
                                                 placeholder={t("inputs.hotel_name.placeholder")}
+                                                onSelectionChange={(e) => setSelectedHotelId(e.currentKey!)}
                                             >
                                                 {hotels.map(h => (
                                                     <SelectItem key={h.id}>{h.name}</SelectItem>
@@ -69,10 +72,10 @@ export function JoinHotel(props: Props) {
                                                 <div className="flex-shrink-0 w-full md:w-48 h-32 relative rounded-lg overflow-hidden">
                                                     <Image
                                                         // src={hotel.imageUrl || "/default-hotel.jpg"}
-                                                        src={`https://picsum.photos/id/${parseInt(`${hotel.id}`.slice(0, 4), 16) % 90 + 10}/200`}
-                                                        alt={`Image of ${hotel.name}`}
                                                         fill
+                                                        alt={`Image of ${hotel.name}`}
                                                         className="object-cover"
+                                                        src={`https://picsum.photos/id/${parseInt(`${hotel.id}`.slice(0, 4), 16) % 90 + 10}/200`}
                                                     />
                                                 </div>
                                                 <div className="flex flex-col gap-1">
@@ -92,7 +95,7 @@ export function JoinHotel(props: Props) {
 
                             <ModalFooter className="gap-3">
                                 <Button color="danger" variant="flat" onPress={onClose}>{t("buttons.close")}</Button>
-                                <Button color="primary" type="submit" form={FORM} disabled={!hotel}>{t("buttons.submit")} </Button>
+                                <Button color="primary" disabled={!hotel} form={FORM} type="submit">{t("buttons.submit")} </Button>
                             </ModalFooter>
                         </>
                     )}

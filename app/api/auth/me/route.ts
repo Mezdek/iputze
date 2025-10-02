@@ -1,9 +1,14 @@
-import type { MeResponse, TRole } from "@/types";
+
 import { getUserOrThrow, HttpStatus, isAdmin, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Hotel } from "@prisma/client";
 import { RoleLevel, RoleStatus } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { MeResponse, TRole } from "@/types";
+
+
 
 export const GET = withErrorHandling(
     async (req: NextRequest) => {

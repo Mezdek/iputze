@@ -1,6 +1,7 @@
 'use client';
 
-import type { InjectedAuthProps, MeResponse } from "@/types";
+
+
 import {
     CleanerView,
     DeniedAccessView,
@@ -12,6 +13,10 @@ import {
 import { RoleLevel, RoleStatus } from "@prisma/client";
 import { useParams } from "next/navigation";
 import type { FC } from "react";
+
+import type { InjectedAuthProps, MeResponse } from "@/types";
+
+
 
 const ViewSelector: Record<RoleLevel, FC<InjectedAuthProps>> = {
     [RoleLevel.ADMIN]: ManagerView,

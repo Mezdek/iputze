@@ -1,5 +1,3 @@
-import { AssignmentStatus, RoleLevel, RoleStatus, RoomCleanliness, RoomOccupancy } from "@prisma/client";
-
 /* -----------------------------------
    Route Params
 ----------------------------------- */
@@ -12,12 +10,15 @@ export type RoleCollectionParams = HotelParams;
 export type RoleParams = RoleCollectionParams & { roleId: string };
 // Assignments
 export type AssignmentCollectionParams = HotelParams;
-export type AssignmentParams = AssignmentCollectionParams & { assignmentId: string };
+export type AssignmentParams = AssignmentCollectionParams & {
+  assignmentId: string;
+};
 // AssignmentNotes
 export type AssignmentNoteCollectionParams = AssignmentParams;
-export type AssignmentNoteParams = AssignmentNoteCollectionParams & { assignmentNoteId: string };
+export type AssignmentNoteParams = AssignmentNoteCollectionParams & {
+  assignmentNoteId: string;
+};
 
 /* -----------------------------------
    Request Bodies
 ----------------------------------- */
-

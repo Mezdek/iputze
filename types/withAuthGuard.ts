@@ -1,4 +1,4 @@
-import { MeResponse } from "@/types";
+import type { MeResponse } from "@/types";
 
 export type InjectedAuthProps = {
     user: MeResponse;

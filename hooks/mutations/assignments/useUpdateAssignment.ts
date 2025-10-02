@@ -1,7 +1,9 @@
-import type { AssignmentParams, AssignmentUpdateBody } from "@/types";
 import { api, getPath, queryKeys } from "@lib";
 import type { Assignment } from "@prisma/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import type { AssignmentParams, AssignmentUpdateBody } from "@/types";
+
 
 
 export const useUpdateAssignment = ({ hotelId, assignmentId }: AssignmentParams) => {
@@ -9,7 +11,7 @@ export const useUpdateAssignment = ({ hotelId, assignmentId }: AssignmentParams)
     return useMutation({
         mutationFn: async (data: AssignmentUpdateBody): Promise<Assignment> => {
             const res = await api.patch<Assignment>(getPath({ hotelId, assignmentId }).API.ASSIGNMENT, data);
-            return res.data;
+            return res;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKeys.assignments, hotelId] })
     });

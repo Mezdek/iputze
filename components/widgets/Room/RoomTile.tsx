@@ -9,8 +9,6 @@ export function RoomTile({ room }: { room: Room }) {
     const t = useTranslations("room")
     return (
         <Tile
-            header={<h2 className="font-semibold">{room.number}</h2>}
-
             body={
                 <>
                     <RichText>
@@ -31,6 +29,8 @@ export function RoomTile({ room }: { room: Room }) {
                     <RoomDeletion room={room} />
                 </>
             }
+
+            header={<h2 className="font-semibold">{room.number}</h2>}
         />
     );
 }

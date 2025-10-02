@@ -1,8 +1,12 @@
-import type { AssignmentParams, AssignmentUpdateBody } from "@/types";
+
 import { APP_ERRORS, canDeleteAssignment, GeneralErrors, getAssignmentAccessContext, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
-import { Assignment } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import type { Assignment } from "@prisma/client";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { AssignmentParams, AssignmentUpdateBody } from "@/types";
+
 
 /**
  * GET /api/hotels/[hotelId]/assignments/[assignmentId]

@@ -1,10 +1,13 @@
 'use client';
 
-import { InjectedAuthProps } from "@/types";
+
 import { JoinHotel, withAuthGuard } from "@components";
 import { Button, Card } from "@heroui/react";
 import { getPath } from "@lib";
 import { useRouter } from "next/navigation";
+
+import type { InjectedAuthProps } from "@/types";
+
 
 function Dashboard({ user }: InjectedAuthProps) {
     const router = useRouter();
@@ -24,9 +27,9 @@ function Dashboard({ user }: InjectedAuthProps) {
                                 <li key={role.id}>
                                     <Button
                                         fullWidth
-                                        size="lg"
-                                        color="secondary"
                                         className="h-16 text-lg font-medium"
+                                        color="secondary"
+                                        size="lg"
                                         onPress={() =>
                                             router.push(getPath({ hotelId: role.hotel.id }).HOTEL)
                                         }

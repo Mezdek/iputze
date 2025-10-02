@@ -1,5 +1,6 @@
 'use client'
 //TODO add showErrorToast
+
 import { api, getPath } from "@lib";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -12,7 +13,7 @@ export const useSignOut = () => {
     return useMutation({
         mutationFn: async (): Promise<null> => {
             const res = await api.post<null>(getPath().API.SIGNOUT);
-            return res.data
+            return res
         },
         onSuccess() {
             router.push(getPath().HOME);

@@ -1,10 +1,11 @@
 'use client'
 
-import type { EnhancedRole } from "@/types";
 import { ApprovalRequest, Tile } from "@components";
 import { addToast } from "@heroui/react";
 import { useUpdateRole } from "@hooks";
 import { RoleLevel, RoleStatus } from "@prisma/client";
+
+import type { EnhancedRole } from "@/types";
 
 export function RoleTile({ role }: { role: EnhancedRole }) {
     const isInactive = role.status === RoleStatus.DISABLED;
@@ -31,13 +32,6 @@ export function RoleTile({ role }: { role: EnhancedRole }) {
 
     return (
         <Tile
-            header={
-                <>
-                    <h2 className="font-semibold">{role.level}</h2>
-                    {isInactive && <span className="italic text-sm">(Inactive)</span>}
-                </>
-            }
-
             body={
                 <>
                     <p><strong>Name:</strong> {role.name}</p>
@@ -74,6 +68,13 @@ export function RoleTile({ role }: { role: EnhancedRole }) {
                             submitButton={{ action: handleDeactivate }}
                         />
                     )}
+                </>
+            }
+
+            header={
+                <>
+                    <h2 className="font-semibold">{role.level}</h2>
+                    {isInactive && <span className="italic text-sm">(Inactive)</span>}
                 </>
             }
         />

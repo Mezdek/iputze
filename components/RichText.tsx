@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 // These tags are available
 type Tag = 'p' | 'b' | 'i' | 'strong';

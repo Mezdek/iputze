@@ -1,14 +1,20 @@
 {
   "name": "iputze",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
+    "next:build": "next build",
+    "next:start": "next start",
+    "next:lint": "next lint",
     "tsc": "tsc --noEmit",
-    "db:reset": "rm -rf ./prisma/{migrations,dev.db} && prisma generate && npx prisma migrate dev --name init && npx prisma db seed"
+    "db:reset": "rm -rf ./prisma/{migrations,dev.db} && prisma generate && npx prisma migrate dev --name init && npx prisma db seed",
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:format": "npm run lint && npm run format:check"
   },
   "dependencies": {
     "@heroui/react": "^2.8.4",
@@ -16,7 +22,6 @@
     "@prisma/client": "^6.16.2",
     "@tailwindcss/postcss": "^4.1.13",
     "@tanstack/react-query": "^5.87.4",
-    "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "framer-motion": "^12.23.12",
     "jsonwebtoken": "^9.0.2",
@@ -32,14 +37,28 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/bcrypt": "^6.0.0",
+    "@types/eslint-plugin-jsx-a11y": "^6.10.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.4.6",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "eslint": "^9.36.0",
+    "eslint-config-next": "^15.4.6",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.2.0",
+    "globals": "^16.4.0",
+    "prettier": "^3.6.2",
     "prisma": "^6.16.2",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.45.0"
   }
 }

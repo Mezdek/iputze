@@ -1,5 +1,7 @@
 import { HttpStatus, prisma, ResponseCookieOptions, SESSION_COOKIE_KEY, withErrorHandling } from "@lib";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
     const sessionId = req.cookies.get(SESSION_COOKIE_KEY)?.value;

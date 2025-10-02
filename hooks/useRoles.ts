@@ -1,13 +1,14 @@
-import type { EnhancedRole, RoleCollectionParams } from "@/types";
 import { api, getPath, queryKeys } from "@lib";
 import { useQuery } from "@tanstack/react-query";
+
+import type { EnhancedRole, RoleCollectionParams } from "@/types";
 
 export const useRoles = ({ hotelId }: RoleCollectionParams) => {
     return useQuery<EnhancedRole[] | null>({
         queryKey: [queryKeys.roles, hotelId],
         queryFn: async () => {
             const res = await api.get<EnhancedRole[]>(getPath({ hotelId }).API.ROLES);
-            return res.data;
+            return res;
         },
         retry: false, // do not retry on 401
         staleTime: 1000 * 60 * 60 * 24,

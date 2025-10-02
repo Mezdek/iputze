@@ -1,6 +1,5 @@
 'use client'
 
-import { useErrorToast } from "@/hooks";
 import {
     Button,
     Modal,
@@ -11,6 +10,8 @@ import {
     useDisclosure
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
+
+import { useErrorToast } from "@/hooks";
 
 type THeroUIButtonColors =
     | "default"
@@ -64,18 +65,18 @@ export function ApprovalRequest({
         <>
             <Button
                 color={modalButton.color ?? "primary"}
-                onPress={onOpen}
                 isDisabled={modalButton.isDisabled}
+                onPress={onOpen}
             >
                 {modalButton.text}
             </Button>
 
             <Modal
+                disableAnimation
+                aria-label={header}
                 isOpen={isOpen}
                 placement="top-center"
                 onOpenChange={onOpenChange}
-                disableAnimation
-                aria-label={header}
             >
                 <ModalContent>
                     <ModalHeader className="text-lg font-semibold">{header}</ModalHeader>

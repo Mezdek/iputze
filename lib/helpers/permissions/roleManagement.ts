@@ -1,6 +1,7 @@
+import { RoleLevel, RoleStatus } from "@prisma/client";
+
 import { isAdmin, isHotelManager } from "@/lib/helpers";
 import type { RoleManagement, RoleManagementModification } from "@/types";
-import { RoleLevel, RoleStatus } from "@prisma/client";
 
 /**
  * Determines whether the actor can modify a specific role.

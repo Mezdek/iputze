@@ -1,7 +1,10 @@
-import type { HotelParams } from "@/types";
 import { APP_ERRORS, canDeleteHotel, canUpdateHotel, canViewHotel, DefaultMessages, GeneralErrors, getHotelOrThrow, getUserOrThrow, HttpStatus, prisma, withErrorHandling } from "@lib";
 import type { Hotel } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { HotelParams } from "@/types";
+
 
 
 export const GET = withErrorHandling(

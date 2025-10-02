@@ -1,5 +1,6 @@
 import { prisma } from "@lib/prisma";
 import { hash } from "bcrypt";
+
 import { hotels, people, type THotel, type TUser, } from "./seeding/data";
 
 

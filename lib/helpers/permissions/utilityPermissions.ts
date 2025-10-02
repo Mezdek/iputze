@@ -1,5 +1,6 @@
-import { MeResponse, SafeUser, TRole } from "@/types";
-import { RoleLevel, RoleStatus, type Role } from "@prisma/client";
+import { type Role,RoleLevel, RoleStatus } from "@prisma/client";
+
+import type { MeResponse, SafeUser, TRole } from "@/types";
 
 
 type RoleCheckProps = { hotelId?: string, user: MeResponse, cleaners?: SafeUser[] }

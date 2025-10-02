@@ -1,4 +1,4 @@
-import { RoleLevel } from "@prisma/client";
+import type { RoleLevel } from "@prisma/client";
 
 // Hotels
 export type THotel = {

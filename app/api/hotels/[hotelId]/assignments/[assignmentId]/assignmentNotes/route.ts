@@ -1,8 +1,12 @@
-import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@/types";
+
 import { getAssignmentAccessContext, HttpStatus, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
-import { AssignmentNote } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import type { AssignmentNote } from "@prisma/client";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { AssignmentNoteCollectionParams, AssignmentNoteCreationBody } from "@/types";
+
 
 
 export const GET = withErrorHandling(

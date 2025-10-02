@@ -1,8 +1,12 @@
-import type { RoleParams, RoleUpdateBody } from "@/types";
+
 import { APP_ERRORS, canModifyRole, GeneralErrors, getRoleOrThrow, getUserOrThrow, RolesErrors, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Role } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { RoleParams, RoleUpdateBody } from "@/types";
+
 
 export const PATCH = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoleParams }) => {

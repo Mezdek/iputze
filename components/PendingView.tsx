@@ -3,6 +3,7 @@
 import { useHotels } from "@hooks";
 import { useParams } from "next/navigation";
 
+
 export function PendingView() {
     const { data: hotels } = useHotels();
     const { hotelId } = useParams<{ hotelId: string }>();

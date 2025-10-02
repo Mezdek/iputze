@@ -1,8 +1,12 @@
-import type { SignUpRequestBody, SignUpResponse } from "@/types";
+
 import { APP_ERRORS, AuthErrors, checkRateLimit, HttpStatus, RATE_LIMIT_KEYS, validateRegistration, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import { hash } from "bcrypt";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { SignUpRequestBody, SignUpResponse } from "@/types";
+
 
 export const POST = withErrorHandling(
     async (req: NextRequest) => {

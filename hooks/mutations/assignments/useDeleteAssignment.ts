@@ -1,6 +1,7 @@
-import type { AssignmentParams } from "@/types";
 import { api, getPath, queryKeys } from "@lib";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import type { AssignmentParams } from "@/types";
 
 
 export const useDeleteAssignment = ({ hotelId, assignmentId }: AssignmentParams) => {
@@ -8,7 +9,7 @@ export const useDeleteAssignment = ({ hotelId, assignmentId }: AssignmentParams)
     return useMutation({
         mutationFn: async (): Promise<null> => {
             const res = await api.delete<null>(getPath({ hotelId, assignmentId }).API.ASSIGNMENT);
-            return res.data;
+            return res;
         },
         onSuccess: () => queryClient.invalidateQueries({ queryKey: [queryKeys.assignments, hotelId] })
     });

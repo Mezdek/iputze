@@ -1,6 +1,6 @@
 'use client'
 
-import type { RoomUpdateBody } from "@/types";
+
 import {
     addToast,
     Button,
@@ -17,9 +17,13 @@ import {
 } from "@heroui/react";
 import { useErrorToast, useUpdateRoom } from "@hooks";
 import { parseFormData } from "@lib";
-import { Room, RoomCleanliness, RoomOccupancy } from "@prisma/client";
+import type { Room} from "@prisma/client";
+import { RoomCleanliness, RoomOccupancy } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import { FormEvent } from "react";
+import type { FormEvent } from "react";
+
+import type { RoomUpdateBody } from "@/types";
+
 
 export function RoomUpdate({ room }: { room: Room }) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -47,15 +51,15 @@ export function RoomUpdate({ room }: { room: Room }) {
     return (
         <>
             <Button
+                aria-label={`Edit room ${room.number}`}
                 color="secondary"
                 onPress={onOpen}
-                aria-label={`Edit room ${room.number}`}
             >
                 {
                     t("update_panel.buttons.open")
                 }
             </Button>
-            <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange} disableAnimation>
+            <Modal disableAnimation isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onCloseModal) => (
                         <>
@@ -68,6 +72,7 @@ export function RoomUpdate({ room }: { room: Room }) {
                                 <Form id={FORM} onSubmit={handleSubmit}>
                                     <Input
                                         autoFocus
+                                        required
                                         className="w-full"
                                         defaultValue={room.number}
                                         errorMessage={t("update_panel.inputs.room_number.error_message")}
@@ -75,17 +80,16 @@ export function RoomUpdate({ room }: { room: Room }) {
                                         label={t("update_panel.inputs.room_number.label")}
                                         name="number"
                                         placeholder={t("update_panel.inputs.room_number.placeholder")}
-                                        required
                                         variant="bordered"
                                     />
                                     <Select
+                                        required
                                         className="w-full"
                                         defaultSelectedKeys={[room.cleanliness]}
                                         form={FORM}
                                         label={t("update_panel.inputs.cleanliness.label")}
                                         name="cleanliness"
                                         placeholder={t("update_panel.inputs.cleanliness.placeholder")}
-                                        required
                                     >
                                         {Object.values(RoomCleanliness).map(status => (
                                             <SelectItem key={status}>
@@ -94,13 +98,13 @@ export function RoomUpdate({ room }: { room: Room }) {
                                         ))}
                                     </Select>
                                     <Select
+                                        required
                                         className="w-full"
                                         defaultSelectedKeys={[room.occupancy]}
                                         form={FORM}
                                         label={t("update_panel.inputs.occupancy.label")}
                                         name="occupancy"
                                         placeholder={t("update_panel.inputs.occupancy.placeholder")}
-                                        required
                                     >
                                         {Object.values(RoomOccupancy).map(status => (
                                             <SelectItem key={status}>

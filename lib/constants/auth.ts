@@ -1,5 +1,6 @@
 import { parseExpiryToMilliSeconds } from "@lib";
-import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+
 
 export const SESSION_COOKIE_EXP = process.env.SESSION_COOKIE_EXP || "7d";
 

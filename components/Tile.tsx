@@ -1,6 +1,7 @@
 'use client'
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/react";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
+
 
 export function Tile({ header, body, footer }: { header: ReactNode, body: ReactNode, footer: ReactNode }) {
     return (

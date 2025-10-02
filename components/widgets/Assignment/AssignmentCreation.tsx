@@ -1,6 +1,6 @@
 'use client'
 
-import type { AssignmentCollectionParams, AssignmentCreationBody } from "@/types";
+
 import {
     addToast,
     Button,
@@ -20,7 +20,10 @@ import { getLocalTimeZone, today } from "@internationalized/date";
 import { parseFormData } from "@lib";
 import { RoleLevel, RoleStatus } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import { FormEvent } from "react";
+import type { FormEvent } from "react";
+
+import type { AssignmentCollectionParams, AssignmentCreationBody } from "@/types";
+
 
 export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
     const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -61,19 +64,19 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
     return (
         <>
             <Button
-                color="primary"
-                onPress={onOpen}
-                disabled={!rooms}
                 aria-label="Create assignment"
+                color="primary"
+                disabled={!rooms}
+                onPress={onOpen}
             >
                 {t("modal_button")}
             </Button>
 
             <Modal
+                aria-labelledby="create-assignment-title"
                 isOpen={isOpen}
                 placement="center"
                 onOpenChange={onOpenChange}
-                aria-labelledby="create-assignment-title"
             >
                 <ModalContent>
                     {(onClose) => (
@@ -85,14 +88,14 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                             <ModalBody>
                                 <Form id="assignment_creation_form" onSubmit={handleCreate}>
                                     <Select
-                                        name="roomId"
-                                        form="assignment_creation_form"
-                                        isRequired
                                         fullWidth
-                                        label={t("inputs.room_number.label")}
-                                        placeholder={t("inputs.room_number.placeholder")}
+                                        isRequired
                                         errorMessage={t("inputs.room_number.error_message")}
+                                        form="assignment_creation_form"
                                         isDisabled={!rooms || rooms.length === 0}
+                                        label={t("inputs.room_number.label")}
+                                        name="roomId"
+                                        placeholder={t("inputs.room_number.placeholder")}
                                     >
                                         {rooms && rooms.length > 0
                                             ? rooms.map((room) => (
@@ -103,15 +106,15 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
 
 
                                     <Select
-                                        name="cleaners"
-                                        form="assignment_creation_form"
-                                        isRequired
                                         fullWidth
+                                        isRequired
+                                        errorMessage={t("inputs.cleaners.error_message")}
+                                        form="assignment_creation_form"
+                                        isDisabled={allCleaners.length === 0}
                                         label={t("inputs.cleaners.label")}
+                                        name="cleaners"
                                         placeholder={t("inputs.cleaners.placeholder")}
                                         selectionMode="multiple"
-                                        errorMessage={t("inputs.cleaners.error_message")}
-                                        isDisabled={allCleaners.length === 0}
                                     >
                                         {allCleaners.map((cl) => (
                                             <SelectItem key={cl.userId}>{cl.name}</SelectItem>
@@ -119,14 +122,14 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                                     </Select>
 
                                     <DatePicker
-                                        name="dueAt"
-                                        form="assignment_creation_form"
                                         isRequired
-                                        label={t("inputs.dua_date.label")}
-                                        description={t("inputs.dua_date.description")}
-                                        minValue={today(getLocalTimeZone())}
                                         defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
+                                        description={t("inputs.dua_date.description")}
                                         errorMessage={t("inputs.dua_date.error_message")}
+                                        form="assignment_creation_form"
+                                        label={t("inputs.dua_date.label")}
+                                        minValue={today(getLocalTimeZone())}
+                                        name="dueAt"
                                     />
                                 </Form>
                             </ModalBody>
@@ -137,8 +140,8 @@ export function AssignmentCreation({ hotelId }: AssignmentCollectionParams) {
                                 </Button>
                                 <Button
                                     color="primary"
-                                    type="submit"
                                     form="assignment_creation_form"
+                                    type="submit"
                                 >
                                     {t("inputs.submit_button")}
                                 </Button>

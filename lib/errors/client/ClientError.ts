@@ -1,5 +1,6 @@
-import { LeafValues } from "@/types";
-import { ErrorCodes } from "./errorCodes";
+import type { LeafValues } from "@/types";
+
+import type { ErrorCodes } from "./errorCodes";
 
 export type ErrorCodeMap<T> = {
     [K in keyof T]: LeafValues<T[K]>;

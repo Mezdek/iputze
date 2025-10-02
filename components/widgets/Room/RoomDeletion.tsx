@@ -3,7 +3,7 @@
 import { ApprovalRequest } from "@components";
 import { addToast } from "@heroui/react";
 import { useDeleteRoom, useErrorToast } from "@hooks";
-import { Room } from "@prisma/client";
+import type { Room } from "@prisma/client";
 import { useTranslations } from "next-intl";
 
 export function RoomDeletion({ room }: { room: Room }) {

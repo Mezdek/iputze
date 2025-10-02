@@ -1,14 +1,15 @@
-import { AssignmentNoteCollectionParams } from "@/types";
 import { api, getPath, queryKeys } from "@lib";
 import type { AssignmentNote } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
+
+import type { AssignmentNoteCollectionParams } from "@/types";
 
 export const useAssignmentNotes = ({ hotelId, assignmentId }: AssignmentNoteCollectionParams) => {
     return useQuery<AssignmentNote[] | null>({
         queryKey: [queryKeys.assignmentNotes, hotelId, assignmentId],
         queryFn: async () => {
             const res = await api.get<AssignmentNote[]>(getPath({ hotelId, assignmentId }).API.ASSIGNMENTNOTES);
-            return res.data;
+            return res;
         },
         retry: false, // do not retry on 401
         staleTime: 1000 * 60 * 60 * 24,

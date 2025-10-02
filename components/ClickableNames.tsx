@@ -1,4 +1,4 @@
-import { SafeUser } from "@/types";
+import type { SafeUser } from "@/types";
 
 export function ClickableNames({ users, isDisabled = false }: { users: SafeUser[], isDisabled?: boolean }) {
     const tw = isDisabled ? "cursor-text" : "cursor-pointer hover:underline"
@@ -6,7 +6,7 @@ export function ClickableNames({ users, isDisabled = false }: { users: SafeUser[
         <div className="inline">
             {users.map
                 ((user, index) =>
-                    <button key={user.id} disabled={isDisabled}>
+                    <button disabled={isDisabled} key={user.id}>
                         <i className={"not-italic " + tw}>{user.name}</i>
                         {index < users.length - 1 && ", "}
                     </button>)}

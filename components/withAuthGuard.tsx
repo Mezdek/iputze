@@ -1,11 +1,17 @@
 'use client';
 
-import { InjectedAuthProps } from "@/types";
+
+
 import { LoadingScreen } from "@components";
 import { useMe } from "@hooks";
 import { getPath } from "@lib";
 import { useRouter } from "next/navigation";
-import { ComponentType, useEffect } from "react";
+import type { ComponentType} from "react";
+import { useEffect } from "react";
+
+import type { InjectedAuthProps } from "@/types";
+
+
 
 
 

@@ -1,9 +1,48 @@
-import axios from "axios";
+import { ApiError } from '@/types';
 
-export const api = axios.create({
-    baseURL: "/api",
-    withCredentials: true,
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+async function handleResponse<T>(response: Response): Promise<T> {
+    if (response.ok) {
+        if (response.status === 204 || response.status === 205) return undefined as T;
+        return response.json() as T;
+    }
+
+    throw await ApiError.fromResponse(response);
+}
+
+
+
+
+async function get<T>(url: string) {
+    const response = await fetch(`/api${url}`, { credentials: 'include' });
+    return handleResponse<T>(response);
+};
+
+async function post<T>(url: string, data?: any) {
+    const response = await fetch(`/api${url}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    return handleResponse<T>(response);
+};
+
+async function patch<T>(url: string, data?: any) {
+    const response = await fetch(`/ api${url}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+    return handleResponse<T>(response);
+};
+
+async function _delete<T>(url: string) {
+    const response = await fetch(`/ api${url} `, {
+        method: 'DELETE',
+        credentials: 'include'
+    });
+    return handleResponse<T>(response);
+};
+
+export const api = { get, post, patch, delete: _delete };

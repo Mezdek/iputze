@@ -1,14 +1,19 @@
 'use client'
 
-import type { SignInRequestBody, SignUpRequestBody } from "@/types";
+
+
 import { FormError, PasswordInput } from "@components";
 import { Button, Card, CardBody, Form, Input, Link, Tab, Tabs } from "@heroui/react";
 import { useErrorToast, useSignIn, useSignUp } from "@hooks";
 import { getPath, parseFormData } from "@lib";
-import { isAxiosError } from "axios";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
+import type { FormEvent} from "react";
+import { useState } from "react";
+
+import { ApiError, type SignInRequestBody, type SignUpRequestBody } from "@/types";
+
+
 
 export function LoginWidget() {
   const t = useTranslations("login")
@@ -58,11 +63,11 @@ export function LoginWidget() {
           size="lg"
           onSelectionChange={(key) => setSelected(key as string)}
         >
-          <Tab key="sign_in" title={t("signin_tab_title")} className="h-full bg">
-            <Form className="flex flex-col gap-4 h-full justify-between" onSubmit={handleSignIn} id={SIGNIN_FORM}>
+          <Tab className="h-full bg" key="sign_in" title={t("signin_tab_title")}>
+            <Form className="flex flex-col gap-4 h-full justify-between" id={SIGNIN_FORM} onSubmit={handleSignIn}>
               <div className="flex flex-col gap-4 h-full w-full">
-                <Input isRequired label={t("email_input.label")} placeholder={t("email_input.placeholder")} type="email" name="email" form={SIGNIN_FORM} />
-                <PasswordInput formId={SIGNIN_FORM} autoComplete="current-password" />
+                <Input isRequired form={SIGNIN_FORM} label={t("email_input.label")} name="email" placeholder={t("email_input.placeholder")} type="email" />
+                <PasswordInput autoComplete="current-password" formId={SIGNIN_FORM} />
                 <FormError message={apiError} />
                 <p className="text-small">
                   {
@@ -74,17 +79,17 @@ export function LoginWidget() {
                   }
                 </p>
               </div>
-              <Button fullWidth color="primary" type="submit" isLoading={isPending} form={SIGNIN_FORM} size="lg">
+              <Button fullWidth color="primary" form={SIGNIN_FORM} isLoading={isPending} size="lg" type="submit">
                 {t("signin_button")}
               </Button>
             </Form>
           </Tab>
-          <Tab key="sign_up" title={t("signup_tab_title")} className="h-full">
-            <Form className="flex flex-col gap-4 h-full justify-between" onSubmit={handleSignUp} id={SIGNUP_FORM}>
+          <Tab className="h-full" key="sign_up" title={t("signup_tab_title")}>
+            <Form className="flex flex-col gap-4 h-full justify-between" id={SIGNUP_FORM} onSubmit={handleSignUp}>
               <div className="flex flex-col gap-4 h-full w-full">
-                <Input isRequired label={t("name_input.label")} placeholder={t("name_input.placeholder")} name="name" form={SIGNUP_FORM} />
-                <Input isRequired label={t("email_input.label")} placeholder={t("email_input.placeholder")} type="email" name="email" form={SIGNUP_FORM} />
-                <PasswordInput formId={SIGNUP_FORM} autoComplete="new-password" />
+                <Input isRequired form={SIGNUP_FORM} label={t("name_input.label")} name="name" placeholder={t("name_input.placeholder")} />
+                <Input isRequired form={SIGNUP_FORM} label={t("email_input.label")} name="email" placeholder={t("email_input.placeholder")} type="email" />
+                <PasswordInput autoComplete="new-password" formId={SIGNUP_FORM} />
                 <FormError message={apiError} />
                 <p className="text-small">
                   {
@@ -96,7 +101,7 @@ export function LoginWidget() {
                   }
                 </p>
               </div>
-              <Button fullWidth color="primary" type="submit" form={SIGNUP_FORM} size="lg">
+              <Button fullWidth color="primary" form={SIGNUP_FORM} size="lg" type="submit">
                 {t("signup_button")}
               </Button>
             </Form>
@@ -108,11 +113,7 @@ export function LoginWidget() {
 }
 
 
-export function handleLoginErrors(e: unknown): string {
-  if (isAxiosError(e)) {
-    if (e.status === 409) {
-      return "E-Mail already exists"
-    }
-  }
+export function handleLoginErrors(error: unknown): string {
+  if (error instanceof ApiError && error.isConflict()) return "E-Mail already exists";
   return "Failed to sign up"
 }

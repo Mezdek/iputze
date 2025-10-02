@@ -1,8 +1,12 @@
-import type { EnhancedRole, RoleCollectionParams } from "@/types";
+
 import { APP_ERRORS, canCreateRole, canViewRoles, GeneralErrors, getHotelOrThrow, getUserOrThrow, HttpStatus, RolesErrors, withErrorHandling } from "@lib";
 import { prisma } from "@lib/prisma";
 import type { Role } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest} from "next/server";
+import { NextResponse } from "next/server";
+
+import type { EnhancedRole, RoleCollectionParams } from "@/types";
+
 
 export const GET = withErrorHandling(
     async (req: NextRequest, { params }: { params: RoleCollectionParams }) => {

@@ -1,6 +1,8 @@
-import { AuthErrors, GeneralErrors, PrismaErrors } from "@/lib/constants";
 import { Prisma } from "@prisma/client";
 import { JsonWebTokenError, NotBeforeError, TokenExpiredError } from "jsonwebtoken";
+
+import { AuthErrors, GeneralErrors, PrismaErrors } from "@/lib/constants";
+
 import { APP_ERRORS } from "./factories";
 import { HttpError } from "./HttpError";
 

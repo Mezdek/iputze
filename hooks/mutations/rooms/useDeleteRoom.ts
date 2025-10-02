@@ -1,7 +1,7 @@
-import type { RoomParams } from "@/types";
 import { api, ClientError, ErrorCodes, getPath, queryKeys } from "@lib";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
+
+import { ApiError, type RoomParams } from "@/types";
 
 
 export const useDeleteRoom = ({ hotelId, roomId }: RoomParams) => {
@@ -10,9 +10,9 @@ export const useDeleteRoom = ({ hotelId, roomId }: RoomParams) => {
         mutationFn: async (): Promise<null> => {
             try {
                 const res = await api.delete<null>(getPath({ hotelId, roomId }).API.ROOM);
-                return res.data;
+                return res;
             } catch (error: unknown) {
-                if (isAxiosError(error) && error.response?.status === 400) {
+                if (error instanceof ApiError && error.isBadRequest()) {
                     throw new ClientError("room", ErrorCodes.room.DELETION.HAS_ASSIGNMENTS);
                 }
                 throw new ClientError("room", ErrorCodes.room.UNKNOWN, error);
