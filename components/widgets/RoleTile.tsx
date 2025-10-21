@@ -75,25 +75,25 @@ export function RoleTile({ role }: { role: TRoleWithUser }) {
           {status === RoleStatus.ACTIVE && (
             <ApprovalRequest
               header={`Approve ${name}`}
-              modalButton={{
+              modalButtonProps={{
                 text: approvalIsDisabled ? 'Approved' : 'Approve',
                 color: approvalIsDisabled ? 'default' : 'success',
                 isDisabled: approvalIsDisabled,
               }}
               question={`Are you sure you want to approve ${name}?`}
-              submitButton={{ action: handleApprove }}
+              submitButtonProps={{ submitHandler: handleApprove }}
             />
           )}
           {level === RoleLevel.CLEANER && (
             <ApprovalRequest
               header={`Deactivate ${name}`}
-              modalButton={{
+              modalButtonProps={{
                 text: status === RoleStatus.ACTIVE ? 'Deactivate' : 'Inactive',
                 color: status === RoleStatus.ACTIVE ? 'warning' : 'default',
                 isDisabled: status !== RoleStatus.ACTIVE,
               }}
               question={`Are you sure you want to deactivate ${name}?`}
-              submitButton={{ action: handleDeactivate }}
+              submitButtonProps={{ submitHandler: handleDeactivate }}
             />
           )}
         </>

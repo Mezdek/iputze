@@ -6,7 +6,7 @@ import { useErrorToast, useUpdateAssignment } from '@hooks';
 import { AssignmentStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
-import { isAssignmentCleaner } from '@/lib';
+import { capitalize, isAssignmentCleaner } from '@/lib';
 import type { InjectedAuthProps, TAssignmentResponse } from '@/types';
 
 import { dateAndTime, NEXT_STATUS, STATUS_STRING } from '../../utils';
@@ -36,13 +36,16 @@ export function AssignmentTile({
   const isAssignmentCleanerFlag = isAssignmentCleaner({ cleaners, user });
 
   const handleStatus = async () => {
-    const newStatus = NEXT_STATUS[status];
+    let newStatus;
+    if (status === 'PENDING' || status === 'IN_PROGRESS') {
+      newStatus = NEXT_STATUS[status];
+    }
     if (!newStatus) return;
     try {
       await update({ status: newStatus });
       addToast({
         title: 'Status Changed!',
-        description: `Assignment set to ${STATUS_STRING[newStatus]}`,
+        description: `Assignment set to ${capitalize(STATUS_STRING[newStatus].state, '_', 'ALL_WORDS')}`,
         color: 'success',
       });
     } catch (e) {
@@ -90,9 +93,7 @@ export function AssignmentTile({
             <h2 id={`assignment-${assignmentId}-title`}>
               {t('header', { number })}
             </h2>
-            <h3 className="text-sm italic">
-              {t(`status.${STATUS_STRING[status].state}`)}
-            </h3>
+            <h3 className="text-sm italic">{t(`status.${status}.state`)}</h3>
           </div>
           {isAssignmentCleanerFlag && status !== AssignmentStatus.COMPLETED && (
             <Button
@@ -101,7 +102,7 @@ export function AssignmentTile({
               disabled={isPending}
               onPress={handleStatus}
             >
-              {t(`status_update.${STATUS_STRING[status].button}`)}
+              {t(`status.${status}.button`)}
             </Button>
           )}
         </>

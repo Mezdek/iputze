@@ -1,11 +1,12 @@
+'use client';
 import { Room, RoomDetails } from '@components';
 import { Card } from '@heroui/react';
+import { useAssignments, useRooms } from '@hooks';
+import { groupByKey } from '@lib';
 import { AssignmentStatus, RoomCleanliness } from '@prisma/client';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
-import { useAssignments, useRooms } from '@/hooks';
-import { groupByKey } from '@/lib';
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -17,7 +18,7 @@ import type {
   TAssignmentResponse,
 } from '@/types';
 
-export function Dash({ user }: InjectedAuthProps) {
+export function ManagerView({ user }: InjectedAuthProps) {
   const { hotelId } = useParams<{ hotelId: string }>();
 
   const { data: rooms } = useRooms({ hotelId });

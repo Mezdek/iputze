@@ -10,6 +10,7 @@ export * from './icons';
 export * from './ListRenderer';
 export * from './LoadingScreen';
 export * from './LocaleSwitcher';
+export * from './ManagerView';
 export * from './NavigationBar';
 export * from './PasswordInput';
 export * from './PendingView';

@@ -4,6 +4,7 @@ import {
   CleanerView,
   DeniedAccessView,
   DisabledView,
+  ManagerView,
   PendingView,
   withAuthGuard,
 } from '@components';
@@ -11,12 +12,11 @@ import { RoleLevel, RoleStatus } from '@prisma/client';
 import { useParams } from 'next/navigation';
 import type { FC } from 'react';
 
-import { Dash } from '@/components/Dash';
 import type { InjectedAuthProps, MeResponse } from '@/types';
 
 const ViewSelector: Record<RoleLevel, FC<InjectedAuthProps>> = {
-  [RoleLevel.ADMIN]: Dash,
-  [RoleLevel.MANAGER]: Dash,
+  [RoleLevel.ADMIN]: ManagerView,
+  [RoleLevel.MANAGER]: ManagerView,
   [RoleLevel.CLEANER]: CleanerView,
   [RoleLevel.PENDING]: PendingView,
 };

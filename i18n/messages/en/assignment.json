@@ -24,14 +24,11 @@
       "submit_button": "Create"
     }
   },
-  "status_update": {
-    "start": "Start",
-    "finish": "Finish"
-  },
   "status": {
-    "done": "Done",
-    "in_progress": "In Progress",
-    "pending": "Pending"
+    "CANCELLED": { "state": "Canceled", "button": "Restart" },
+    "COMPLETED": { "state": "Completed", "button": "" },
+    "IN_PROGRESS": { "state": "In Progress", "button": "Finish" },
+    "PENDING": { "state": "Pending", "button": "Start" }
   },
   "archived": "Archived",
   "archive": "Archive",

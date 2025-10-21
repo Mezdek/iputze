@@ -3,8 +3,6 @@ import { AssignmentStatus } from '@prisma/client';
 export const NEXT_STATUS = {
   [AssignmentStatus.PENDING]: AssignmentStatus.IN_PROGRESS,
   [AssignmentStatus.IN_PROGRESS]: AssignmentStatus.COMPLETED,
-  [AssignmentStatus.COMPLETED]: [AssignmentStatus.CANCELLED], //TODO this is wrong
-  [AssignmentStatus.CANCELLED]: null, //TODO this is wrong
 } as const;
 
 export const SECTIONS = {
@@ -14,10 +12,10 @@ export const SECTIONS = {
 } as const;
 
 export const STATUS_STRING = {
-  DONE: { button: '', state: 'done' },
-  IN_PROGRESS: { button: 'finish', state: 'in_progress' },
-  PENDING: { button: 'start', state: 'pending' },
-  CANCELLED: { button: 'www', state: 'www' }, // TODO this is wron
+  [AssignmentStatus.IN_PROGRESS]: { button: 'finish', state: 'in_progress' },
+  [AssignmentStatus.PENDING]: { button: 'start', state: 'pending' },
+  [AssignmentStatus.CANCELLED]: { button: 'restart', state: 'canceled' },
+  [AssignmentStatus.COMPLETED]: { button: '', state: 'completed' },
 } as const;
 
 type Props = {
