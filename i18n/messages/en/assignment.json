@@ -1,49 +1,49 @@
 {
-    "name": "Assignments",
-    "header": "Room {number}",
-    "creation": {
-        "modal_button": "Create Assignment",
-        "header": "New Assignment",
-        "inputs": {
-            "room_number": {
-                "label": "Room number",
-                "placeholder": "Select a room",
-                "error_message": "Please select a room"
-            },
-            "cleaners": {
-                "label": "Cleaners",
-                "placeholder": "Assign cleaners",
-                "error_message": "Please select at least one cleaner"
-            },
-            "dua_date": {
-                "label": "Due Date",
-                "description": "Choose when the cleaning should be completed",
-                "error_message": "Please select a due date"
-            },
-            "close_button": "Cancel",
-            "submit_button": "Create"
-        }
-    },
-    "status_update": {
-        "start": "Start",
-        "finish": "Finish"
-    },
-    "status": {
-        "done": "Done",
-        "in_progress": "In Progress",
-        "pending": "Pending"
-    },
-    "archived": "Archived",
-    "archive": "Archive",
-    "due_at": "<strong>Due:</strong> {dueAt}",
-    "cleaners": "<strong>Cleaners: </strong>",
-    "assigned_by": "<strong>Assigned by: </strong> {name}",
-    "created_at": "<strong>Created:</strong> {createdAt}",
-    "deleted": "Deleted account",
-    "errors": {
-        "unknown": {
-            "title": "Something went wrong!",
-            "description": "Please try again later"
-        }
+  "name": "Assignments",
+  "header": "Room {number}",
+  "creation": {
+    "modal_button": "Create Assignment",
+    "header": "New Assignment",
+    "inputs": {
+      "room_number": {
+        "label": "Room number",
+        "placeholder": "Select a room",
+        "error_message": "Please select a room"
+      },
+      "cleaners": {
+        "label": "Cleaners",
+        "placeholder": "Assign cleaners",
+        "error_message": "Please select at least one cleaner"
+      },
+      "dua_date": {
+        "label": "Due Date",
+        "description": "Choose when the cleaning should be completed",
+        "error_message": "Please select a due date"
+      },
+      "close_button": "Cancel",
+      "submit_button": "Create"
     }
+  },
+  "status_update": {
+    "start": "Start",
+    "finish": "Finish"
+  },
+  "status": {
+    "done": "Done",
+    "in_progress": "In Progress",
+    "pending": "Pending"
+  },
+  "archived": "Archived",
+  "archive": "Archive",
+  "due_at": "<strong>Due:</strong> {dueAt}",
+  "cleaners": "<strong>Cleaners: </strong>",
+  "assigned_by": "<strong>Assigned by: </strong> {name}",
+  "created_at": "<strong>Created:</strong> {createdAt}",
+  "deleted": "Deleted account",
+  "errors": {
+    "unknown": {
+      "title": "Something went wrong!",
+      "description": "Please try again later"
+    }
+  }
 }

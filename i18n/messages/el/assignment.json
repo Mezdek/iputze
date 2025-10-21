@@ -1,49 +1,49 @@
 {
-    "name": "Καθήκοντα",
-    "header": "Δωμάτιο {number}",
-    "creation": {
-        "modal_button": "Δημιουργία Καθήκοντος",
-        "header": "Νέο Καθήκον",
-        "inputs": {
-            "room_number": {
-                "label": "Αριθμός δωματίου",
-                "placeholder": "Επιλέξτε δωμάτιο",
-                "error_message": "Παρακαλώ επιλέξτε δωμάτιο"
-            },
-            "cleaners": {
-                "label": "Καθαριστές",
-                "placeholder": "Ανάθεση καθαριστών",
-                "error_message": "Παρακαλώ επιλέξτε τουλάχιστον έναν καθαριστή"
-            },
-            "dua_date": {
-                "label": "Ημερομηνία λήξης",
-                "description": "Επιλέξτε πότε πρέπει να ολοκληρωθεί ο καθαρισμός",
-                "error_message": "Παρακαλώ επιλέξτε ημερομηνία λήξης"
-            },
-            "close_button": "Ακύρωση",
-            "submit_button": "Δημιουργία"
-        }
-    },
-    "status_update": {
-        "start": "Έναρξη",
-        "finish": "Ολοκλήρωση"
-    },
-    "status": {
-        "done": "Ολοκληρώθηκε",
-        "in_progress": "Σε εξέλιξη",
-        "pending": "Εν αναμονή"
-    },
-    "archived": "Αρχειοθετημένο",
-    "archive": "Αρχειοθέτηση",
-    "due_at": "<strong>Προθεσμία:</strong> {dueAt}",
-    "cleaners": "<strong>Καθαριστές: </strong>",
-    "assigned_by": "<strong>Ανατέθηκε από: </strong> {name}",
-    "created_at": "<strong>Δημιουργήθηκε:</strong> {createdAt}",
-    "deleted": "Ο λογαριασμός διαγράφηκε",
-    "errors": {
-        "unknown": {
-            "title": "Κάτι πήγε στραβά!",
-            "description": "Παρακαλώ δοκιμάστε ξανά αργότερα"
-        }
+  "name": "Καθήκοντα",
+  "header": "Δωμάτιο {number}",
+  "creation": {
+    "modal_button": "Δημιουργία Καθήκοντος",
+    "header": "Νέο Καθήκον",
+    "inputs": {
+      "room_number": {
+        "label": "Αριθμός δωματίου",
+        "placeholder": "Επιλέξτε δωμάτιο",
+        "error_message": "Παρακαλώ επιλέξτε δωμάτιο"
+      },
+      "cleaners": {
+        "label": "Καθαριστές",
+        "placeholder": "Ανάθεση καθαριστών",
+        "error_message": "Παρακαλώ επιλέξτε τουλάχιστον έναν καθαριστή"
+      },
+      "dua_date": {
+        "label": "Ημερομηνία λήξης",
+        "description": "Επιλέξτε πότε πρέπει να ολοκληρωθεί ο καθαρισμός",
+        "error_message": "Παρακαλώ επιλέξτε ημερομηνία λήξης"
+      },
+      "close_button": "Ακύρωση",
+      "submit_button": "Δημιουργία"
     }
+  },
+  "status_update": {
+    "start": "Έναρξη",
+    "finish": "Ολοκλήρωση"
+  },
+  "status": {
+    "done": "Ολοκληρώθηκε",
+    "in_progress": "Σε εξέλιξη",
+    "pending": "Εν αναμονή"
+  },
+  "archived": "Αρχειοθετημένο",
+  "archive": "Αρχειοθέτηση",
+  "due_at": "<strong>Προθεσμία:</strong> {dueAt}",
+  "cleaners": "<strong>Καθαριστές: </strong>",
+  "assigned_by": "<strong>Ανατέθηκε από: </strong> {name}",
+  "created_at": "<strong>Δημιουργήθηκε:</strong> {createdAt}",
+  "deleted": "Ο λογαριασμός διαγράφηκε",
+  "errors": {
+    "unknown": {
+      "title": "Κάτι πήγε στραβά!",
+      "description": "Παρακαλώ δοκιμάστε ξανά αργότερα"
+    }
+  }
 }

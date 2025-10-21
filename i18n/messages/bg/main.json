@@ -1,11 +1,11 @@
 {
-    "ApprovalRequest": {
-        "closeButton": "Отказ",
-        "submitButton": "Да"
-    },
-    "ManagerView": {
-        "no_rooms_message": "Все още няма създадени стаи.",
-        "no_workers_message": "Все още няма назначени работници към това хотелско място.",
-        "mo_assignments_message": "Все още няма създадени задачи."
-    }
+  "ApprovalRequest": {
+    "closeButton": "Отказ",
+    "submitButton": "Да"
+  },
+  "ManagerView": {
+    "no_rooms_message": "Все още няма създадени стаи.",
+    "no_workers_message": "Все още няма назначени работници към това хотелско място.",
+    "mo_assignments_message": "Все още няма създадени задачи."
+  }
 }

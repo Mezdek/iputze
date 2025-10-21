@@ -1,4 +1,3 @@
-
 import {
   APP_ERRORS,
   canCreateAssignment,
@@ -12,13 +11,13 @@ import {
 } from '@lib';
 import { prisma } from '@lib/prisma';
 import type { Assignment } from '@prisma/client';
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import type {
   AssignmentCollectionParams,
   AssignmentCreationBody,
-  AssignmentResponse,
+  TAssignmentResponse,
 } from '@/types';
 
 export const GET = withErrorHandling(
@@ -34,7 +33,7 @@ export const GET = withErrorHandling(
     if (hasManagerPermission({ hotelId, roles })) {
       where = { room: { hotelId } };
     } else if (isHotelCleaner({ hotelId, roles })) {
-      where = { AssignmentUser: { some: { userId } } };
+      where = { assignedUsers: { some: { userId } } };
     } else {
       throw APP_ERRORS.forbidden();
     }
@@ -44,16 +43,29 @@ export const GET = withErrorHandling(
       orderBy: { dueAt: 'asc' },
       include: {
         room: true,
-        AssignmentNote: true,
-        assignedByUser: { omit: { passwordHash: true } },
-        AssignmentUser: { include: { user: { omit: { passwordHash: true } } } },
+        notes: { omit: { assignmentId: true } },
+        assignedBy: { omit: { passwordHash: true } },
+        assignedUsers: {
+          include: { user: { omit: { passwordHash: true } } },
+          omit: { userId: true, assignmentId: true },
+        },
+      },
+      omit: {
+        assignedById: true,
+        roomId: true,
       },
     });
-    const assignmentsFlatened = assignments.map(a => {
-      const cleaners = a.AssignmentUser.map(a => a.user);
-      return { ...a, cleaners };
-    });
-    return NextResponse.json<AssignmentResponse[]>(assignmentsFlatened);
+    const assignmentsFlatened = assignments.map(
+      ({ assignedUsers, ...assignment }) => {
+        // Flatten assignmentUsers and rename to cleaners
+        const cleaners = assignedUsers.map(({ assignedAt, user }) => ({
+          ...user,
+          assignedAt,
+        }));
+        return { ...assignment, cleaners };
+      }
+    );
+    return NextResponse.json<TAssignmentResponse[]>(assignmentsFlatened);
   }
 );
 
@@ -62,7 +74,9 @@ export const POST = withErrorHandling(
     req: NextRequest,
     { params }: { params: AssignmentCollectionParams }
   ) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+    const { hotelId: paramsHotelId } = await params;
+    const { id: hotelId } = await getHotelOrThrow(paramsHotelId);
+
     const { roles, id: userId } = await getUserOrThrow(req);
 
     if (!canCreateAssignment({ roles, hotelId }))
@@ -78,9 +92,9 @@ export const POST = withErrorHandling(
       data: {
         roomId,
         dueAt: parsedDueAt,
-        assignedBy: userId,
-        AssignmentUser: {
-          create: cleaners.map(id => ({ userId: id })),
+        assignedById: userId,
+        assignedUsers: {
+          create: cleaners.map((userId) => ({ userId })),
         },
       },
     });

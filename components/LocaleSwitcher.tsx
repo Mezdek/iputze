@@ -51,7 +51,7 @@ export function LocaleSwitcher(props: { locales?: Locale[] }) {
       name="language_switcher"
       onChange={handleLocaleChange}
     >
-      {availableLocales.map(l => (
+      {availableLocales.map((l) => (
         <option key={l} value={l}>
           {t(l)}
         </option>

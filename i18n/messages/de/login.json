@@ -1,21 +1,21 @@
 {
-    "name": "Anmeldung",
-    "signin_tab_title": "Anmelden",
-    "signup_tab_title": "Registrieren",
-    "email_input": {
-        "label": "E-Mail",
-        "placeholder": "Geben Sie Ihre E-Mail ein"
-    },
-    "password_input": {
-        "label": "Passwort",
-        "placeholder": "Geben Sie Ihr Passwort ein"
-    },
-    "name_input": {
-        "label": "Name",
-        "placeholder": "Geben Sie Ihren Namen ein"
-    },
-    "signup_invite": "Sie müssen ein Konto erstellen? <Link>Registrieren</Link>",
-    "signin_invite": "Haben Sie bereits ein Konto? <Link>Anmelden</Link>",
-    "signin_button": "Anmelden",
-    "signup_button": "Registrieren"
+  "name": "Anmeldung",
+  "signin_tab_title": "Anmelden",
+  "signup_tab_title": "Registrieren",
+  "email_input": {
+    "label": "E-Mail",
+    "placeholder": "Geben Sie Ihre E-Mail ein"
+  },
+  "password_input": {
+    "label": "Passwort",
+    "placeholder": "Geben Sie Ihr Passwort ein"
+  },
+  "name_input": {
+    "label": "Name",
+    "placeholder": "Geben Sie Ihren Namen ein"
+  },
+  "signup_invite": "Sie müssen ein Konto erstellen? <Link>Registrieren</Link>",
+  "signin_invite": "Haben Sie bereits ein Konto? <Link>Anmelden</Link>",
+  "signin_button": "Anmelden",
+  "signup_button": "Registrieren"
 }

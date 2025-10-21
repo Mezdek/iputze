@@ -1,87 +1,87 @@
 {
-    "name": "Zimmer",
-    "cleanliness": "<strong>Sauberkeit: </strong> {status}",
-    "cleanliness_status": {
-        "CLEAN": "Sauber",
-        "DIRTY": "Schmutzig"
+  "name": "Zimmer",
+  "cleanliness": "<strong>Sauberkeit: </strong> {status}",
+  "cleanliness_status": {
+    "CLEAN": "Sauber",
+    "DIRTY": "Schmutzig"
+  },
+  "occupancy": "<strong>Belegung: </strong> {status}",
+  "occupancy_status": {
+    "AVAILABLE": "Verfügbar",
+    "OCCUPIED": "Belegt"
+  },
+  "notes": "<strong>Anmerkungen: </strong> {notes}",
+  "no_notes": "Keine Notizen",
+  "update_panel": {
+    "header": " Zimmer {number} bearbeiten",
+    "inputs": {
+      "room_number": {
+        "label": "Zimmernummer",
+        "placeholder": "Neue Zimmernummer eingeben",
+        "error_message": "Bitte Zimmernummer angeben"
+      },
+      "cleanliness": {
+        "label": "Sauberkeitsstatus",
+        "placeholder": "Sauberkeitsstatus auswählen"
+      },
+      "occupancy": {
+        "label": "Belegungsstatus",
+        "placeholder": "Belegungsstatus auswählen"
+      }
     },
-    "occupancy": "<strong>Belegung: </strong> {status}",
-    "occupancy_status": {
-        "AVAILABLE": "Verfügbar",
-        "OCCUPIED": "Belegt"
-    },
-    "notes": "<strong>Anmerkungen: </strong> {notes}",
-    "no_notes": "Keine Notizen",
-    "update_panel": {
-        "header": " Zimmer {number} bearbeiten",
-        "inputs": {
-            "room_number": {
-                "label": "Zimmernummer",
-                "placeholder": "Neue Zimmernummer eingeben",
-                "error_message": "Bitte Zimmernummer angeben"
-            },
-            "cleanliness": {
-                "label": "Sauberkeitsstatus",
-                "placeholder": "Sauberkeitsstatus auswählen"
-            },
-            "occupancy": {
-                "label": "Belegungsstatus",
-                "placeholder": "Belegungsstatus auswählen"
-            }
-        },
-        "buttons": {
-            "open": "Bearbeiten",
-            "close": "Abbrechen",
-            "submit": "Aktualisieren"
-        }
-    },
-    "deletion_panel": {
-        "header": "Zimmer löschen",
-        "buttons": {
-            "open": "Löschen",
-            "submit": "Löschen"
-        },
-        "approval_question": "Sind Sie sicher, dass Sie Zimmer {number} löschen möchten?"
-    },
-    "creation_panel": {
-        "buttons": {
-            "close": "Abbrechen",
-            "open": "Zimmer erstellen",
-            "submit": "Erstellen"
-        },
-        "header": "Neues Zimmer",
-        "inputs": {
-            "room_number": {
-                "error_message": "Bitte Zimmernummer angeben",
-                "label": "Zimmernummer",
-                "placeholder": "Neue Zimmernummer eingeben"
-            },
-            "cleanliness": {
-                "label": "Sauberkeitsstatus",
-                "placeholder": "Sauberkeitsstatus auswählen"
-            },
-            "occupancy": {
-                "label": "Belegungsstatus",
-                "placeholder": "Belegungsstatus auswählen"
-            }
-        }
-    },
-    "errors": {
-        "duplicate_room_number_creation": {
-            "title": "Das Zimmer konnte nicht erstellt werden!",
-            "description": "Die Zimmernummer ist bereits vorhanden"
-        },
-        "unknown": {
-            "title": "Etwas ist schief gelaufen",
-            "description": "Bitte versuchen Sie es später erneut"
-        },
-        "room_has_assignments": {
-            "title": "Zimmer konnte nicht gelöscht werden!",
-            "description": "Es sind noch Aufgaben an dieses Zimmer gebunden!"
-        },
-        "duplicate_room_number_update": {
-            "title": "Zimmer konnte nicht aktualisiert werden!",
-            "description": "Die Zimmernummer ist bereits vorhanden"
-        }
+    "buttons": {
+      "open": "Bearbeiten",
+      "close": "Abbrechen",
+      "submit": "Aktualisieren"
     }
+  },
+  "deletion_panel": {
+    "header": "Zimmer löschen",
+    "buttons": {
+      "open": "Löschen",
+      "submit": "Löschen"
+    },
+    "approval_question": "Sind Sie sicher, dass Sie Zimmer {number} löschen möchten?"
+  },
+  "creation_panel": {
+    "buttons": {
+      "close": "Abbrechen",
+      "open": "Zimmer erstellen",
+      "submit": "Erstellen"
+    },
+    "header": "Neues Zimmer",
+    "inputs": {
+      "room_number": {
+        "error_message": "Bitte Zimmernummer angeben",
+        "label": "Zimmernummer",
+        "placeholder": "Neue Zimmernummer eingeben"
+      },
+      "cleanliness": {
+        "label": "Sauberkeitsstatus",
+        "placeholder": "Sauberkeitsstatus auswählen"
+      },
+      "occupancy": {
+        "label": "Belegungsstatus",
+        "placeholder": "Belegungsstatus auswählen"
+      }
+    }
+  },
+  "errors": {
+    "duplicate_room_number_creation": {
+      "title": "Das Zimmer konnte nicht erstellt werden!",
+      "description": "Die Zimmernummer ist bereits vorhanden"
+    },
+    "unknown": {
+      "title": "Etwas ist schief gelaufen",
+      "description": "Bitte versuchen Sie es später erneut"
+    },
+    "room_has_assignments": {
+      "title": "Zimmer konnte nicht gelöscht werden!",
+      "description": "Es sind noch Aufgaben an dieses Zimmer gebunden!"
+    },
+    "duplicate_room_number_update": {
+      "title": "Zimmer konnte nicht aktualisiert werden!",
+      "description": "Die Zimmernummer ist bereits vorhanden"
+    }
+  }
 }

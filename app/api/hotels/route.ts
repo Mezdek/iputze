@@ -1,4 +1,3 @@
-
 import {
   APP_ERRORS,
   canCreateHotel,
@@ -9,29 +8,21 @@ import {
 } from '@lib';
 import { prisma } from '@lib/prisma';
 import type { Hotel } from '@prisma/client';
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import type { HotelCreationBody, PublicHotel } from '@/types';
 
 export const GET = withErrorHandling(async () => {
-  const hotels = await prisma.hotel.findMany({
-    include: { _count: true },
+  const PublicHotelList = await prisma.hotel.findMany({
+    omit: { updatedAt: true, createdAt: true, deletedAt: true },
   });
-  if (hotels.length === 0) throw APP_ERRORS.notFound(HotelErrors.EMPTY);
+  if (PublicHotelList.length === 0)
+    throw APP_ERRORS.notFound(HotelErrors.EMPTY);
 
-  const publicHotelList: PublicHotel[] = hotels.map(
-    ({ id, name, address, description, email, phone }) => ({
-      id,
-      name,
-      address,
-      description,
-      email,
-      phone,
-    })
-  );
-  return NextResponse.json<PublicHotel[]>(publicHotelList);
+  return NextResponse.json<PublicHotel[]>(PublicHotelList);
 });
+
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const { roles } = await getUserOrThrow(req);
   if (!canCreateHotel({ roles })) throw APP_ERRORS.forbidden();

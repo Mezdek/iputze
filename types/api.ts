@@ -2,6 +2,7 @@ import type {
   Assignment,
   AssignmentNote,
   AssignmentStatus,
+  AssignmentUser,
   Hotel,
   Role,
   RoleLevel,
@@ -22,7 +23,7 @@ export type SafeUserWithRoles = SafeUser & { roles: Role[] };
 
 export type TRole = Omit<Role, 'userId' | 'hotelId'> & { hotel: Hotel };
 
-export type PublicHotel = Omit<Hotel, 'createdAt' | 'updatedAt'>;
+export type PublicHotel = Omit<Hotel, 'createdAt' | 'updatedAt' | 'deletedAt'>;
 
 export interface AssignmentAccessContext {
   hotelId: string;
@@ -37,12 +38,14 @@ export interface AssignmentAccessContext {
 
 // Assignments
 
-export interface AssignmentResponse extends Assignment {
-  room: Room;
-  AssignmentNote: AssignmentNote[];
-  assignedByUser: SafeUser | null;
-  cleaners: SafeUser[];
-}
+export type TAssignmentResponse = Omit<
+  Assignment,
+  'assignedById' | 'roomId'
+> & { room: Room } & { notes: Omit<AssignmentNote, 'assignmentId'>[] } & {
+  assignedBy: SafeUser | null;
+} & {
+  cleaners: (Pick<AssignmentUser, 'assignedAt'> & SafeUser)[];
+};
 
 export interface AssignmentCreationBody {
   roomId: string;
@@ -51,7 +54,6 @@ export interface AssignmentCreationBody {
 }
 
 export interface AssignmentUpdateBody {
-  isActive?: boolean;
   status?: AssignmentStatus;
 }
 
@@ -99,7 +101,7 @@ export interface HotelCreationBody {
 }
 
 // Roles
-export interface EnhancedRole extends Role, SafeUser {}
+export type TRoleWithUser = Omit<Role, 'userId'> & { user: SafeUser };
 
 export interface RoleUpdateBody {
   level?: RoleLevel;

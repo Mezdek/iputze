@@ -1,3 +1,6 @@
-import type { Role } from "@prisma/client";
+import type { Role } from '@prisma/client';
 
-export interface RoomManagement { roles: Role[], hotelId: string }
+export interface RoomManagement {
+  roles: Role[];
+  hotelId: string;
+}

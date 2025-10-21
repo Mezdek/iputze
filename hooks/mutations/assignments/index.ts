@@ -1,4 +1,3 @@
-export * from "./useCreateAssignment";
-export * from "./useDeleteAssignment";
-export * from "./useUpdateAssignment";
-
+export * from './useCreateAssignment';
+export * from './useDeleteAssignment';
+export * from './useUpdateAssignment';

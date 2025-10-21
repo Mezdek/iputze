@@ -1,16 +1,16 @@
 {
-    "name": "beit Hotel",
-    "header": "Einem Hotel beitreten",
-    "inputs": {
-        "hotel_name": {
-            "label": "Hotel auswählen",
-            "placeholder": "Wählen Sie ein Hotel"
-        }
-    },
-    "loading_message": "Hotels werden geladen...",
-    "buttons": {
-        "open": "Beitreten",
-        "close": "Abbrechen",
-        "submit": "Beitreten"
+  "name": "beit Hotel",
+  "header": "Einem Hotel beitreten",
+  "inputs": {
+    "hotel_name": {
+      "label": "Hotel auswählen",
+      "placeholder": "Wählen Sie ein Hotel"
     }
+  },
+  "loading_message": "Hotels werden geladen...",
+  "buttons": {
+    "open": "Beitreten",
+    "close": "Abbrechen",
+    "submit": "Beitreten"
+  }
 }

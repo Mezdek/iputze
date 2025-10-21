@@ -1,7 +1,7 @@
-import { api, getPath, queryKeys } from "@lib";
-import { useQuery } from "@tanstack/react-query";
+import { api, getPath, queryKeys } from '@lib';
+import { useQuery } from '@tanstack/react-query';
 
-import type { MeResponse } from "@/types";
+import type { MeResponse } from '@/types';
 
 export const useMe = () => {
   return useQuery<MeResponse>({
@@ -16,7 +16,4 @@ export const useMe = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-}
-
-
-
+};

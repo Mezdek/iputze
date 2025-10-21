@@ -1,3 +1,5 @@
-import type { Role } from "@prisma/client";
+import type { Role } from '@prisma/client';
 
-export interface AdminRights { roles: Role[] }
+export interface AdminRights {
+  roles: Role[];
+}

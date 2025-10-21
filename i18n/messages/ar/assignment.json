@@ -1,49 +1,49 @@
 {
-    "name": "المهام",
-    "header": "الغرفة {number}",
-    "creation": {
-        "modal_button": "إنشاء مهمة",
-        "header": "مهمة جديدة",
-        "inputs": {
-            "room_number": {
-                "label": "رقم الغرفة",
-                "placeholder": "اختر غرفة",
-                "error_message": "يرجى اختيار غرفة"
-            },
-            "cleaners": {
-                "label": "عمال النظافة",
-                "placeholder": "تعيين عمال النظافة",
-                "error_message": "يرجى اختيار عمال نظافة على الأقل"
-            },
-            "dua_date": {
-                "label": "تاريخ التسليم",
-                "description": "اختر موعد إتمام التنظيف",
-                "error_message": "يرجى اختيار تاريخ التسليم"
-            },
-            "close_button": "إلغاء",
-            "submit_button": "إنشاء"
-        }
-    },
-    "status_update": {
-        "start": "ابدأ",
-        "finish": "انتهى"
-    },
-    "status": {
-        "done": "تم",
-        "in_progress": "قيد التنفيذ",
-        "pending": "قيد الانتظار"
-    },
-    "archived": "أرشف",
-    "archive": "أرشيف",
-    "due_at": "<strong>موعد التسليم:</strong> {dueAt}",
-    "cleaners": "<strong>عمال النظافة: </strong>",
-    "assigned_by": "<strong>تعيين بواسطة: </strong> {name}",
-    "created_at": "<strong>أنشئ في:</strong> {createdAt}",
-    "deleted": "تم حذف الحساب",
-    "errors": {
-        "unknown": {
-            "title": "حدث خطأ!",
-            "description": "يرجى المحاولة مرة أخرى لاحقًا"
-        }
+  "name": "المهام",
+  "header": "الغرفة {number}",
+  "creation": {
+    "modal_button": "إنشاء مهمة",
+    "header": "مهمة جديدة",
+    "inputs": {
+      "room_number": {
+        "label": "رقم الغرفة",
+        "placeholder": "اختر غرفة",
+        "error_message": "يرجى اختيار غرفة"
+      },
+      "cleaners": {
+        "label": "عمال النظافة",
+        "placeholder": "تعيين عمال النظافة",
+        "error_message": "يرجى اختيار عمال نظافة على الأقل"
+      },
+      "dua_date": {
+        "label": "تاريخ التسليم",
+        "description": "اختر موعد إتمام التنظيف",
+        "error_message": "يرجى اختيار تاريخ التسليم"
+      },
+      "close_button": "إلغاء",
+      "submit_button": "إنشاء"
     }
+  },
+  "status_update": {
+    "start": "ابدأ",
+    "finish": "انتهى"
+  },
+  "status": {
+    "done": "تم",
+    "in_progress": "قيد التنفيذ",
+    "pending": "قيد الانتظار"
+  },
+  "archived": "أرشف",
+  "archive": "أرشيف",
+  "due_at": "<strong>موعد التسليم:</strong> {dueAt}",
+  "cleaners": "<strong>عمال النظافة: </strong>",
+  "assigned_by": "<strong>تعيين بواسطة: </strong> {name}",
+  "created_at": "<strong>أنشئ في:</strong> {createdAt}",
+  "deleted": "تم حذف الحساب",
+  "errors": {
+    "unknown": {
+      "title": "حدث خطأ!",
+      "description": "يرجى المحاولة مرة أخرى لاحقًا"
+    }
+  }
 }

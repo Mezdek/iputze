@@ -1,35 +1,11 @@
 {
-    "semi": true,
-    "trailingComma": "es5",
-    "singleQuote": true,
-    "printWidth": 80,
-    "tabWidth": 2,
-    "useTabs": false,
-    "quoteProps": "as-needed",
-    "bracketSpacing": true,
-    "bracketSameLine": false,
-    "arrowParens": "avoid",
-    "endOfLine": "lf",
-    "embeddedLanguageFormatting": "auto",
-    "singleAttributePerLine": false,
-    "plugins": [
-        "prettier-plugin-tailwindcss"
-    ],
-    "overrides": [
-        {
-            "files": "*.json",
-            "options": {
-                "parser": "json"
-            }
-        },
-        {
-            "files": [
-                "*.ts",
-                "*.tsx"
-            ],
-            "options": {
-                "parser": "typescript"
-            }
-        }
-    ]
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "useTabs": false,
+  "jsxSingleQuote": false,
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "trailingComma": "es5",
+  "printWidth": 80
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { JoinHotel, LocaleSwitcher, Logo } from '@components';
+import { Icons, JoinHotel, LocaleSwitcher } from '@components';
 import {
   Avatar,
   Dropdown,
@@ -39,7 +39,7 @@ export function NavigationBar() {
             push(getPath().HOME);
           }}
         >
-          <Logo />
+          <Icons.Logo />
         </NavbarBrand>
 
         {!isLoginScreen && (

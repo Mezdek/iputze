@@ -10,14 +10,14 @@ export function CleanerView({ user }: InjectedAuthProps) {
   const { hotelId } = useParams<{ hotelId: string }>();
   const { data: assignments, isLoading } = useAssignments({ hotelId });
 
-  const role = user.roles.find(r => r.hotel.id === hotelId);
+  const role = user.roles.find((r) => r.hotel.id === hotelId);
   if (!role) return null;
 
   return (
     <div className="flex flex-col gap-2 items-center justify-around w-full h-screen">
       <HotelBanner hotelName={role.hotel.name} />
       <ListRenderer data={assignments} isLoading={isLoading}>
-        {assignment => (
+        {(assignment) => (
           <AssignmentTile
             assignment={assignment}
             key={assignment.id}

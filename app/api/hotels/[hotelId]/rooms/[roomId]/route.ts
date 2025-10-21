@@ -1,4 +1,3 @@
-
 import {
   APP_ERRORS,
   canDeleteRoom,
@@ -13,7 +12,7 @@ import {
 } from '@lib';
 import { prisma } from '@lib/prisma';
 import type { Room } from '@prisma/client';
-import type { NextRequest} from 'next/server';
+import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import type { RoomParams, RoomUpdateBody } from '@/types';

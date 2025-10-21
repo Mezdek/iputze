@@ -1,121 +1,118 @@
-
-import { Button } from '@heroui/react';
-import type { Room} from '@prisma/client';
-import { RoomCleanliness } from '@prisma/client';
+import { Room, RoomDetails } from '@components';
+import { Card } from '@heroui/react';
+import { AssignmentStatus, RoomCleanliness } from '@prisma/client';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 import { useAssignments, useRooms } from '@/hooks';
-import type { AssignmentResponse } from '@/types';
+import { groupByKey } from '@/lib';
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  XCircleIcon,
+} from '@/temp/new template/components';
+import type {
+  InjectedAuthProps,
+  RoomWithHotel,
+  TAssignmentResponse,
+} from '@/types';
 
-import { ClickableNames } from './ClickableNames';
+export function Dash({ user }: InjectedAuthProps) {
+  const { hotelId } = useParams<{ hotelId: string }>();
 
+  const { data: rooms } = useRooms({ hotelId });
+  const { data: tasks } = useAssignments({ hotelId });
+  const [room, setRoom] = useState<RoomWithHotel>();
 
-
-export default function Dash({ hotelId }: { hotelId: string }) {
-    const { data: rooms } = useRooms({ hotelId });
-    const { data: assignments } = useAssignments({ hotelId })
-    const [room, setRoom] = useState<Room>()
-
-    const roomColor = (cleanliness: RoomCleanliness) => cleanliness === RoomCleanliness.CLEAN ? "bg-success-600" : "bg-danger-600"
-
-    return (
-        <div className='flex bg-blue-50 gap-4 p-4 h-full'>
-            <div className='grid grid-cols-6 w-2/3 h-full p-12 gap-4 bg-blue-200 rounded-sm'>
-                {rooms?.map(
-                    room =>
-                        <Button
-                            className={`${roomColor(room.cleanliness)} text-3xl rounded-sm h-30`}
-                            key={room.id}
-                            onPress={() => setRoom(room)}>
-                            {room.number}
-                        </Button>
-                )}
-            </div>
-            <div className='grid grid-cols-1 w-1/3'>
-                {
-                    room
-                        ? <RoomDetails assignments={getRoomAssignments(assignments, room.id)} room={room} />
-                        : <p className='flex h-full items-center justify-center'>
-                            Select a room to view details
-                            Click on any room to see cleaning status and assignment information.
-                        </p>
-                }
-            </div>
-        </div >
-    )
+  const floors = rooms && groupByKey({ items: rooms, key: 'floor' });
+  const floorsWithRoomStatus = floors?.map((floor) =>
+    floor.map((room) => ({
+      ...room,
+      status: Room.roomStatus({
+        room,
+        tasks: tasks?.filter((task) => task.room.id === room.id),
+      }),
+    }))
+  );
+  return (
+    <div className="grid grid-cols-7 gap-2 p-2 h-full">
+      <Room.Nav
+        className="col-span-5"
+        goToOverview={() => setRoom(undefined)}
+      />
+      <Room.RoomsMap
+        className="col-span-5 h-full"
+        floors={floorsWithRoomStatus}
+        setRoom={setRoom}
+      />
+      {room && user ? (
+        <RoomDetails
+          className="col-span-2"
+          defaultCleaners={[]}
+          room={room}
+          tasks={
+            tasks?.filter((task) => task.room.number === room.number) ?? []
+          }
+        />
+      ) : (
+        <Card className="flex h-full gap-2 p-2 justify-end col-span-2">
+          <Room.RoomCreation hotelId={hotelId} />
+          {tasks && <Room.TaskManagement className="" tasks={tasks} />}
+        </Card>
+      )}
+    </div>
+  );
 }
 
-export const getRoomAssignments = (assignments: AssignmentResponse[] | undefined | null, roomId: string) => {
-    if (assignments === undefined || assignments === null) return []
-    return assignments.filter(assignment => assignment.roomId === roomId)
-}
+export const getRoomAssignments = (
+  assignments: TAssignmentResponse[] | undefined | null,
+  roomId: string
+) => {
+  if (assignments === undefined || assignments === null) return [];
+  return assignments.filter((assignment) => assignment.room.id === roomId);
+};
 
-export const getLastAssignment = (assignments: AssignmentResponse[] | null | undefined) => {
-    if (assignments === undefined || assignments === null || assignments.length === 0) return undefined
-    const sorted = assignments.sort(
-        (b, a) => {
-            const dateA = new Date(a.dueAt);
-            const dateB = new Date(b.dueAt);
-            return dateA.getTime() - dateB.getTime();
-        });
-    return sorted[0];
-}
+export const getLastAssignment = (
+  assignments: TAssignmentResponse[] | null | undefined
+) => {
+  if (
+    assignments === undefined ||
+    assignments === null ||
+    assignments.length === 0
+  )
+    return undefined;
+  const sorted = assignments.sort((b, a) => {
+    const dateA = new Date(a.dueAt);
+    const dateB = new Date(b.dueAt);
+    return dateA.getTime() - dateB.getTime();
+  });
+  return sorted[0];
+};
 
+export const statusOptions = {
+  clean: { color: 'success', icon: CheckCircleIcon, label: 'Clean' },
+  dirty: { color: 'danger', icon: XCircleIcon, label: 'Dirty' },
+  in_progress: {
+    color: 'warning',
+    icon: ExclamationTriangleIcon,
+    label: 'In Progress',
+  },
+} as const;
 
-const RoomDetails = ({ room, assignments }: { room: Room, assignments: AssignmentResponse[] }) => {
-    const lastAssignment = getLastAssignment(assignments);
+type TStatusOptions = typeof statusOptions;
+type KStatusOptions = keyof TStatusOptions;
+type VStatusOptions = TStatusOptions[KStatusOptions];
 
-    return (
-        <div className='border-primary-400 border-2 p-2 rounded-md'>
-            <div className='bg-cyan-100 p-4'>
-                <p className='bg-secondary-100 border-1 border-amber-900 p-1 rounded-md'>
-                    <b>Room {room.number}</b>
-                </p>
-                <p className='p-1'>
-                    <b>Status: </b>
-                    {room.cleanliness}
-                </p>
-                <p className='p-1'>
-                    <b>Vacancy: </b>
-                    {room.occupancy}
-                </p>
-                {
-                    room.notes &&
-                    <p className='p-1'>
-                        {room.notes}
-                    </p>
-                }
-                {
-                    <AssignmentTile assignment={lastAssignment} />
-                }
-            </div>
-        </div>
-    )
-}
-
-const AssignmentTile = ({ assignment }: { assignment: AssignmentResponse | undefined }) => {
-    if (!assignment) return null;
-    const txt = new Date(assignment.dueAt) < new Date() ? "Last assignment" : "Current assignment";
-
-    return (
-        <div className='border-1 border-danger-600 p-2'>
-            <p>
-                {txt}
-            </p>
-            <ul>
-                <li>{assignment.room.number}</li>
-                <li>{new Date(assignment.dueAt).toLocaleDateString("de")}</li>
-                <li>{assignment.status}</li>
-                <li>Assigned by: {assignment.assignedByUser?.name}</li>
-                <li>Cleaners: <ClickableNames users={assignment.cleaners} /></li>
-                <li className='flex flex-wrap gap-2'>
-                    {
-                        assignment.AssignmentNote.map(
-                            note => <span className='p-1 bg-secondary-100' key={note.id}>{note.content}</span>
-                        )
-                    }
-                </li>
-            </ul>
-        </div>
-    )
-}
+export const getStatus = ({
+  cleanliness,
+  lastAssignment,
+}: {
+  cleanliness: RoomCleanliness;
+  lastAssignment: TAssignmentResponse | undefined;
+}): VStatusOptions => {
+  const hasActiveAssignment =
+    !!lastAssignment && lastAssignment.status !== AssignmentStatus.COMPLETED;
+  if (cleanliness === RoomCleanliness.CLEAN) return statusOptions.clean;
+  if (hasActiveAssignment) return statusOptions.in_progress;
+  return statusOptions.dirty;
+};

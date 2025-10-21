@@ -1,4 +1,4 @@
-import type { AssignmentResponse, InjectedAuthProps } from '@/types';
+import type { InjectedAuthProps, TAssignmentResponse } from '@/types';
 
 export interface TabProps extends InjectedAuthProps {
   hotelName: string;
@@ -7,5 +7,5 @@ export interface TabProps extends InjectedAuthProps {
 }
 
 export interface AssignmentsTabProps extends TabProps {
-  assignments: AssignmentResponse[] | null | undefined;
+  assignments: TAssignmentResponse[] | null | undefined;
 }

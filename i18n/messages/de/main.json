@@ -1,11 +1,11 @@
 {
-    "ApprovalRequest": {
-        "closeButton": "Abbrechen",
-        "submitButton": "Ja"
-    },
-    "ManagerView": {
-        "no_rooms_message": "Es wurden noch keine Zimmer erstellt.",
-        "no_workers_message": "Es sind noch keine Arbeiter diesem Hotel zugewiesen.",
-        "mo_assignments_message": "Noch keine Aufgaben erstellt."
-    }
+  "ApprovalRequest": {
+    "closeButton": "Abbrechen",
+    "submitButton": "Ja"
+  },
+  "ManagerView": {
+    "no_rooms_message": "Es wurden noch keine Zimmer erstellt.",
+    "no_workers_message": "Es sind noch keine Arbeiter diesem Hotel zugewiesen.",
+    "mo_assignments_message": "Noch keine Aufgaben erstellt."
+  }
 }

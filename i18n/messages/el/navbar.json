@@ -1,22 +1,22 @@
 {
-    "name": "navbar",
-    "pages": {
-        "dashboard": "Πίνακας",
-        "hotels": "Ξενοδοχεία"
-    },
-    "buttons": {
-        "join": "Ενταχθείτε",
-        "logout": "Αποσύνδεση",
-        "settings": "Οι ρυθμίσεις μου"
-    },
-    "locales": {
-        "ar": "ع",
-        "bg": "бг",
-        "de": "DE",
-        "el": "Ελ",
-        "en": "EN",
-        "sq": "SH"
-    },
-    "profile_header": "Συνδεδεμένος ως {name}",
-    "image_alt": "Avatar του {name}"
+  "name": "navbar",
+  "pages": {
+    "dashboard": "Πίνακας",
+    "hotels": "Ξενοδοχεία"
+  },
+  "buttons": {
+    "join": "Ενταχθείτε",
+    "logout": "Αποσύνδεση",
+    "settings": "Οι ρυθμίσεις μου"
+  },
+  "locales": {
+    "ar": "ع",
+    "bg": "бг",
+    "de": "DE",
+    "el": "Ελ",
+    "en": "EN",
+    "sq": "SH"
+  },
+  "profile_header": "Συνδεδεμένος ως {name}",
+  "image_alt": "Avatar του {name}"
 }

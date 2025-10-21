@@ -1,21 +1,21 @@
 {
-    "name": "login",
-    "signin_tab_title": "Sign in",
-    "signup_tab_title": "Sign up",
-    "email_input": {
-        "label": "Email",
-        "placeholder": "Enter your email"
-    },
-    "password_input": {
-        "label": "Password",
-        "placeholder": "Enter your password"
-    },
-    "name_input": {
-        "label": "Name",
-        "placeholder": "Enter your name"
-    },
-    "signup_invite": "Need to create an account? <Link>Sign up</Link>",
-    "signin_invite": "Already have an account? <Link>Sign in</Link>",
-    "signin_button": "Sign in",
-    "signup_button": "Sign up"
+  "name": "login",
+  "signin_tab_title": "Sign in",
+  "signup_tab_title": "Sign up",
+  "email_input": {
+    "label": "Email",
+    "placeholder": "Enter your email"
+  },
+  "password_input": {
+    "label": "Password",
+    "placeholder": "Enter your password"
+  },
+  "name_input": {
+    "label": "Name",
+    "placeholder": "Enter your name"
+  },
+  "signup_invite": "Need to create an account? <Link>Sign up</Link>",
+  "signin_invite": "Already have an account? <Link>Sign in</Link>",
+  "signin_button": "Sign in",
+  "signup_button": "Sign up"
 }

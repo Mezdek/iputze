@@ -1,5 +1,5 @@
-import { APP_ERRORS, AssignmentErrors } from "@lib";
-import { prisma } from "@lib/prisma";
+import { APP_ERRORS, AssignmentErrors } from '@lib';
+import { prisma } from '@lib/prisma';
 
 /**
  * Retrieves an assignment by ID and throws if not found or invalid.
@@ -9,36 +9,25 @@ import { prisma } from "@lib/prisma";
  * @throws {HttpError} If assignmentId is invalid or assignment not found.
  */
 export const getAssignmentOrThrow = async (assignmentId: string) => {
+  const assignment = await prisma.assignment.findUnique({
+    where: {
+      id: assignmentId,
+    },
+    include: {
+      room: {
+        select: {
+          hotelId: true,
+        },
+      },
+      assignedBy: {
+        omit: {
+          passwordHash: true,
+        },
+      },
+    },
+  });
 
-    const assignment = await prisma.assignment.findUnique(
-        {
-            where:
-            {
-                id: assignmentId
-            },
-            include:
-            {
-                room:
-                {
-                    select:
-                    {
-                        hotelId: true
-                    }
-                },
-                assignedByUser:
-                {
-                    omit: {
-                        passwordHash: true
-                    }
-                }
-            },
-        }
-    );
+  if (!assignment) throw APP_ERRORS.badRequest(AssignmentErrors.NOT_FOUND);
 
-    if (!assignment) throw APP_ERRORS.badRequest(AssignmentErrors.NOT_FOUND);
-
-    return assignment;
+  return assignment;
 };
-
-
-

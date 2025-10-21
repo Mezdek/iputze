@@ -1,7 +1,7 @@
-import { RoleLevel, RoleStatus } from "@prisma/client";
+import { RoleLevel, RoleStatus } from '@prisma/client';
 
-import { isAdmin, isHotelManager } from "@/lib/helpers";
-import type { RoleManagement, RoleManagementModification } from "@/types";
+import { isAdmin, isHotelManager } from '@/lib/helpers';
+import type { RoleManagement, RoleManagementModification } from '@/types';
 
 /**
  * Determines whether the actor can modify a specific role.
@@ -21,29 +21,29 @@ import type { RoleManagement, RoleManagementModification } from "@/types";
  * @returns {boolean} True if the modification is allowed, false otherwise.
  */
 export const canModifyRole = ({
-    roles,
-    targetRole,
-    newLevel,
-    newStatus,
+  roles,
+  targetRole,
+  newLevel,
+  newStatus,
 }: RoleManagementModification): boolean => {
-    if (isAdmin({ roles })) return true;
+  if (isAdmin({ roles })) return true;
 
-    if (!isHotelManager({ roles, hotelId: targetRole.hotelId })) return false;
+  if (!isHotelManager({ roles, hotelId: targetRole.hotelId })) return false;
 
-    // Approve PENDING → CLEANER
-    if (targetRole.level === RoleLevel.PENDING && newLevel === RoleLevel.CLEANER) return true;
+  // Approve PENDING → CLEANER
+  if (targetRole.level === RoleLevel.PENDING && newLevel === RoleLevel.CLEANER)
+    return true;
 
-    // Change CLEANER status (disable or re-activate)
-    if (
-        targetRole.level === RoleLevel.CLEANER &&
-        !newLevel && // level unchanged
-        (newStatus === RoleStatus.DISABLED || newStatus === RoleStatus.ACTIVE)
-    ) return true;
+  // Change CLEANER status (disable or re-activate)
+  if (
+    targetRole.level === RoleLevel.CLEANER &&
+    !newLevel && // level unchanged
+    (newStatus === RoleStatus.DISABLED || newStatus === RoleStatus.ACTIVE)
+  )
+    return true;
 
-    return false;
+  return false;
 };
-
-
 
 /**
  * Determines whether the actor can read roles for a specific hotel.
@@ -58,9 +58,7 @@ export const canModifyRole = ({
  * @returns {boolean} True if the actor can view roles, false otherwise.
  */
 export const canViewRoles = ({ roles, hotelId }: RoleManagement): boolean =>
-    isAdmin({ roles }) || (!!hotelId && isHotelManager({ roles, hotelId }));
-
-
+  isAdmin({ roles }) || (!!hotelId && isHotelManager({ roles, hotelId }));
 
 /**
  * Determines whether the actor can create a new role in a hotel.
@@ -75,4 +73,4 @@ export const canViewRoles = ({ roles, hotelId }: RoleManagement): boolean =>
  * @returns {boolean} True if the actor can create a new role, false otherwise.
  */
 export const canCreateRole = ({ roles, hotelId }: RoleManagement): boolean =>
-    !roles.some(r => r.hotelId === hotelId);
+  !roles.some((r) => r.hotelId === hotelId);

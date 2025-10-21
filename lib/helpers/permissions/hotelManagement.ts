@@ -1,5 +1,5 @@
-import { isAdmin, isHotelManager } from "@/lib/helpers";
-import type { AdminRights, HotelManagement } from "@/types";
+import { isAdmin, isHotelManager } from '@/lib/helpers';
+import type { AdminRights, HotelManagement } from '@/types';
 
 /**
  * Determines whether the actor can create a hotel.
@@ -11,9 +11,7 @@ import type { AdminRights, HotelManagement } from "@/types";
  * @returns {boolean} True if the actor can create a hotel, false otherwise.
  */
 export const canCreateHotel = ({ roles }: AdminRights): boolean =>
-    isAdmin({ roles });
-
-
+  isAdmin({ roles });
 
 /**
  * Determines whether the actor can update a hotel.
@@ -25,9 +23,7 @@ export const canCreateHotel = ({ roles }: AdminRights): boolean =>
  * @returns {boolean} True if the actor can update a hotel, false otherwise.
  */
 export const canUpdateHotel = ({ roles }: AdminRights): boolean =>
-    isAdmin({ roles });
-
-
+  isAdmin({ roles });
 
 /**
  * Determines whether the actor can delete a hotel.
@@ -39,9 +35,7 @@ export const canUpdateHotel = ({ roles }: AdminRights): boolean =>
  * @returns {boolean} True if the actor can delete a hotel, false otherwise.
  */
 export const canDeleteHotel = ({ roles }: AdminRights): boolean =>
-    isAdmin({ roles });
-
-
+  isAdmin({ roles });
 
 /**
  * Determines whether the actor can view the information of a hotel.
@@ -53,12 +47,10 @@ export const canDeleteHotel = ({ roles }: AdminRights): boolean =>
  * @returns {boolean} True if the actor can view the information of a hotel, false otherwise.
  */
 export const canViewHotel = ({ roles, hotelId }: HotelManagement): boolean =>
-    isAdmin({ roles }) || isHotelManager({ roles, hotelId });
-
-
+  isAdmin({ roles }) || isHotelManager({ roles, hotelId });
 
 /**
- * Determines whether the actor can see all rooms a hotel. 
+ * Determines whether the actor can see all rooms a hotel.
  *
  * Business rule:
  * - Only admins and hotel managers can see all rooms in a hotel.
@@ -67,4 +59,4 @@ export const canViewHotel = ({ roles, hotelId }: HotelManagement): boolean =>
  * @returns {boolean} True if the actor can see all rooms in a hotel, false otherwise.
  */
 export const canListRooms = ({ roles, hotelId }: HotelManagement): boolean =>
-    isAdmin({ roles }) || isHotelManager({ roles, hotelId });    
+  isAdmin({ roles }) || isHotelManager({ roles, hotelId });

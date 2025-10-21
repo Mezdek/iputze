@@ -1,11 +1,11 @@
 {
-    "ApprovalRequest": {
-        "closeButton": "Anulo",
-        "submitButton": "Po"
-    },
-    "ManagerView": {
-        "no_rooms_message": "Nuk janë krijuar dhoma ende.",
-        "no_workers_message": "Nuk janë caktuar punëtorë në këtë hotel ende.",
-        "mo_assignments_message": "Nuk janë krijuar ende detyra."
-    }
+  "ApprovalRequest": {
+    "closeButton": "Anulo",
+    "submitButton": "Po"
+  },
+  "ManagerView": {
+    "no_rooms_message": "Nuk janë krijuar dhoma ende.",
+    "no_workers_message": "Nuk janë caktuar punëtorë në këtë hotel ende.",
+    "mo_assignments_message": "Nuk janë krijuar ende detyra."
+  }
 }

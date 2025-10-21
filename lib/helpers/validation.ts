@@ -1,5 +1,5 @@
-import { APP_ERRORS, AuthErrors } from "@lib";
-import { z } from "zod";
+import { APP_ERRORS, AuthErrors } from '@lib';
+import { z } from 'zod';
 
 /**
  * Schemas
@@ -12,17 +12,17 @@ export const passwordSchema = z.string().min(8).max(128);
  * Generic validator for registration
  */
 export const validateRegistration = (data: unknown) => {
-    const result = z
-        .object({
-            name: nameSchema,
-            email: emailSchema,
-            password: passwordSchema,
-        })
-        .safeParse(data);
+  const result = z
+    .object({
+      name: nameSchema,
+      email: emailSchema,
+      password: passwordSchema,
+    })
+    .safeParse(data);
 
-    if (!result.success) {
-        throw APP_ERRORS.badRequest(AuthErrors.INVALID_VALUES);
-    }
+  if (!result.success) {
+    throw APP_ERRORS.badRequest(AuthErrors.INVALID_VALUES);
+  }
 
-    return result.data;
+  return result.data;
 };

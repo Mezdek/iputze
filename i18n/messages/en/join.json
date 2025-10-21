@@ -1,16 +1,16 @@
 {
-    "name": "join hotel",
-    "header": "Join a Hotel",
-    "inputs": {
-        "hotel_name": {
-            "label": "Select Hotel",
-            "placeholder": "Choose a hotel"
-        }
-    },
-    "loading_message": "Loading hotels...",
-    "buttons": {
-        "open": "Join",
-        "close": "Cancel",
-        "submit": "Join"
+  "name": "join hotel",
+  "header": "Join a Hotel",
+  "inputs": {
+    "hotel_name": {
+      "label": "Select Hotel",
+      "placeholder": "Choose a hotel"
     }
+  },
+  "loading_message": "Loading hotels...",
+  "buttons": {
+    "open": "Join",
+    "close": "Cancel",
+    "submit": "Join"
+  }
 }

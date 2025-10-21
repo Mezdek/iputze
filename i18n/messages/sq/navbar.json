@@ -1,22 +1,22 @@
 {
-    "name": "navbar",
-    "pages": {
-        "dashboard": "Paneli kryesor",
-        "hotels": "Hotellet"
-    },
-    "buttons": {
-        "join": "Bashko",
-        "logout": "Dil",
-        "settings": "Cilësimet e mia"
-    },
-    "locales": {
-        "ar": "ع",
-        "bg": "бг",
-        "de": "DE",
-        "el": "Ελ",
-        "en": "EN",
-        "sq": "SH"
-    },
-    "profile_header": "I kyçur si {name}",
-    "image_alt": "Avatar i {name}"
+  "name": "navbar",
+  "pages": {
+    "dashboard": "Paneli kryesor",
+    "hotels": "Hotellet"
+  },
+  "buttons": {
+    "join": "Bashko",
+    "logout": "Dil",
+    "settings": "Cilësimet e mia"
+  },
+  "locales": {
+    "ar": "ع",
+    "bg": "бг",
+    "de": "DE",
+    "el": "Ελ",
+    "en": "EN",
+    "sq": "SH"
+  },
+  "profile_header": "I kyçur si {name}",
+  "image_alt": "Avatar i {name}"
 }

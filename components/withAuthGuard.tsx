@@ -1,21 +1,17 @@
 'use client';
 
+import { LoadingScreen } from '@components';
+import { useMe } from '@hooks';
+import { getPath } from '@lib';
+import { useRouter } from 'next/navigation';
+import type { ComponentType } from 'react';
+import { useEffect } from 'react';
 
+import type { InjectedAuthProps } from '@/types';
 
-import { LoadingScreen } from "@components";
-import { useMe } from "@hooks";
-import { getPath } from "@lib";
-import { useRouter } from "next/navigation";
-import type { ComponentType} from "react";
-import { useEffect } from "react";
-
-import type { InjectedAuthProps } from "@/types";
-
-
-
-
-
-export function withAuthGuard<P extends object>(Component: ComponentType<P & InjectedAuthProps>) {
+export function withAuthGuard<P extends object>(
+  Component: ComponentType<P & InjectedAuthProps>
+) {
   return function Guarded(props: P) {
     const { data: user, isFetching, isLoading } = useMe();
     const router = useRouter();

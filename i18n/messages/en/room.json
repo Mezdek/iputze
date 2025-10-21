@@ -1,88 +1,89 @@
 {
-    "name": "Room",
-    "header": "<b>Room</b> {number}",
-    "cleanliness": "<strong>Status: </strong> {status}",
-    "cleanliness_status": {
-        "CLEAN": "clean",
-        "DIRTY": "dirty"
+  "name": "Room",
+  "header": "<b>Room</b> {number}",
+  "cleanliness": "<strong>Status: </strong> {status}",
+  "cleanliness_status": {
+    "CLEAN": "clean",
+    "DIRTY": "dirty"
+  },
+  "occupancy": "<strong>Occupancy: </strong> {status}",
+  "occupancy_status": {
+    "VACANT": "vacant",
+    "OCCUPIED": "occupied",
+    "UNAVAILABLE": "unavailable"
+  },
+  "notes": "<strong>Notes: </strong> {notes}",
+  "no_notes": "No Notes",
+  "update_panel": {
+    "header": " Edit room {number}",
+    "inputs": {
+      "room_number": {
+        "label": "Room Number",
+        "placeholder": "Enter new room number",
+        "error_message": "Please provide room number"
+      },
+      "cleanliness": {
+        "label": "Cleanliness Status",
+        "placeholder": "Select cleanliness status"
+      },
+      "occupancy": {
+        "label": "Occupancy Status",
+        "placeholder": "Select occupancy status"
+      }
     },
-    "occupancy": "<strong>Occupancy: </strong> {status}",
-    "occupancy_status": {
-        "AVAILABLE": "available",
-        "OCCUPIED": "occupied"
-    },
-    "notes": "<strong>Notes: </strong> {notes}",
-    "no_notes": "No Notes",
-    "update_panel": {
-        "header": " Edit room {number}",
-        "inputs": {
-            "room_number": {
-                "label": "Room Number",
-                "placeholder": "Enter new room number",
-                "error_message": "Please provide room number"
-            },
-            "cleanliness": {
-                "label": "Cleanliness Status",
-                "placeholder": "Select cleanliness status"
-            },
-            "occupancy": {
-                "label": "Occupancy Status",
-                "placeholder": "Select occupancy status"
-            }
-        },
-        "buttons": {
-            "open": "Edit",
-            "close": "Cancel",
-            "submit": "Update"
-        }
-    },
-    "deletion_panel": {
-        "header": "Room Deletion",
-        "buttons": {
-            "open": "Delete",
-            "submit": "Delete"
-        },
-        "approval_question": "Are you sure you want to delete room {number}?"
-    },
-    "creation_panel": {
-        "buttons": {
-            "close": "Cancel",
-            "open": "Create Room",
-            "submit": "Create"
-        },
-        "header": "New Room",
-        "inputs": {
-            "room_number": {
-                "error_message": "Please provide room number",
-                "label": "Room Number",
-                "placeholder": "Enter new room number"
-            },
-            "cleanliness": {
-                "label": "Cleanliness Status",
-                "placeholder": "Select cleanliness status"
-            },
-            "occupancy": {
-                "label": "Occupancy Status",
-                "placeholder": "Select occupancy status"
-            }
-        }
-    },
-    "errors": {
-        "duplicate_room_number_creation": {
-            "title": "Room could not be created!",
-            "description": "The room number already exists"
-        },
-        "unknown": {
-            "title": "Something went wrong",
-            "description": "Please try again later"
-        },
-        "room_has_assignments": {
-            "title": "Room could not be deleted!",
-            "description": "There are still assignments attached to this room!"
-        },
-        "duplicate_room_number_update": {
-            "title": "Room could not be updated!",
-            "description": "The room number already exists"
-        }
+    "buttons": {
+      "open": "Edit",
+      "close": "Cancel",
+      "submit": "Update"
     }
+  },
+  "deletion_panel": {
+    "header": "Room Deletion",
+    "buttons": {
+      "open": "Delete",
+      "submit": "Delete"
+    },
+    "approval_question": "Are you sure you want to delete room {number}?"
+  },
+  "creation_panel": {
+    "buttons": {
+      "close": "Cancel",
+      "open": "Create Room",
+      "submit": "Create"
+    },
+    "header": "New Room",
+    "inputs": {
+      "room_number": {
+        "error_message": "Please provide room number",
+        "label": "Room Number",
+        "placeholder": "Enter new room number"
+      },
+      "cleanliness": {
+        "label": "Cleanliness Status",
+        "placeholder": "Select cleanliness status"
+      },
+      "occupancy": {
+        "label": "Occupancy Status",
+        "placeholder": "Select occupancy status"
+      }
+    }
+  },
+  "errors": {
+    "duplicate_room_number_creation": {
+      "title": "Room could not be created!",
+      "description": "The room number already exists"
+    },
+    "unknown": {
+      "title": "Something went wrong",
+      "description": "Please try again later"
+    },
+    "room_has_assignments": {
+      "title": "Room could not be deleted!",
+      "description": "There are still assignments attached to this room!"
+    },
+    "duplicate_room_number_update": {
+      "title": "Room could not be updated!",
+      "description": "The room number already exists"
+    }
+  }
 }

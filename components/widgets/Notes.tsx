@@ -142,7 +142,7 @@ export function Notes({
         onOpenChange={onOpenChange}
       >
         <ModalContent>
-          {onClose => (
+          {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
                 Assignment Notes
@@ -154,7 +154,7 @@ export function Notes({
                     label="Note"
                     name="content"
                     placeholder="Choose a note or other"
-                    onSelectionChange={e => {
+                    onSelectionChange={(e) => {
                       if (e.currentKey === OTHER) {
                         setTimeout(() => inputRef.current?.focus(), 50);
                         setIsOther(true);
@@ -163,7 +163,7 @@ export function Notes({
                       }
                     }}
                   >
-                    {[...PREDEFINED_NOTES, OTHER].map(note => (
+                    {[...PREDEFINED_NOTES, OTHER].map((note) => (
                       <SelectItem key={note}>{note}</SelectItem>
                     ))}
                   </Select>
@@ -187,7 +187,7 @@ export function Notes({
                 </Form>
 
                 <div className="flex flex-wrap gap-2 bg-primary-50 border border-primary-600 rounded-lg p-2 min-h-12">
-                  {notes?.map(assignmentNote => (
+                  {notes?.map((assignmentNote) => (
                     <Chip
                       isCloseable
                       className="px-2 py-5 text-medium border-1 border-default"

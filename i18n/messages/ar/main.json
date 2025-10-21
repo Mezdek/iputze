@@ -1,11 +1,11 @@
 {
-    "ApprovalRequest": {
-        "closeButton": "إلغاء",
-        "submitButton": "نعم"
-    },
-    "ManagerView": {
-        "no_rooms_message": "لم يتم إنشاء أي غرف بعد.",
-        "no_workers_message": "لم يتم تعيين عمال لهذا الفندق بعد.",
-        "mo_assignments_message": "لم يتم إنشاء أي مهام بعد."
-    }
+  "ApprovalRequest": {
+    "closeButton": "إلغاء",
+    "submitButton": "نعم"
+  },
+  "ManagerView": {
+    "no_rooms_message": "لم يتم إنشاء أي غرف بعد.",
+    "no_workers_message": "لم يتم تعيين عمال لهذا الفندق بعد.",
+    "mo_assignments_message": "لم يتم إنشاء أي مهام بعد."
+  }
 }

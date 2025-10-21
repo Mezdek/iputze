@@ -1,49 +1,49 @@
 {
-    "name": "Задачи",
-    "header": "Стая {number}",
-    "creation": {
-        "modal_button": "Създайте задача",
-        "header": "Нова задача",
-        "inputs": {
-            "room_number": {
-                "label": "Номер на стая",
-                "placeholder": "Изберете стая",
-                "error_message": "Моля, изберете стая"
-            },
-            "cleaners": {
-                "label": "Почистване",
-                "placeholder": "Задайте почистващи",
-                "error_message": "Моля, изберете поне един почистващ"
-            },
-            "dua_date": {
-                "label": "Краен срок",
-                "description": "Изберете кога трябва да бъде завършено почистването",
-                "error_message": "Моля, изберете краен срок"
-            },
-            "close_button": "Отказ",
-            "submit_button": "Създай"
-        }
-    },
-    "status_update": {
-        "start": "Започни",
-        "finish": "Завърши"
-    },
-    "status": {
-        "done": "Готово",
-        "in_progress": "В процес",
-        "pending": "В очакване"
-    },
-    "archived": "Архивирано",
-    "archive": "Архив",
-    "due_at": "<strong>Краен срок:</strong> {dueAt}",
-    "cleaners": "<strong>Почистване: </strong>",
-    "assigned_by": "<strong>Назначено от: </strong> {name}",
-    "created_at": "<strong>Създадено:</strong> {createdAt}",
-    "deleted": "Акаунтът е изтрит",
-    "errors": {
-        "unknown": {
-            "title": "Нещо се обърка!",
-            "description": "Моля, опитайте отново по-късно"
-        }
+  "name": "Задачи",
+  "header": "Стая {number}",
+  "creation": {
+    "modal_button": "Създайте задача",
+    "header": "Нова задача",
+    "inputs": {
+      "room_number": {
+        "label": "Номер на стая",
+        "placeholder": "Изберете стая",
+        "error_message": "Моля, изберете стая"
+      },
+      "cleaners": {
+        "label": "Почистване",
+        "placeholder": "Задайте почистващи",
+        "error_message": "Моля, изберете поне един почистващ"
+      },
+      "dua_date": {
+        "label": "Краен срок",
+        "description": "Изберете кога трябва да бъде завършено почистването",
+        "error_message": "Моля, изберете краен срок"
+      },
+      "close_button": "Отказ",
+      "submit_button": "Създай"
     }
+  },
+  "status_update": {
+    "start": "Започни",
+    "finish": "Завърши"
+  },
+  "status": {
+    "done": "Готово",
+    "in_progress": "В процес",
+    "pending": "В очакване"
+  },
+  "archived": "Архивирано",
+  "archive": "Архив",
+  "due_at": "<strong>Краен срок:</strong> {dueAt}",
+  "cleaners": "<strong>Почистване: </strong>",
+  "assigned_by": "<strong>Назначено от: </strong> {name}",
+  "created_at": "<strong>Създадено:</strong> {createdAt}",
+  "deleted": "Акаунтът е изтрит",
+  "errors": {
+    "unknown": {
+      "title": "Нещо се обърка!",
+      "description": "Моля, опитайте отново по-късно"
+    }
+  }
 }

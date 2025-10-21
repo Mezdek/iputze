@@ -1,87 +1,87 @@
 {
-    "name": "Δωμάτιο",
-    "cleanliness": "<strong>Καθαριότητα: </strong> {status}",
-    "cleanliness_status": {
-        "CLEAN": "Καθαρό",
-        "DIRTY": "Βρώμικο"
+  "name": "Δωμάτιο",
+  "cleanliness": "<strong>Καθαριότητα: </strong> {status}",
+  "cleanliness_status": {
+    "CLEAN": "Καθαρό",
+    "DIRTY": "Βρώμικο"
+  },
+  "occupancy": "<strong>Κατοχή: </strong> {status}",
+  "occupancy_status": {
+    "AVAILABLE": "Διαθέσιμο",
+    "OCCUPIED": "Κατειλημμένο"
+  },
+  "notes": "<strong>Σημειώσεις: </strong> {notes}",
+  "no_notes": "Χωρίς σημειώσεις",
+  "update_panel": {
+    "header": "Επεξεργασία δωματίου {number}",
+    "inputs": {
+      "room_number": {
+        "label": "Αριθμός Δωματίου",
+        "placeholder": "Εισάγετε νέο αριθμό δωματίου",
+        "error_message": "Παρακαλώ δώστε αριθμό δωματίου"
+      },
+      "cleanliness": {
+        "label": "Κατάσταση καθαριότητας",
+        "placeholder": "Επιλέξτε κατάσταση καθαριότητας"
+      },
+      "occupancy": {
+        "label": "Κατάσταση κατοχής",
+        "placeholder": "Επιλέξτε κατάσταση κατοχής"
+      }
     },
-    "occupancy": "<strong>Κατοχή: </strong> {status}",
-    "occupancy_status": {
-        "AVAILABLE": "Διαθέσιμο",
-        "OCCUPIED": "Κατειλημμένο"
-    },
-    "notes": "<strong>Σημειώσεις: </strong> {notes}",
-    "no_notes": "Χωρίς σημειώσεις",
-    "update_panel": {
-        "header": "Επεξεργασία δωματίου {number}",
-        "inputs": {
-            "room_number": {
-                "label": "Αριθμός Δωματίου",
-                "placeholder": "Εισάγετε νέο αριθμό δωματίου",
-                "error_message": "Παρακαλώ δώστε αριθμό δωματίου"
-            },
-            "cleanliness": {
-                "label": "Κατάσταση καθαριότητας",
-                "placeholder": "Επιλέξτε κατάσταση καθαριότητας"
-            },
-            "occupancy": {
-                "label": "Κατάσταση κατοχής",
-                "placeholder": "Επιλέξτε κατάσταση κατοχής"
-            }
-        },
-        "buttons": {
-            "open": "Επεξεργασία",
-            "close": "Ακύρωση",
-            "submit": "Ενημέρωση"
-        }
-    },
-    "deletion_panel": {
-        "header": "Διαγραφή δωματίου",
-        "buttons": {
-            "open": "Διαγραφή",
-            "submit": "Διαγραφή"
-        },
-        "approval_question": "Είστε σίγουροι ότι θέλετε να διαγράψετε το δωμάτιο {number};"
-    },
-    "creation_panel": {
-        "buttons": {
-            "close": "Ακύρωση",
-            "open": "Δημιουργία δωματίου",
-            "submit": "Δημιουργία"
-        },
-        "header": "Νέο Δωμάτιο",
-        "inputs": {
-            "room_number": {
-                "error_message": "Παρακαλώ δώστε αριθμό δωματίου",
-                "label": "Αριθμός Δωματίου",
-                "placeholder": "Εισάγετε νέο αριθμό δωματίου"
-            },
-            "cleanliness": {
-                "label": "Κατάσταση καθαριότητας",
-                "placeholder": "Επιλέξτε κατάσταση καθαριότητας"
-            },
-            "occupancy": {
-                "label": "Κατάσταση κατοχής",
-                "placeholder": "Επιλέξτε κατάσταση κατοχής"
-            }
-        }
-    },
-    "errors": {
-        "duplicate_room_number_creation": {
-            "title": "Δεν ήταν δυνατή η δημιουργία δωματίου!",
-            "description": "Ο αριθμός δωματίου υπάρχει ήδη"
-        },
-        "unknown": {
-            "title": "Κάτι πήγε στραβά",
-            "description": "Παρακαλώ δοκιμάστε ξανά αργότερα"
-        },
-        "room_has_assignments": {
-            "title": "Δεν ήταν δυνατή η διαγραφή δωματίου!",
-            "description": "Υπάρχουν ακόμα αναθέσεις συνδεδεμένες με αυτό το δωμάτιο!"
-        },
-        "duplicate_room_number_update": {
-            "title": "Δεν ήταν δυνατή η ενημέρωση δωματίου!",
-            "description": "Ο αριθμός δωματίου υπάρχει ήδη"
-        }
+    "buttons": {
+      "open": "Επεξεργασία",
+      "close": "Ακύρωση",
+      "submit": "Ενημέρωση"
     }
+  },
+  "deletion_panel": {
+    "header": "Διαγραφή δωματίου",
+    "buttons": {
+      "open": "Διαγραφή",
+      "submit": "Διαγραφή"
+    },
+    "approval_question": "Είστε σίγουροι ότι θέλετε να διαγράψετε το δωμάτιο {number};"
+  },
+  "creation_panel": {
+    "buttons": {
+      "close": "Ακύρωση",
+      "open": "Δημιουργία δωματίου",
+      "submit": "Δημιουργία"
+    },
+    "header": "Νέο Δωμάτιο",
+    "inputs": {
+      "room_number": {
+        "error_message": "Παρακαλώ δώστε αριθμό δωματίου",
+        "label": "Αριθμός Δωματίου",
+        "placeholder": "Εισάγετε νέο αριθμό δωματίου"
+      },
+      "cleanliness": {
+        "label": "Κατάσταση καθαριότητας",
+        "placeholder": "Επιλέξτε κατάσταση καθαριότητας"
+      },
+      "occupancy": {
+        "label": "Κατάσταση κατοχής",
+        "placeholder": "Επιλέξτε κατάσταση κατοχής"
+      }
+    }
+  },
+  "errors": {
+    "duplicate_room_number_creation": {
+      "title": "Δεν ήταν δυνατή η δημιουργία δωματίου!",
+      "description": "Ο αριθμός δωματίου υπάρχει ήδη"
+    },
+    "unknown": {
+      "title": "Κάτι πήγε στραβά",
+      "description": "Παρακαλώ δοκιμάστε ξανά αργότερα"
+    },
+    "room_has_assignments": {
+      "title": "Δεν ήταν δυνατή η διαγραφή δωματίου!",
+      "description": "Υπάρχουν ακόμα αναθέσεις συνδεδεμένες με αυτό το δωμάτιο!"
+    },
+    "duplicate_room_number_update": {
+      "title": "Δεν ήταν δυνατή η ενημέρωση δωματίου!",
+      "description": "Ο αριθμός δωματίου υπάρχει ήδη"
+    }
+  }
 }

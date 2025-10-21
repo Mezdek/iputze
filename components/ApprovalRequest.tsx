@@ -1,105 +1,98 @@
-'use client'
+'use client';
 
 import {
-    Button,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    useDisclosure
-} from "@heroui/react";
-import { useTranslations } from "next-intl";
+  Button,
+  type ButtonProps,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from '@heroui/react';
+import { useTranslations } from 'next-intl';
 
-import { useErrorToast } from "@/hooks";
+import { useErrorToast } from '@/hooks';
 
-type THeroUIButtonColors =
-    | "default"
-    | "danger"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | undefined;
+type TCancelButtonProps = { text?: string } & ButtonProps;
+type TModalButtonProps = { text?: string } & ButtonProps;
+type TSubmitButtonProps = {
+  text?: string;
+  submitHandler: () => Promise<void>;
+} & ButtonProps;
 
-type ApprovalRequestProps = {
-    header: string;
-    question: string;
-    cancelButton?: {
-        text?: string;
-        color?: THeroUIButtonColors;
-    };
-    modalButton: {
-        text: string;
-        color?: THeroUIButtonColors;
-        isDisabled?: boolean;
-    };
-    submitButton: {
-        text?: string;
-        action: () => Promise<void>;
-        color?: THeroUIButtonColors;
-    };
+export type ApprovalRequestProps = {
+  header: string;
+  question: string;
+  cancelButtonProps: TCancelButtonProps;
+  modalButtonProps: TModalButtonProps;
+  submitButtonProps: TSubmitButtonProps;
 };
 
 export function ApprovalRequest({
-    submitButton,
-    cancelButton,
-    header,
-    question,
-    modalButton
-}: ApprovalRequestProps) {
-    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-    const t = useTranslations("ApprovalRequest");
-    const { showErrorToast } = useErrorToast()
-    const handleSubmit = async () => {
-        try {
-            await submitButton.action();
-        } catch (e) {
-            showErrorToast(e);
-        } finally {
-            onClose();
-        }
-    };
+  submitButtonProps,
+  cancelButtonProps,
+  header,
+  question,
+  modalButtonProps,
+}: Partial<ApprovalRequestProps>) {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const t = useTranslations('ApprovalRequest');
+  const { showErrorToast } = useErrorToast();
+  const {
+    submitHandler,
+    text: submitText,
+    ...submitButtonRestProps
+  } = submitButtonProps!;
+  const { text: modalText, ...modalButtonRestProps } = modalButtonProps!;
+  const cancelText = cancelButtonProps?.text;
+  const handleSubmit = async () => {
+    try {
+      await submitHandler();
+    } catch (e) {
+      showErrorToast(e);
+    } finally {
+      onClose();
+    }
+  };
 
-    return (
-        <>
+  return (
+    <>
+      <Button color="primary" onPress={onOpen} {...modalButtonRestProps}>
+        {modalText}
+      </Button>
+
+      <Modal
+        disableAnimation
+        aria-label={header}
+        isOpen={isOpen}
+        placement="top-center"
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          <ModalHeader className="text-lg font-semibold">{header}</ModalHeader>
+          <ModalBody>
+            <p className="text-base">{question}</p>
+          </ModalBody>
+          <ModalFooter className="flex justify-end gap-3">
             <Button
-                color={modalButton.color ?? "primary"}
-                isDisabled={modalButton.isDisabled}
-                onPress={onOpen}
+              color="default"
+              variant="flat"
+              onPress={onClose}
+              {...cancelButtonProps}
             >
-                {modalButton.text}
+              {cancelText ?? t('closeButton')}
             </Button>
-
-            <Modal
-                disableAnimation
-                aria-label={header}
-                isOpen={isOpen}
-                placement="top-center"
-                onOpenChange={onOpenChange}
+            <Button
+              color="primary"
+              onPress={handleSubmit}
+              {...submitButtonRestProps}
             >
-                <ModalContent>
-                    <ModalHeader className="text-lg font-semibold">{header}</ModalHeader>
-                    <ModalBody>
-                        <p className="text-base">{question}</p>
-                    </ModalBody>
-                    <ModalFooter className="flex justify-end gap-3">
-                        <Button
-                            color={cancelButton?.color ?? "default"}
-                            variant="flat"
-                            onPress={onClose}
-                        >
-                            {cancelButton?.text ?? t("closeButton")}
-                        </Button>
-                        <Button
-                            color={submitButton.color ?? "primary"}
-                            onPress={handleSubmit}
-                        >
-                            {submitButton.text ?? t("submitButton")}
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </>
-    );
+              {submitText ?? t('submitButton')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
 }

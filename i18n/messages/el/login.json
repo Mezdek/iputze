@@ -1,21 +1,21 @@
 {
-    "name": "Σύνδεση",
-    "signin_tab_title": "Σύνδεση",
-    "signup_tab_title": "Εγγραφή",
-    "email_input": {
-        "label": "Email",
-        "placeholder": "Εισάγετε το email σας"
-    },
-    "password_input": {
-        "label": "Κωδικός πρόσβασης",
-        "placeholder": "Εισάγετε τον κωδικό πρόσβασής σας"
-    },
-    "name_input": {
-        "label": "Όνομα",
-        "placeholder": "Εισάγετε το όνομά σας"
-    },
-    "signup_invite": "Χρειάζεστε να δημιουργήσετε λογαριασμό; <Link>Εγγραφείτε</Link>",
-    "signin_invite": "Έχετε ήδη λογαριασμό; <Link>Συνδεθείτε</Link>",
-    "signin_button": "Σύνδεση",
-    "signup_button": "Εγγραφή"
+  "name": "Σύνδεση",
+  "signin_tab_title": "Σύνδεση",
+  "signup_tab_title": "Εγγραφή",
+  "email_input": {
+    "label": "Email",
+    "placeholder": "Εισάγετε το email σας"
+  },
+  "password_input": {
+    "label": "Κωδικός πρόσβασης",
+    "placeholder": "Εισάγετε τον κωδικό πρόσβασής σας"
+  },
+  "name_input": {
+    "label": "Όνομα",
+    "placeholder": "Εισάγετε το όνομά σας"
+  },
+  "signup_invite": "Χρειάζεστε να δημιουργήσετε λογαριασμό; <Link>Εγγραφείτε</Link>",
+  "signin_invite": "Έχετε ήδη λογαριασμό; <Link>Συνδεθείτε</Link>",
+  "signin_button": "Σύνδεση",
+  "signup_button": "Εγγραφή"
 }

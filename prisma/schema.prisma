@@ -4,16 +4,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "sqlite" // Use "sqlite" for local dev, "postgresql" for production
   url      = env("DATABASE_URL")
 }
 
-/**
- * suggested alternative for enums
- * model Role {
- * level Int @default(0) // 0=PENDING, 1=CLEANER, 2=MANAGER, 3=ADMIN
- * }
- */
 // ---------- Enums ----------
 enum RoleLevel {
   ADMIN
@@ -28,8 +22,9 @@ enum RoleStatus {
 }
 
 enum RoomOccupancy {
-  AVAILABLE
+  VACANT
   OCCUPIED
+  UNAVAILABLE
 }
 
 enum RoomCleanliness {
@@ -40,128 +35,225 @@ enum RoomCleanliness {
 enum AssignmentStatus {
   PENDING
   IN_PROGRESS
-  DONE
+  COMPLETED
+  CANCELLED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  RESTORE
+  LOGIN
+  LOGOUT
+  ROLE_CHANGE
+  ASSIGNMENT_START
+  ASSIGNMENT_COMPLETE
+  ASSIGNMENT_CANCEL
 }
 
 // ---------- Domain models ----------
 
 model Hotel {
-  id          String   @id @default(uuid())
-  name        String   @unique
+  id          String    @id @default(uuid())
+  name        String    @unique
   address     String?
   phone       String?
   email       String?
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
   rooms Room[]
   roles Role[]
+
+  @@index([deletedAt])
 }
 
 model Room {
-  id          String          @id @default(uuid())
-  number      String
-  occupancy   RoomOccupancy   @default(AVAILABLE)
-  cleanliness RoomCleanliness @default(CLEAN)
-  notes       String?
+  id             String          @id @default(uuid())
+  number         String
+  occupancy      RoomOccupancy   @default(VACANT)
+  cleanliness    RoomCleanliness @default(CLEAN)
+  notes          String?
+  type           String?
+  capacity       Int?
+  floor          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime?
+  lastModifiedBy String?
 
-  hotelId    String
-  hotel      Hotel        @relation(fields: [hotelId], references: [id], onDelete: Restrict)
-  assignment Assignment[]
+  hotelId         String
+  hotel           Hotel             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  assignments     Assignment[]
+  defaultCleaners DefaultCleaners[]
+  modifier        User?             @relation("RoomModifier", fields: [lastModifiedBy], references: [id], onDelete: SetNull)
 
   @@unique([hotelId, number])
   @@index([hotelId])
+  @@index([hotelId, occupancy])
+  @@index([deletedAt])
+  @@index([lastModifiedBy])
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   name         String
-  email        String   @unique
+  email        String    @unique
   passwordHash String
   avatarUrl    String?
   notes        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 
-  roles          Role[]
-  AssignmentUser AssignmentUser[]
-  AssignmentNote AssignmentNote[]
-  RefreshToken   RefreshToken[]
-  assignedTasks  Assignment[]     @relation("AssignedBy") // Assignments this user created
-  Session        Session[]
+  roles           Role[]
+  assignmentUsers AssignmentUser[]
+  assignmentNotes AssignmentNote[]
+  refreshTokens   RefreshToken[]
+  assignedTasks   Assignment[]      @relation("AssignedBy")
+  sessions        Session[]
+  defaultCleaners DefaultCleaners[]
+  modifiedRooms   Room[]            @relation("RoomModifier")
+
+  @@index([email])
+  @@index([deletedAt])
 }
 
 model Role {
-  id      String     @id @default(uuid())
-  userId  String
-  hotelId String
-  level   RoleLevel  @default(PENDING)
-  status  RoleStatus @default(ACTIVE)
+  id        String     @id @default(uuid())
+  userId    String
+  hotelId   String
+  level     RoleLevel  @default(PENDING)
+  status    RoleStatus @default(ACTIVE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
-
-  hotel Hotel @relation(fields: [hotelId], references: [id], onDelete: Restrict)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hotel Hotel @relation(fields: [hotelId], references: [id], onDelete: Cascade)
 
   @@unique([userId, hotelId, level])
   @@index([hotelId, level])
+  @@index([userId, status])
 }
 
 model Assignment {
-  id         String           @id @default(uuid())
-  roomId     String
-  createdAt  DateTime         @default(now())
-  dueAt      DateTime
-  status     AssignmentStatus @default(PENDING)
-  notes      String?
-  isActive   Boolean          @default(true)
-  assignedBy String?
+  id       String           @id @default(uuid())
+  roomId   String
+  status   AssignmentStatus @default(PENDING)
+  priority Int              @default(0) // 0=normal, 1=high, 2=urgent
 
-  room           Room             @relation(fields: [roomId], references: [id], onDelete: Restrict)
-  AssignmentUser AssignmentUser[]
-  AssignmentNote AssignmentNote[]
-  assignedByUser User?            @relation("AssignedBy", fields: [assignedBy], references: [id], onDelete: SetNull)
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  dueAt       DateTime
+  startedAt   DateTime? // Set when status changes to IN_PROGRESS
+  completedAt DateTime? // Set when status changes to COMPLETED
+  cancelledAt DateTime? // Set when status changes to CANCELLED
 
-  @@index([dueAt])
-  @@index([status])
-  @@index([roomId])
-  @@index([isActive])
-  @@index([assignedBy])
-  @@index([roomId, status, isActive])
+  // Time tracking
+  estimatedMinutes Int?
+  actualMinutes    Int?
+
+  assignedById String?
+  assignedBy   User?   @relation("AssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
+
+  room          Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  assignedUsers AssignmentUser[]
+  notes         AssignmentNote[]
+
+  @@index([roomId, status, dueAt])
+  @@index([assignedById, status])
+  @@index([dueAt, priority])
+  @@index([status, createdAt])
+  @@index([roomId, status])
 }
 
 model AssignmentUser {
   assignmentId String
   userId       String
-  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt   DateTime @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([assignmentId, userId])
+  @@index([userId])
+}
+
+model DefaultCleaners {
+  roomId     String
+  userId     String
+  assignedAt DateTime @default(now())
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([roomId, userId])
+  @@index([userId])
 }
 
 model AssignmentNote {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   assignmentId String
   authorId     String
   content      String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 
   assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
   author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([assignmentId, createdAt])
+  @@index([deletedAt])
 }
 
-// ---------- Auth models (NextAuth Prisma Adapter) ----------
+// ---------- Audit Log (Centralized) ----------
+model AuditLog {
+  id String @id @default(uuid())
+
+  // What was changed
+  tableName String
+  recordId  String // UUID of affected record
+  action    AuditAction
+
+  // Who changed it
+  userId   String?
+  userName String? // Denormalized for history
+
+  // What changed - using Json for PostgreSQL, String for SQLite
+  changes Json // For PostgreSQL: Json type, For SQLite: use String
+
+  // When
+  timestamp DateTime @default(now())
+
+  // Context
+  ipAddress String?
+  userAgent String?
+
+  @@index([tableName, recordId, timestamp])
+  @@index([userId, timestamp])
+  @@index([timestamp])
+  @@index([action])
+  @@index([tableName, action])
+}
+
+// ---------- Auth models ----------
 
 model RefreshToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
+  id        String    @id @default(uuid())
+  token     String    @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  @@index([token])
+  @@index([expiresAt])
+  @@index([userId])
 }
 
 model Session {
@@ -169,12 +261,13 @@ model Session {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   expiresAt DateTime
+  revokedAt DateTime?
 
   ipAddress String?
   userAgent String?
 
   @@index([userId])
-  @@index([expiresAt]) // useful for cleanup jobs
+  @@index([expiresAt])
 }

@@ -1,37 +1,48 @@
+import {
+  getAdminRole,
+  getUserOrThrow,
+  HttpStatus,
+  isAdmin,
+  withErrorHandling,
+} from '@lib';
+import { prisma } from '@lib/prisma';
+import type { Hotel, Role } from '@prisma/client';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
-import { getUserOrThrow, HttpStatus, isAdmin, withErrorHandling } from "@lib";
-import { prisma } from "@lib/prisma";
-import type { Hotel } from "@prisma/client";
-import { RoleLevel, RoleStatus } from "@prisma/client";
-import type { NextRequest} from "next/server";
-import { NextResponse } from "next/server";
+import type { MeResponse, TRole } from '@/types';
 
-import type { MeResponse, TRole } from "@/types";
+export const GET = withErrorHandling(async (req: NextRequest) => {
+  const { roles, ...user } = await getUserOrThrow(req);
+  const userIsAdmin = isAdmin({ roles });
 
+  let hotels: Hotel[], rolesWithHotels: TRole[];
 
+  if (userIsAdmin) {
+    // An admin has control over all the hotels
+    hotels = await prisma.hotel.findMany();
+    // Extend the admin role to all hotels
+    const {
+      hotelId: _hotelId,
+      userId: _userId,
+      ...adminRole
+    } = getAdminRole<Role>({ roles });
 
-export const GET = withErrorHandling(
-    async (req: NextRequest) => {
-        const user = await getUserOrThrow(req);
-        const userIsAdmin = isAdmin({ roles: user.roles });
-
-        let hotels: Hotel[], rolesWithHotels: TRole[];
-
-        if (userIsAdmin) {
-            hotels = await prisma.hotel.findMany();
-            rolesWithHotels = hotels.map(
-
-                hotel => ({ id: user.id, level: RoleLevel.ADMIN, status: RoleStatus.ACTIVE, hotel }))
-        } else {
-            const hotelIds = user.roles.map(r => r.hotelId);
-            hotels = await prisma.hotel.findMany({ where: { id: { in: hotelIds } } });
-            rolesWithHotels = user.roles.map(
-                ({ id, hotelId, level, status }) => ({ id, level, status, hotel: { ...hotels.find(h => h.id === hotelId)! } }))
-        }
-
-        return NextResponse.json<MeResponse>(
-            { ...user, roles: rolesWithHotels },
-            { status: HttpStatus.OK }
-        );
-    }
-)
+    rolesWithHotels = hotels.map((hotel) => ({
+      ...adminRole,
+      hotel,
+    }));
+  } else {
+    const hotelIds = roles.map((r) => r.hotelId);
+    hotels = await prisma.hotel.findMany({ where: { id: { in: hotelIds } } });
+    rolesWithHotels = roles.map(({ userId: _userId, hotelId, ...role }) => ({
+      ...role,
+      hotel: { ...hotels.find((hotel) => hotel.id === hotelId)! },
+    }));
+  }
+  // Send the user informatin with all the roles they have
+  return NextResponse.json<MeResponse>(
+    { ...user, roles: rolesWithHotels },
+    { status: HttpStatus.OK }
+  );
+});

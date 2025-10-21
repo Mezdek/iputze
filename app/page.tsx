@@ -1,12 +1,10 @@
-'use client'
+'use client';
 
-
-
-import { LoginWidget } from "@components";
-import { useMe } from "@hooks";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { useEffect } from "react";
+import { LoginWidget } from '@components';
+import { useMe } from '@hooks';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 
 export default function Home() {
   const { data: user, isLoading } = useMe();
@@ -15,7 +13,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.replace("/dashboard");
+      router.replace('/dashboard');
     }
   }, [user, isLoading, router]);
 
@@ -23,9 +21,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-10 items-center justify-center min-h-screen p-4">
-      <h1 className="text-center font-bold text-4xl">
-        {t("app_name")}
-      </h1>
+      <h1 className="text-center font-bold text-4xl">{t('app_name')}</h1>
       <LoginWidget />
     </div>
   );

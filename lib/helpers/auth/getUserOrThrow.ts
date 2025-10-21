@@ -13,14 +13,13 @@ export const getUserOrThrow = async (
 
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
-    include: { user: { include: { roles: true } } },
+    include: {
+      user: { include: { roles: true }, omit: { passwordHash: true } },
+    },
   });
 
   if (!session || session.expiresAt < new Date())
     throw APP_ERRORS.unauthorized();
 
-  const { passwordHash: _passwordHash, ...userWithoutPasswordHash } =
-    session.user;
-
-  return userWithoutPasswordHash;
+  return session.user;
 };

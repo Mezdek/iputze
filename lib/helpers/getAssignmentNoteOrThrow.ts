@@ -1,27 +1,27 @@
-import { APP_ERRORS, AssignmentErrors, AssignmentNotesErrors } from "@lib";
-import { prisma } from "@lib/prisma";
-import type { Assignment, AssignmentNote, Hotel, Room } from "@prisma/client";
+import { APP_ERRORS, AssignmentErrors, AssignmentNotesErrors } from '@lib';
+import { prisma } from '@lib/prisma';
+import type { Assignment, AssignmentNote, Hotel, Room } from '@prisma/client';
 
 /**
  * Type that includes an AssignmentNote with its assignment,
  * room, and hotel context for validation purposes.
  */
 export type AssignmentNoteWithContext = AssignmentNote & {
-    assignment: Assignment & {
-        room: Room & {
-            hotel: Hotel;
-        };
+  assignment: Assignment & {
+    room: Room & {
+      hotel: Hotel;
     };
+  };
 };
 
 /**
  * Parameters for validating an assignment note.
  */
 export type AssignmentNoteContext = {
-    assignmentNoteId: string;
-    expectedAssignmentId?: string;
-    expectedHotelId?: string;
-    expectedAuthorId?: string;
+  assignmentNoteId: string;
+  expectedAssignmentId?: string;
+  expectedHotelId?: string;
+  expectedAuthorId?: string;
 };
 
 /**
@@ -39,56 +39,58 @@ export type AssignmentNoteContext = {
  * @throws {HttpError} If validation fails.
  */
 export const getAssignmentNoteOrThrow = async (
-    ctx: AssignmentNoteContext
+  ctx: AssignmentNoteContext
 ): Promise<AssignmentNoteWithContext> => {
-    const { assignmentNoteId, expectedAssignmentId, expectedHotelId, expectedAuthorId } = ctx;
+  const {
+    assignmentNoteId,
+    expectedAssignmentId,
+    expectedHotelId,
+    expectedAuthorId,
+  } = ctx;
 
-
-    // Fetch note with full context
-    const assignmentNote = await prisma.assignmentNote.findUnique({
-        where: { id: assignmentNoteId },
-        include: {
-            assignment: {
-                select: {
-                    id: true,
-                    room: {
-                        select: {
-                            id: true,
-                            hotel: true,
-                        },
-                    },
-                },
+  // Fetch note with full context
+  const assignmentNote = await prisma.assignmentNote.findUnique({
+    where: { id: assignmentNoteId },
+    include: {
+      assignment: {
+        select: {
+          id: true,
+          room: {
+            select: {
+              id: true,
+              hotel: true,
             },
+          },
         },
-    });
+      },
+    },
+  });
 
-    if (!assignmentNote) {
-        throw APP_ERRORS.badRequest(AssignmentNotesErrors.NOT_FOUND);
-    }
+  if (!assignmentNote) {
+    throw APP_ERRORS.badRequest(AssignmentNotesErrors.NOT_FOUND);
+  }
 
-    // Ensure assignment is not floating (must be tied to a room)
-    if (!assignmentNote.assignment.room) throw APP_ERRORS.badRequest(AssignmentErrors.FLOATING);
+  // Ensure assignment is not floating (must be tied to a room)
+  if (!assignmentNote.assignment.room)
+    throw APP_ERRORS.badRequest(AssignmentErrors.FLOATING);
 
-    // Check assignment match
-    if (
-        expectedAssignmentId &&
-        assignmentNote.assignment.id !== expectedAssignmentId
-    ) throw APP_ERRORS.forbidden(
-        AssignmentNotesErrors.NOT_IN_ASSIGNMENT
-    );
+  // Check assignment match
+  if (
+    expectedAssignmentId &&
+    assignmentNote.assignment.id !== expectedAssignmentId
+  )
+    throw APP_ERRORS.forbidden(AssignmentNotesErrors.NOT_IN_ASSIGNMENT);
 
-    // Check hotel match
-    if (
-        expectedHotelId &&
-        assignmentNote.assignment.room.hotel.id !== expectedHotelId
-    ) throw APP_ERRORS.forbidden(
-        AssignmentNotesErrors.NOT_IN_HOTEL
-    );
+  // Check hotel match
+  if (
+    expectedHotelId &&
+    assignmentNote.assignment.room.hotel.id !== expectedHotelId
+  )
+    throw APP_ERRORS.forbidden(AssignmentNotesErrors.NOT_IN_HOTEL);
 
+  // Check author match
+  if (expectedAuthorId && assignmentNote.authorId !== expectedAuthorId)
+    throw APP_ERRORS.forbidden(AssignmentNotesErrors.EDITING_DENIED);
 
-    // Check author match
-    if (expectedAuthorId && assignmentNote.authorId !== expectedAuthorId) throw APP_ERRORS.forbidden(AssignmentNotesErrors.EDITING_DENIED);
-
-
-    return assignmentNote as AssignmentNoteWithContext;
+  return assignmentNote as AssignmentNoteWithContext;
 };

@@ -1,6 +1,6 @@
 // TODO: Move from in memory to DB
 
-import { APP_ERRORS, AuthErrors } from "@lib";
+import { APP_ERRORS, AuthErrors } from '@lib';
 
 type RateLimitEntry = number[];
 
@@ -16,39 +16,39 @@ const rateLimitMap = new Map<string, RateLimitEntry>();
  */
 
 export const rateLimit = (
-    identifier: string,
-    limit: number = 5,
-    windowMs: number = 60000
+  identifier: string,
+  limit: number = 5,
+  windowMs: number = 60000
 ): boolean => {
-    const now = Date.now();
-    const windowStart = now - windowMs;
+  const now = Date.now();
+  const windowStart = now - windowMs;
 
-    if (!rateLimitMap.has(identifier)) {
-        rateLimitMap.set(identifier, []);
-    }
+  if (!rateLimitMap.has(identifier)) {
+    rateLimitMap.set(identifier, []);
+  }
 
-    const requests = rateLimitMap.get(identifier)!;
-    const recentRequests = requests.filter((time) => time > windowStart);
+  const requests = rateLimitMap.get(identifier)!;
+  const recentRequests = requests.filter((time) => time > windowStart);
 
-    if (recentRequests.length >= limit) return false;
+  if (recentRequests.length >= limit) return false;
 
-    recentRequests.push(now);
-    rateLimitMap.set(identifier, recentRequests);
+  recentRequests.push(now);
+  rateLimitMap.set(identifier, recentRequests);
 
-    return true;
-}
+  return true;
+};
 
 // Optional: auto-cleanup to prevent memory leak
 setInterval(() => {
-    const now = Date.now();
-    for (const [key, times] of rateLimitMap.entries()) {
-        const recent = times.filter((t) => t > now - 60000); // default 1 minute window
-        if (recent.length === 0) {
-            rateLimitMap.delete(key);
-        } else {
-            rateLimitMap.set(key, recent);
-        }
+  const now = Date.now();
+  for (const [key, times] of rateLimitMap.entries()) {
+    const recent = times.filter((t) => t > now - 60000); // default 1 minute window
+    if (recent.length === 0) {
+      rateLimitMap.delete(key);
+    } else {
+      rateLimitMap.set(key, recent);
     }
+  }
 }, 60000); // cleanup every minute
 
 /**
@@ -59,12 +59,19 @@ setInterval(() => {
  * @param limit - Number of allowed requests
  * @param windowMs - Time window in ms
  */
-export const checkRateLimit = (req: Request | any, keyPrefix: string, limit = 5, windowMs = 300000) => {
-    const clientIP = req.headers.get("x-forwarded-for") || req.ip || "unknown";
+export const checkRateLimit = (
+  req: Request | any,
+  keyPrefix: string,
+  limit = 5,
+  windowMs = 300000
+) => {
+  const clientIP = req.headers.get('x-forwarded-for') || req.ip || 'unknown';
 
-    const identifier = `${keyPrefix}:${clientIP}`;
+  const identifier = `${keyPrefix}:${clientIP}`;
 
-    if (!rateLimit(identifier, limit, windowMs)) {
-        throw APP_ERRORS.tooManyRequests(AuthErrors.TOO_MANY_REQUESTS + Math.ceil(windowMs / 1000) + "s");
-    }
-}
+  if (!rateLimit(identifier, limit, windowMs)) {
+    throw APP_ERRORS.tooManyRequests(
+      AuthErrors.TOO_MANY_REQUESTS + Math.ceil(windowMs / 1000) + 's'
+    );
+  }
+};

@@ -1,4 +1,4 @@
-import { APP_ERRORS, AuthErrors } from "@lib";
+import { APP_ERRORS, AuthErrors } from '@lib';
 
 /**
  * Parses a string ID into a number.
@@ -10,11 +10,11 @@ import { APP_ERRORS, AuthErrors } from "@lib";
  * @throws {import("@lib/errors/HttpError").HttpError} If the ID is not a valid number.
  */
 export const parseId = (id: string, errorMessage?: string): number => {
-    const parsedId = Number(id);
+  const parsedId = Number(id);
 
-    if (!Number.isInteger(parsedId)) {
-        throw APP_ERRORS.badRequest(errorMessage ?? AuthErrors.INVALID_ID);
-    }
+  if (!Number.isInteger(parsedId)) {
+    throw APP_ERRORS.badRequest(errorMessage ?? AuthErrors.INVALID_ID);
+  }
 
-    return parsedId;
+  return parsedId;
 };
