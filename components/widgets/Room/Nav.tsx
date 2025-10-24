@@ -2,11 +2,13 @@
 import { Button } from '@heroui/react';
 import type { HTMLAttributes } from 'react';
 
+import type { TViews } from '@/components/ManagerView';
+
 export function Nav({
-  goToOverview,
+  navigate,
   ...props
 }: {
-  goToOverview: (props?: unknown) => void;
+  navigate: (props: TViews | undefined) => void;
 } & HTMLAttributes<HTMLDivElement>) {
   const { className, ...rest } = props;
   return (
@@ -17,21 +19,22 @@ export function Nav({
       <Button
         className="rounded-tl-full text-default-50 text-xl"
         color="primary"
+        onPress={() => navigate('FLOOR_MAP')}
       >
-        X
+        Floor Map
       </Button>
       <Button
         className="rounded-none col-span-2 text-default-50 text-xl"
         color="primary"
-        onPress={goToOverview}
       >
         Overview
       </Button>
       <Button
         className="rounded-tr-full text-default-50 text-xl"
         color="primary"
+        onPress={() => navigate('TIMELINE')}
       >
-        Y
+        Timeline
       </Button>
     </div>
   );

@@ -5,12 +5,6 @@ export const NEXT_STATUS = {
   [AssignmentStatus.IN_PROGRESS]: AssignmentStatus.COMPLETED,
 } as const;
 
-export const SECTIONS = {
-  ASSIGNMENTS: 'Assignments',
-  ROOMS: 'Rooms',
-  WORKERS: 'Workers',
-} as const;
-
 export const STATUS_STRING = {
   [AssignmentStatus.IN_PROGRESS]: { button: 'finish', state: 'in_progress' },
   [AssignmentStatus.PENDING]: { button: 'start', state: 'pending' },
