@@ -117,6 +117,9 @@ model User {
   sessions        Session[]
   defaultCleaners DefaultCleaners[]
   modifiedRooms   Room[]            @relation("RoomModifier")
+  AssignmentImage AssignmentImage[]
+  UserStats       UserStats?
+  Achievement     Achievement[]
 
   @@index([email])
   @@index([deletedAt])
@@ -143,14 +146,15 @@ model Assignment {
   id       String           @id @default(uuid())
   roomId   String
   status   AssignmentStatus @default(PENDING)
-  priority Int              @default(0) // 0=normal, 1=high, 2=urgent
+  priority Int              @default(0)
 
   // Timestamps
-  createdAt   DateTime  @default(now())
-  dueAt       DateTime
-  startedAt   DateTime? // Set when status changes to IN_PROGRESS
-  completedAt DateTime? // Set when status changes to COMPLETED
-  cancelledAt DateTime? // Set when status changes to CANCELLED
+  createdAt        DateTime  @default(now())
+  dueAt            DateTime
+  startedAt        DateTime?
+  completedAt      DateTime?
+  cancelledAt      DateTime?
+  cancellationNote String?
 
   // Time tracking
   estimatedMinutes Int?
@@ -159,15 +163,20 @@ model Assignment {
   assignedById String?
   assignedBy   User?   @relation("AssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
 
-  room          Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  assignedUsers AssignmentUser[]
-  notes         AssignmentNote[]
+  room            Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  assignedUsers   AssignmentUser[]
+  notes           AssignmentNote[]
+  AssignmentImage AssignmentImage[]
 
+  // EXISTING INDEXES
   @@index([roomId, status, dueAt])
   @@index([assignedById, status])
   @@index([dueAt, priority])
   @@index([status, createdAt])
   @@index([roomId, status])
+  // NEW INDEXES FOR TIMELINE VIEW
+  @@index([dueAt, status]) // For filtering by week + status
+  @@index([roomId, dueAt]) // For room-specific timeline queries
 }
 
 model AssignmentUser {
@@ -208,6 +217,47 @@ model AssignmentNote {
 
   @@index([assignmentId, createdAt])
   @@index([deletedAt])
+}
+
+model AssignmentImage {
+  id           String     @id @default(uuid())
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  url        String // Cloudinary/S3 URL
+  uploadedBy String
+  uploader   User   @relation(fields: [uploadedBy], references: [id])
+
+  uploadedAt DateTime @default(now())
+
+  @@index([assignmentId])
+}
+
+// Add to schema.prisma for the XP/Performance feature
+model UserStats {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  totalXP        Int    @default(0)
+  tasksCompleted Int    @default(0)
+  averageTime    Float? // Average completion time in minutes
+  qualityScore   Float? // Based on feedback/ratings
+
+  lastUpdated DateTime @updatedAt
+
+  @@index([totalXP])
+}
+
+model Achievement {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type       String // "SPEED_DEMON", "PERFECTIONIST", "STREAK_KEEPER"
+  unlockedAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 // ---------- Audit Log (Centralized) ----------
@@ -268,6 +318,11 @@ model Session {
   ipAddress String?
   userAgent String?
 
+  lastActivityAt DateTime @default(now())
+  deviceInfo     String?
+
+  @@index([userId, expiresAt])
+  @@index([lastActivityAt])
   @@index([userId])
   @@index([expiresAt])
 }

@@ -7,6 +7,7 @@ import {
   hasManagerPermission,
   HttpStatus,
   isHotelCleaner,
+  transformAssignment,
   withErrorHandling,
 } from '@lib';
 import { prisma } from '@lib/prisma';
@@ -27,45 +28,47 @@ export const GET = withErrorHandling(
   ) => {
     const { id: hotelId } = await getHotelOrThrow(params.hotelId);
     const { roles, id: userId } = await getUserOrThrow(req);
+    const { searchParams } = new URL(req.url);
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
-    let where;
+    let baseWhere;
+
+    const isRanged = !!startDate && !!endDate;
 
     if (hasManagerPermission({ hotelId, roles })) {
-      where = { room: { hotelId } };
+      baseWhere = { room: { hotelId } };
     } else if (isHotelCleaner({ hotelId, roles })) {
-      where = { assignedUsers: { some: { userId } } };
+      baseWhere = { assignedUsers: { some: { userId } } };
     } else {
       throw APP_ERRORS.forbidden();
     }
+    const where = isRanged
+      ? {
+          ...baseWhere,
+          dueAt: {
+            gte: new Date(startDate),
+            lte: new Date(endDate),
+          },
+        }
+      : baseWhere;
 
     const assignments = await prisma.assignment.findMany({
       where,
       orderBy: { dueAt: 'asc' },
       include: {
         room: true,
-        notes: { omit: { assignmentId: true } },
+        notes: true,
         assignedBy: { omit: { passwordHash: true } },
         assignedUsers: {
           include: { user: { omit: { passwordHash: true } } },
-          omit: { userId: true, assignmentId: true },
         },
       },
-      omit: {
-        assignedById: true,
-        roomId: true,
-      },
     });
-    const assignmentsFlatened = assignments.map(
-      ({ assignedUsers, ...assignment }) => {
-        // Flatten assignmentUsers and rename to cleaners
-        const cleaners = assignedUsers.map(({ assignedAt, user }) => ({
-          ...user,
-          assignedAt,
-        }));
-        return { ...assignment, cleaners };
-      }
-    );
-    return NextResponse.json<TAssignmentResponse[]>(assignmentsFlatened);
+
+    const transformedAssignments = assignments.map(transformAssignment);
+
+    return NextResponse.json<TAssignmentResponse[]>(transformedAssignments);
   }
 );
 

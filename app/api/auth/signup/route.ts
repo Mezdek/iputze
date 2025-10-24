@@ -15,7 +15,7 @@ import { NextResponse } from 'next/server';
 import type { SignUpRequestBody, SignUpResponse } from '@/types';
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
-  checkRateLimit(req, RATE_LIMIT_KEYS.REGISTER, 3, 600000);
+  await checkRateLimit(req, RATE_LIMIT_KEYS.REGISTER, 'api');
 
   const data = (await req.json()) as SignUpRequestBody;
 

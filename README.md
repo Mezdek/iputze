@@ -1,242 +1,116 @@
-# Database Seeding Guide
+# 🏨 iputze - Hotel Cleaning Management System
 
-## 📁 File Structure
+Modern hotel cleaning coordination platform connecting managers and cleaning staff.
 
-```shell
-prisma/
-├── schema.prisma
-├── seed.ts
-└── seeding/
-    └── data.ts
-```
+## 🎯 Key Features
+
+- **Multi-hotel management** - Single platform for multiple properties
+- **Role-based access** - Admin, Manager, Cleaner, Pending
+- **Real-time assignments** - Task creation, tracking, and completion
+- **Timeline view** - Weekly scheduling and workload visualization
+- **Task documentation** - Notes and image uploads for quality assurance
+- **Performance tracking** - XP system and achievement badges
 
 ## 🚀 Quick Start
 
-### 1. Setup the seed script in `package.json`
+### Prerequisites
 
-Add this to your `package.json`:
+- Node.js 18+
+- PostgreSQL (or SQLite for development)
 
-```json
-{
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
-  "scripts": {
-    "db:seed": "prisma db seed",
-    "db:reset": "prisma migrate reset",
-    "db:studio": "prisma studio"
-  }
-}
-```
-
-### 2. Install required dependencies
+### Installation
 
 ```bash
-npm install -D tsx
-# or
-pnpm add -D tsx
-# or
-yarn add -D tsx
-```
+# Clone and install
+git clone [repo-url]
+npm install
 
-### 3. Run migrations (first time)
+# Setup environment
+cp .env.example .env
+# Edit .env with your database credentials
 
-```bash
-npx prisma migrate dev --name init
-```
-
-### 4. Seed the database
-
-```bash
+# Run migrations and seed
+npm run db:migrate
 npm run db:seed
+
+# Start development server
+npm run dev
 ```
 
-## 🔄 Reset Database (Clear & Reseed)
+Visit `http://localhost:3000`
+
+### Default Login Credentials
+
+See [Database Seeding Guide](#database-seeding) below for credentials.
+
+## 🏗️ Tech Stack
+
+- **Framework**: Next.js 15, React 19, TypeScript
+- **Database**: Prisma ORM (PostgreSQL/SQLite)
+- **UI**: HeroUI, TailwindCSS, Framer Motion
+- **State**: TanStack Query
+- **Auth**: Custom JWT sessions
+- **i18n**: next-intl
+
+## 📁 Project Structure
+
+```
+├── app/              # Next.js app router
+├── components/       # React components
+├── hooks/            # Custom React hooks
+├── lib/              # Business logic & utilities
+├── prisma/           # Database schema & migrations
+└── types/            # TypeScript definitions
+```
+
+## 🔐 Environment Variables
+
+```env
+DATABASE_URL="postgresql://user:pass@localhost:5432/iputze"
+SESSION_COOKIE_EXP="7d"
+NODE_ENV="development"
+```
+
+## 📚 API Documentation
+
+API follows RESTful conventions:
+
+- `GET /api/hotels` - List hotels
+- `POST /api/hotels/:id/rooms` - Create room
+- `GET /api/hotels/:id/assignments` - List assignments
+- `PATCH /api/hotels/:id/assignments/:id` - Update assignment
+
+## 🧪 Testing
 
 ```bash
-npm run db:reset
+npm run test           # Run tests
+npm run test:watch     # Watch mode
+npm run test:coverage  # Coverage report
 ```
 
-This will:
-
-1. Drop the database
-2. Run all migrations
-3. Run the seed script automatically
-
-## 📊 What Gets Seeded
-
-### Hotels (3)
-
-- **Zentrale** - Administrative center (not a real hotel)
-- **La Luna** - Boutique hotel with 15 rooms
-- **Khan Al Harir** - Larger hotel with 19 rooms
-
-### Users (10)
-
-- **2 Admins** - Full system access
-- **2 Managers** - One per hotel
-- **6 Cleaners** - 3 per hotel
-
-### Rooms
-
-- **La Luna**: 15 rooms across 3 floors
-  - Mix of Standard, Deluxe, and Suite rooms
-  - Various occupancy states (Occupied, Vacant, Unavailable)
-  
-- **Khan Al Harir**: 19 rooms across 4 floors
-  - Includes a Presidential Suite
-  - Rooms with different cleanliness states
-
-### Assignments
-
-- **La Luna**: 5 active assignments (mix of PENDING and IN_PROGRESS)
-- **Khan Al Harir**: 8 active assignments
-
-### Default Cleaners
-
-- Each room has assigned default cleaners
-- Cleaners are automatically linked to specific rooms
-
-## 🔑 Login Credentials
-
-### Admins
-
-| Email | Password |
-|-------|----------|
-| <anwar@iputze.com> | anwar@shabbout |
-| <mezdek@iputze.com> | mezdek@osman |
-
-### Managers
-
-| Hotel | Email | Password |
-|-------|-------|----------|
-| La Luna | <antonio@laluna.com> | antonio@luna |
-| Khan Al Harir | <mustafa@khan-alharir.com> | mustafa@harir |
-
-### Cleaners - La Luna
-
-| Name | Email | Password |
-|------|-------|----------|
-| Charles Chaplin | <charles@cleaners.com> | charles@chaplin |
-| Elon Must | <elon@cleaners.com> | elon@must |
-| Sofia Romano | <sofia@cleaners.com> | sofia@romano |
-
-### Cleaners - Khan Al Harir
-
-| Name | Email | Password |
-|------|-------|----------|
-| Bertha Bernard | <bertha@cleaners.com> | bertha@bernard |
-| Dora Daniel | <dora@cleaners.com> | dora@daniel |
-| Fatima Al-Rashid | <fatima@cleaners.com> | fatima@rashid |
-
-## 🛠️ Customization
-
-### Modify Seed Data
-
-Edit `prisma/seeding/data.ts` to:
-
-- Add/remove hotels
-- Add/remove users
-- Modify room configurations
-- Adjust assignment templates
-
-### Re-run Seed (Without Clearing)
-
-The seed script is idempotent - it won't create duplicates:
+## 🚢 Deployment
 
 ```bash
-npm run db:seed
+npm run build
+npm run start
 ```
 
-### Clear Specific Data
+Deploy to Vercel with one click: [Deploy Button]
 
-To start fresh, uncomment the clearing section in `seed.ts`:
+## 🤝 Contributing
 
-```typescript
-// Uncomment these lines in seed.ts
-await prisma.assignmentNote.deleteMany();
-await prisma.assignmentUser.deleteMany();
-await prisma.assignment.deleteMany();
-await prisma.defaultCleaners.deleteMany();
-await prisma.room.deleteMany();
-await prisma.role.deleteMany();
-await prisma.session.deleteMany();
-await prisma.refreshToken.deleteMany();
-await prisma.user.deleteMany();
-await prisma.hotel.deleteMany();
-await prisma.auditLog.deleteMany();
-```
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
-## 🔍 Explore Your Data
+## 📄 License
 
-Open Prisma Studio to browse the seeded data:
+[Your License]
 
-```bash
-npm run db:studio
-```
+---
 
-This opens a web interface at `http://localhost:5555`
+## Database Seeding
 
-## 📝 Notes
-
-- **Passwords** are hashed using bcrypt (10 rounds)
-- **UUIDs** are generated automatically for all IDs
-- **Timestamps** are set automatically
-- **Default cleaners** are linked through junction table
-- **Assignments** have realistic due dates (1-5 hours from now)
-- **Room states** reflect real-world scenarios (occupied/vacant/dirty/clean)
-
-## 🐛 Troubleshooting
-
-### "Table doesn't exist" error
-
-```bash
-npx prisma migrate deploy
-```
-
-### "Cannot find module" error
-
-Make sure `tsx` is installed:
-
-```bash
-npm install -D tsx
-```
-
-### "Unique constraint failed" error
-
-The data already exists. Either:
-
-1. Run `npm run db:reset` to start fresh
-2. Let the seed script skip existing records (default behavior)
-
-### Check database connection
-
-```bash
-npx prisma db pull
-```
-
-## 🎯 Next Steps
-
-After seeding:
-
-1. Test login with different user roles
-2. Explore room assignments in your app
-3. Test cleaner assignment workflows
-4. Verify role-based access control
-5. Check audit log functionality
-
-## 📚 Additional Commands
-
-```bash
-# Generate Prisma Client
-npx prisma generate
-
-# View current schema
-npx prisma db pull
-
-# Format schema file
-npx prisma format
-
-# Validate schema
-npx prisma validate
-```
+[Your existing seeding documentation here]

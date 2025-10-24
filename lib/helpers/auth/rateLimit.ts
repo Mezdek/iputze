@@ -1,77 +1,90 @@
-// TODO: Move from in memory to DB
-
 import { APP_ERRORS, AuthErrors } from '@lib';
+import { Redis } from '@upstash/redis';
 
-type RateLimitEntry = number[];
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
-const rateLimitMap = new Map<string, RateLimitEntry>();
+type RateLimitConfig = {
+  identifier: string;
+  limit: number;
+  windowMs: number;
+};
 
 /**
- * Checks whether a given identifier can perform an action based on rate limits.
- *
- * @param identifier - Unique key for rate limiting (e.g., IP or userId).
- * @param limit - Maximum allowed requests within the time window.
- * @param windowMs - Time window in milliseconds (default 1 minute).
- * @returns true if allowed, false if rate limit exceeded.
+ * Redis-based rate limiter using sorted sets
+ * Works across serverless instances and deployments
  */
-
-export const rateLimit = (
-  identifier: string,
-  limit: number = 5,
-  windowMs: number = 60000
-): boolean => {
+export const rateLimit = async ({
+  identifier,
+  limit = 5,
+  windowMs = 60000,
+}: RateLimitConfig): Promise<boolean> => {
+  const key = `ratelimit:${identifier}`;
   const now = Date.now();
   const windowStart = now - windowMs;
 
-  if (!rateLimitMap.has(identifier)) {
-    rateLimitMap.set(identifier, []);
+  try {
+    // Pipeline for atomic operations
+    const pipeline = redis.pipeline();
+
+    // Remove old entries outside time window
+    pipeline.zremrangebyscore(key, 0, windowStart);
+
+    // Count requests in current window
+    pipeline.zcard(key);
+
+    // Add current request
+    pipeline.zadd(key, { score: now, member: `${now}-${Math.random()}` });
+
+    // Set expiration (TTL)
+    pipeline.expire(key, Math.ceil(windowMs / 1000));
+
+    const results = await pipeline.exec();
+    const count = results[1] as number;
+
+    return count < limit;
+  } catch (error) {
+    // Fail open: allow request if Redis is down
+    console.error('Rate limit check failed:', error);
+    return true;
   }
-
-  const requests = rateLimitMap.get(identifier)!;
-  const recentRequests = requests.filter((time) => time > windowStart);
-
-  if (recentRequests.length >= limit) return false;
-
-  recentRequests.push(now);
-  rateLimitMap.set(identifier, recentRequests);
-
-  return true;
 };
 
-// Optional: auto-cleanup to prevent memory leak
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, times] of rateLimitMap.entries()) {
-    const recent = times.filter((t) => t > now - 60000); // default 1 minute window
-    if (recent.length === 0) {
-      rateLimitMap.delete(key);
-    } else {
-      rateLimitMap.set(key, recent);
-    }
-  }
-}, 60000); // cleanup every minute
-
 /**
- * Wrapper for Next.js requests
- *
- * @param req - Incoming NextRequest
- * @param keyPrefix - Unique key prefix to differentiate routes
- * @param limit - Number of allowed requests
- * @param windowMs - Time window in ms
+ * Next.js request wrapper with typed configs
  */
-export const checkRateLimit = (
-  req: Request | any,
+type RateLimitPreset = 'auth' | 'api' | 'strict';
+
+const PRESETS: Record<RateLimitPreset, { limit: number; windowMs: number }> = {
+  auth: { limit: 5, windowMs: 15 * 60 * 1000 }, // 5 req / 15min
+  api: { limit: 100, windowMs: 60 * 60 * 1000 }, // 100 req / hour
+  strict: { limit: 3, windowMs: 60 * 1000 }, // 3 req / min
+};
+
+export const checkRateLimit = async (
+  req: Request,
   keyPrefix: string,
-  limit = 5,
-  windowMs = 300000
-) => {
-  const clientIP = req.headers.get('x-forwarded-for') || req.ip || 'unknown';
+  preset: RateLimitPreset = 'auth'
+): Promise<void> => {
+  if (process.env.NODE_ENV === 'development' && !process.env.TEST_RATE_LIMIT) {
+    return;
+  }
+
+  const clientIP =
+    req.headers.get('x-forwarded-for')?.split(',')[0] ||
+    req.headers.get('x-real-ip') ||
+    'unknown';
 
   const identifier = `${keyPrefix}:${clientIP}`;
+  const config = PRESETS[preset];
 
-  if (!rateLimit(identifier, limit, windowMs)) {
+  const allowed = await rateLimit({ identifier, ...config });
+
+  if (!allowed) {
     throw APP_ERRORS.tooManyRequests(
-      AuthErrors.TOO_MANY_REQUESTS + Math.ceil(windowMs / 1000) + 's'
+      `${AuthErrors.TOO_MANY_REQUESTS}${Math.ceil(config.windowMs / 1000)}s`
     );
   }
 };

@@ -13,11 +13,8 @@ import type { Room } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import type {
-  RoomCollectionParams,
-  RoomCreationBody,
-  RoomWithHotel,
-} from '@/types';
+import { roomCreationSchema } from '@/lib/validation/schemas';
+import type { RoomCollectionParams, RoomWithHotel } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomCollectionParams }) => {
@@ -48,7 +45,7 @@ export const POST = withErrorHandling(
 
     if (!canCreateRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
 
-    const data = (await req.json()) as RoomCreationBody;
+    const data = roomCreationSchema.parse(await req.json());
 
     const roomNumber = data.number;
     if (!roomNumber) throw APP_ERRORS.badRequest(RoomErrors.MISSING_NUMBER);

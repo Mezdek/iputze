@@ -4,6 +4,7 @@ import { Card } from '@heroui/react';
 import { useAssignments, useRooms } from '@hooks';
 import { groupByKey } from '@lib';
 import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 import type { InjectedAuthProps, RoomWithHotel } from '@/types';
 
@@ -21,14 +22,18 @@ export function FloorMapView({
   const { data: tasks } = useAssignments({ hotelId });
 
   const floors = rooms && groupByKey({ items: rooms, key: 'floor' });
-  const floorsWithRoomStatus = floors?.map((floor) =>
-    floor.map((room) => ({
-      ...room,
-      status: Room.roomStatus({
-        room,
-        tasks: tasks?.filter((task) => task.room.id === room.id),
-      }),
-    }))
+  const floorsWithRoomStatus = useMemo(
+    () =>
+      floors?.map((floor) =>
+        floor.map((room) => ({
+          ...room,
+          status: Room.roomStatus({
+            room,
+            tasks: tasks?.filter((task) => task.room.id === room.id),
+          }),
+        }))
+      ),
+    [floors, tasks]
   );
   return (
     <div className="grid grid-cols-7 gap-2 p-2 h-full">

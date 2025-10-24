@@ -8,5 +8,6 @@ export * from './getRoleOrThrow';
 export * from './getRoomOrThrow';
 export * from './parseId';
 export * from './permissions';
+export * from './transformAssignment';
 export * from './utilities';
 export * from './validation';

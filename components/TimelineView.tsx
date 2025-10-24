@@ -12,7 +12,7 @@ import {
 import { useAssignments } from '@hooks';
 import { AssignmentStatus } from '@prisma/client';
 import { useParams } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 import type { TAssignmentResponse } from '@/types';
 
@@ -38,7 +38,6 @@ interface DayData {
 }
 
 type ViewMode = 'overview' | 'selected';
-
 type StatusFilterType = 'all' | AssignmentStatus;
 
 // ==================== CONSTANTS ====================
@@ -52,7 +51,7 @@ const CLEANER_COLORS = [
   '#16a085',
   '#2980b9',
   '#8e44ad',
-];
+] as const;
 
 const STATUS_COLORS = {
   [AssignmentStatus.PENDING]: {
@@ -75,33 +74,33 @@ const STATUS_COLORS = {
     bg: 'bg-red-50',
     text: 'text-red-700',
   },
-};
+} as const;
 
 const PRIORITY_COLORS = {
-  0: null, // normal - no indicator
-  1: '#f39c12', // high - orange
-  2: '#e74c3c', // urgent - red
-};
+  0: null,
+  1: '#f39c12',
+  2: '#e74c3c',
+} as const;
 
-const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
 
 // ==================== UTILITY FUNCTIONS ====================
 
 function getWeekStart(date: Date): Date {
   const d = new Date(date);
   const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust to Monday
-  return new Date(d.setDate(diff));
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  d.setDate(diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
 function getWeekDays(startDate: Date): Date[] {
-  const days: Date[] = [];
-  for (let i = 0; i < 7; i++) {
+  return Array.from({ length: 7 }, (_, i) => {
     const day = new Date(startDate);
     day.setDate(startDate.getDate() + i);
-    days.push(day);
-  }
-  return days;
+    return day;
+  });
 }
 
 function isSameDay(date1: Date, date2: Date): boolean {
@@ -147,33 +146,40 @@ export function WeeklyTimelineView() {
 
   const viewMode: ViewMode = selectedCleanerId ? 'selected' : 'overview';
 
-  // ==================== DATA PROCESSING ====================
+  // ==================== OPTIMIZED DATA PROCESSING ====================
 
-  const weekDays = useMemo(
-    () => getWeekDays(currentWeekStart),
-    [currentWeekStart]
-  );
+  // 1. Calculate week boundaries once
+  const weekBoundaries = useMemo(() => {
+    const start = new Date(currentWeekStart);
+    const end = new Date(currentWeekStart);
+    end.setDate(end.getDate() + 7);
+    return { start, end };
+  }, [currentWeekStart]);
 
+  // 2. Filter assignments by week FIRST (reduces data to process)
+  const weekAssignments = useMemo(() => {
+    if (!assignments) return [];
+
+    return assignments.filter((assignment) => {
+      const assignmentDate = new Date(assignment.dueAt);
+      return (
+        assignmentDate >= weekBoundaries.start &&
+        assignmentDate < weekBoundaries.end
+      );
+    });
+  }, [assignments, weekBoundaries]);
+
+  // 3. Apply status filter
+  const filteredAssignments = useMemo(() => {
+    if (statusFilter === 'all') return weekAssignments;
+    return weekAssignments.filter((a) => a.status === statusFilter);
+  }, [weekAssignments, statusFilter]);
+
+  // 4. Build cleaners map (only from filtered assignments)
   const cleanersMap = useMemo(() => {
-    if (!assignments) return new Map<string, CleanerWithTasks>();
-
     const map = new Map<string, CleanerWithTasks>();
 
-    assignments.forEach((assignment) => {
-      // Filter by current week
-      const assignmentDate = new Date(assignment.dueAt);
-      const weekEnd = new Date(currentWeekStart);
-      weekEnd.setDate(weekEnd.getDate() + 7);
-
-      if (assignmentDate < currentWeekStart || assignmentDate >= weekEnd) {
-        return;
-      }
-
-      // Filter by status
-      if (statusFilter !== 'all' && assignment.status !== statusFilter) {
-        return;
-      }
-
+    filteredAssignments.forEach((assignment) => {
       assignment.cleaners.forEach(({ id, name, email, avatarUrl }) => {
         if (!map.has(id)) {
           map.set(id, {
@@ -181,52 +187,66 @@ export function WeeklyTimelineView() {
             name,
             email,
             avatarUrl,
-            color:
-              CLEANER_COLORS[map.size % CLEANER_COLORS.length] || '#3498db',
+            color: CLEANER_COLORS[map.size % CLEANER_COLORS.length],
             tasksThisWeek: [],
           });
         }
-
         map.get(id)!.tasksThisWeek.push(assignment);
       });
     });
 
     return map;
-  }, [assignments, currentWeekStart, statusFilter]);
+  }, [filteredAssignments]);
 
+  // 5. Get sorted cleaners list
   const cleanersList = useMemo(() => {
     return Array.from(cleanersMap.values()).sort((a, b) =>
       a.name.localeCompare(b.name)
     );
   }, [cleanersMap]);
 
+  // 6. Get week days (memoized)
+  const weekDays = useMemo(
+    () => getWeekDays(currentWeekStart),
+    [currentWeekStart]
+  );
+
+  // 7. Build day data (optimized grouping)
   const weekData = useMemo((): DayData[] => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Group assignments by date string for O(1) lookup
+    const assignmentsByDate = new Map<string, TAssignmentResponse[]>();
+    filteredAssignments.forEach((assignment) => {
+      const dateKey = new Date(assignment.dueAt).toDateString();
+      if (!assignmentsByDate.has(dateKey)) {
+        assignmentsByDate.set(dateKey, []);
+      }
+      assignmentsByDate.get(dateKey)!.push(assignment);
+    });
 
     return weekDays.map((date, index) => {
-      const dayTasks =
-        assignments?.filter((assignment) => {
-          const assignmentDate = new Date(assignment.dueAt);
-          if (!isSameDay(assignmentDate, date)) return false;
-          if (statusFilter !== 'all' && assignment.status !== statusFilter)
-            return false;
+      const dateKey = date.toDateString();
+      const dayTasks = assignmentsByDate.get(dateKey) || [];
 
-          if (viewMode === 'selected' && selectedCleanerId) {
-            return assignment.cleaners.some(
-              ({ id }) => id === selectedCleanerId
-            );
-          }
+      // Filter by selected cleaner if in selected mode
+      const visibleTasks =
+        viewMode === 'selected' && selectedCleanerId
+          ? dayTasks.filter((task) =>
+              task.cleaners.some((c) => c.id === selectedCleanerId)
+            )
+          : dayTasks;
 
-          return true;
-        }) || [];
+      // Get unique cleaners for this day
+      const cleanerIds = new Set<string>();
+      visibleTasks.forEach((task) => {
+        task.cleaners.forEach((cleaner) => cleanerIds.add(cleaner.id));
+      });
 
-      const dayCleaners = Array.from(
-        new Map(
-          dayTasks.flatMap((task) =>
-            task.cleaners.map(({ id }) => [id, cleanersMap.get(id)!])
-          )
-        ).values()
-      );
+      const dayCleaners = Array.from(cleanerIds)
+        .map((id) => cleanersMap.get(id)!)
+        .filter(Boolean);
 
       return {
         date,
@@ -235,43 +255,44 @@ export function WeeklyTimelineView() {
         isToday: isSameDay(date, today),
         isWeekend: index >= 5,
         cleaners: dayCleaners,
-        tasks: dayTasks,
+        tasks: visibleTasks,
       };
     });
-  }, [
-    weekDays,
-    assignments,
-    statusFilter,
-    viewMode,
-    selectedCleanerId,
-    cleanersMap,
-  ]);
+  }, [weekDays, filteredAssignments, viewMode, selectedCleanerId, cleanersMap]);
 
-  // ==================== HANDLERS ====================
+  // ==================== HANDLERS (MEMOIZED) ====================
 
-  const handlePreviousWeek = () => {
-    const newStart = new Date(currentWeekStart);
-    newStart.setDate(newStart.getDate() - 7);
-    setCurrentWeekStart(newStart);
-  };
+  const handlePreviousWeek = useCallback(() => {
+    setCurrentWeekStart((prev) => {
+      const newStart = new Date(prev);
+      newStart.setDate(newStart.getDate() - 7);
+      return newStart;
+    });
+  }, []);
 
-  const handleNextWeek = () => {
-    const newStart = new Date(currentWeekStart);
-    newStart.setDate(newStart.getDate() + 7);
-    setCurrentWeekStart(newStart);
-  };
+  const handleNextWeek = useCallback(() => {
+    setCurrentWeekStart((prev) => {
+      const newStart = new Date(prev);
+      newStart.setDate(newStart.getDate() + 7);
+      return newStart;
+    });
+  }, []);
 
-  const handleToday = () => {
+  const handleToday = useCallback(() => {
     setCurrentWeekStart(getWeekStart(new Date()));
-  };
+  }, []);
 
-  const handleCleanerSelect = (cleanerId: string | null) => {
+  const handleCleanerSelect = useCallback((cleanerId: string | null) => {
     setSelectedCleanerId(cleanerId);
-  };
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setSelectedCleanerId(null);
-  };
+  }, []);
+
+  const handleStatusChange = useCallback((status: StatusFilterType) => {
+    setStatusFilter(status);
+  }, []);
 
   // ==================== RENDER ====================
 
@@ -288,7 +309,7 @@ export function WeeklyTimelineView() {
     );
   }
 
-  const weekEnd = new Date(currentWeekStart);
+  const weekEnd = new Date(weekBoundaries.start);
   weekEnd.setDate(weekEnd.getDate() + 6);
 
   return (
@@ -320,7 +341,7 @@ export function WeeklyTimelineView() {
             ←
           </Button>
           <span className="text-sm font-medium whitespace-nowrap px-2">
-            {formatDateRange(currentWeekStart, weekEnd)}
+            {formatDateRange(weekBoundaries.start, weekEnd)}
           </span>
           <Button isIconOnly size="sm" variant="flat" onClick={handleNextWeek}>
             →
@@ -332,45 +353,10 @@ export function WeeklyTimelineView() {
       </div>
 
       {/* STATUS FILTER */}
-      <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-sm overflow-x-auto">
-        <span className="text-sm font-medium whitespace-nowrap">Filter:</span>
-        <div className="flex gap-1">
-          <Button
-            size="sm"
-            variant={statusFilter === 'all' ? 'solid' : 'flat'}
-            onClick={() => setStatusFilter('all')}
-          >
-            All
-          </Button>
-          <Button
-            size="sm"
-            variant={
-              statusFilter === AssignmentStatus.PENDING ? 'solid' : 'flat'
-            }
-            onClick={() => setStatusFilter(AssignmentStatus.PENDING)}
-          >
-            Pending
-          </Button>
-          <Button
-            size="sm"
-            variant={
-              statusFilter === AssignmentStatus.IN_PROGRESS ? 'solid' : 'flat'
-            }
-            onClick={() => setStatusFilter(AssignmentStatus.IN_PROGRESS)}
-          >
-            In Progress
-          </Button>
-          <Button
-            size="sm"
-            variant={
-              statusFilter === AssignmentStatus.COMPLETED ? 'solid' : 'flat'
-            }
-            onClick={() => setStatusFilter(AssignmentStatus.COMPLETED)}
-          >
-            Completed
-          </Button>
-        </div>
-      </div>
+      <StatusFilter
+        currentFilter={statusFilter}
+        onFilterChange={handleStatusChange}
+      />
 
       {/* TIMELINE GRID */}
       <Card className="flex-1 overflow-auto p-4">
@@ -393,7 +379,7 @@ export function WeeklyTimelineView() {
   );
 }
 
-// ==================== SUB-COMPONENTS ====================
+// ==================== SUB-COMPONENTS (MEMOIZED) ====================
 
 interface CleanerDropdownProps {
   cleaners: CleanerWithTasks[];
@@ -401,7 +387,7 @@ interface CleanerDropdownProps {
   onSelect: (cleanerId: string | null) => void;
 }
 
-function CleanerDropdown({
+const CleanerDropdown = memo(function CleanerDropdown({
   cleaners,
   selectedCleanerId,
   onSelect,
@@ -416,7 +402,7 @@ function CleanerDropdown({
         </Button>
       </DropdownTrigger>
       <DropdownMenu
-        aria-label="Cleaner selection Dynamic Actions"
+        aria-label="Cleaner selection"
         onAction={(key) => onSelect(key as string)}
       >
         <>
@@ -443,7 +429,59 @@ function CleanerDropdown({
       </DropdownMenu>
     </Dropdown>
   );
+});
+
+interface StatusFilterProps {
+  currentFilter: StatusFilterType;
+  onFilterChange: (status: StatusFilterType) => void;
 }
+
+const StatusFilter = memo(function StatusFilter({
+  currentFilter,
+  onFilterChange,
+}: StatusFilterProps) {
+  return (
+    <div className="flex items-center gap-2 bg-white rounded-lg p-2 shadow-sm overflow-x-auto">
+      <span className="text-sm font-medium whitespace-nowrap">Filter:</span>
+      <div className="flex gap-1">
+        <Button
+          size="sm"
+          variant={currentFilter === 'all' ? 'solid' : 'flat'}
+          onClick={() => onFilterChange('all')}
+        >
+          All
+        </Button>
+        <Button
+          size="sm"
+          variant={
+            currentFilter === AssignmentStatus.PENDING ? 'solid' : 'flat'
+          }
+          onClick={() => onFilterChange(AssignmentStatus.PENDING)}
+        >
+          Pending
+        </Button>
+        <Button
+          size="sm"
+          variant={
+            currentFilter === AssignmentStatus.IN_PROGRESS ? 'solid' : 'flat'
+          }
+          onClick={() => onFilterChange(AssignmentStatus.IN_PROGRESS)}
+        >
+          In Progress
+        </Button>
+        <Button
+          size="sm"
+          variant={
+            currentFilter === AssignmentStatus.COMPLETED ? 'solid' : 'flat'
+          }
+          onClick={() => onFilterChange(AssignmentStatus.COMPLETED)}
+        >
+          Completed
+        </Button>
+      </div>
+    </div>
+  );
+});
 
 interface DayColumnProps {
   day: DayData;
@@ -451,7 +489,11 @@ interface DayColumnProps {
   onChipClick: (cleanerId: string) => void;
 }
 
-function DayColumn({ day, viewMode, onChipClick }: DayColumnProps) {
+const DayColumn = memo(function DayColumn({
+  day,
+  viewMode,
+  onChipClick,
+}: DayColumnProps) {
   const totalTasks = day.tasks.length;
   const uniqueCleaners = day.cleaners.length;
 
@@ -476,7 +518,6 @@ function DayColumn({ day, viewMode, onChipClick }: DayColumnProps) {
       {/* Content */}
       <div className="flex-1 p-2 overflow-y-auto space-y-2">
         {viewMode === 'overview' ? (
-          // Overview: Show cleaner chips
           day.cleaners.length > 0 ? (
             day.cleaners.map((cleaner) => {
               const cleanerTasksToday = day.tasks.filter((task) =>
@@ -494,8 +535,7 @@ function DayColumn({ day, viewMode, onChipClick }: DayColumnProps) {
           ) : (
             <EmptyDayState mode="overview" />
           )
-        ) : // Selected: Show task cards
-        day.tasks.length > 0 ? (
+        ) : day.tasks.length > 0 ? (
           day.tasks.map((task) => <TaskCard key={task.id} task={task} />)
         ) : (
           <EmptyDayState mode="selected" />
@@ -511,7 +551,7 @@ function DayColumn({ day, viewMode, onChipClick }: DayColumnProps) {
       )}
     </div>
   );
-}
+});
 
 interface CleanerChipProps {
   cleaner: CleanerWithTasks;
@@ -519,7 +559,11 @@ interface CleanerChipProps {
   onClick: () => void;
 }
 
-function CleanerChip({ cleaner, taskCount, onClick }: CleanerChipProps) {
+const CleanerChip = memo(function CleanerChip({
+  cleaner,
+  taskCount,
+  onClick,
+}: CleanerChipProps) {
   return (
     <button
       className="w-full flex items-center gap-2 p-2 rounded-lg bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
@@ -540,13 +584,13 @@ function CleanerChip({ cleaner, taskCount, onClick }: CleanerChipProps) {
       </div>
     </button>
   );
-}
+});
 
 interface TaskCardProps {
   task: TAssignmentResponse;
 }
 
-function TaskCard({ task }: TaskCardProps) {
+const TaskCard = memo(function TaskCard({ task }: TaskCardProps) {
   const statusStyle = STATUS_COLORS[task.status];
   const priorityColor =
     PRIORITY_COLORS[task.priority as keyof typeof PRIORITY_COLORS];
@@ -595,13 +639,15 @@ function TaskCard({ task }: TaskCardProps) {
       </div>
     </Tooltip>
   );
-}
+});
 
 interface EmptyDayStateProps {
   mode: 'overview' | 'selected';
 }
 
-function EmptyDayState({ mode }: EmptyDayStateProps) {
+const EmptyDayState = memo(function EmptyDayState({
+  mode,
+}: EmptyDayStateProps) {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center p-4 text-gray-400">
       <p className="text-xs mb-2">
@@ -612,9 +658,9 @@ function EmptyDayState({ mode }: EmptyDayStateProps) {
       </Button>
     </div>
   );
-}
+});
 
-function LoadingSkeleton() {
+const LoadingSkeleton = memo(function LoadingSkeleton() {
   return (
     <div className="grid grid-cols-7 gap-2 h-full">
       {Array.from({ length: 7 }).map((_, i) => (
@@ -635,4 +681,4 @@ function LoadingSkeleton() {
       ))}
     </div>
   );
-}
+});

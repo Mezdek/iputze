@@ -18,8 +18,34 @@ export const getUserOrThrow = async (
     },
   });
 
-  if (!session || session.expiresAt < new Date())
+  if (!session || session.expiresAt < new Date()) {
+    // Clean up expired session
+    if (session) await prisma.session.delete({ where: { id: sessionId } });
     throw APP_ERRORS.unauthorized();
+  }
 
+  // Validate IP hasn't changed drastically
+  const currentIP = req.headers.get('x-forwarded-for');
+  if (session.ipAddress && currentIP && session.ipAddress !== currentIP) {
+    // Log suspicious activity
+    console.warn(`Session IP changed: ${session.ipAddress} -> ${currentIP}`);
+  }
+
+  // Update last activity (debounce to avoid too many writes)
+  const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  if (session.lastActivityAt < hourAgo) {
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: { lastActivityAt: new Date() },
+    });
+  }
   return session.user;
 };
+
+// TODO
+// Cleanup job ( to be used via cron or on startup)
+export async function cleanupExpiredSessions() {
+  await prisma.session.deleteMany({
+    where: { expiresAt: { lt: new Date() } },
+  });
+}

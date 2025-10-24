@@ -18,7 +18,7 @@ import { NextResponse } from 'next/server';
 import type { SignInRequestBody, SignInResponse } from '@/types';
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
-  checkRateLimit(req, RATE_LIMIT_KEYS.SIGNIN, 5, 300_000);
+  await checkRateLimit(req, RATE_LIMIT_KEYS.SIGNIN, 'auth');
 
   const { email, password } = (await req.json()) as SignInRequestBody;
   if (!email || !password)
