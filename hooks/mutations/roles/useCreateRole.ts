@@ -1,13 +1,13 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath, queryKeys } from '@lib/shared';
 import type { Role } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { RoleCollectionParams } from '@/types';
 
 export const useCreateRole = ({ hotelId }: RoleCollectionParams) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (): Promise<Role> => {
       const res = await api.post<Role>(getPath({ hotelId }).API.ROLES);
       return res;

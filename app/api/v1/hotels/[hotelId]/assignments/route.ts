@@ -7,6 +7,7 @@ import {
 } from '@lib/server';
 import {
   APP_ERRORS,
+  assignmentCreationSchema,
   GeneralErrors,
   HttpStatus,
   withErrorHandling,
@@ -15,18 +16,17 @@ import type { Assignment } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import type {
-  AssignmentCollectionParams,
-  AssignmentCreationBody,
-  TAssignmentResponse,
-} from '@/types';
+import type { AssignmentCollectionParams, TAssignmentResponse } from '@/types';
 
 export const GET = withErrorHandling(
   async (
     req: NextRequest,
     { params }: { params: AssignmentCollectionParams }
   ) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+    const { hotelId: hotelIdParam } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
+
     const { roles, id: userId } = await getUserOrThrow(req);
     const { searchParams } = new URL(req.url);
     const startDate = searchParams.get('startDate');
@@ -56,12 +56,56 @@ export const GET = withErrorHandling(
     const assignments = await prisma.assignment.findMany({
       where,
       orderBy: { dueAt: 'asc' },
-      include: {
-        room: true,
-        notes: true,
-        assignedBy: { omit: { passwordHash: true } },
+      select: {
+        id: true,
+        status: true,
+        priority: true,
+        dueAt: true,
+        startedAt: true,
+        completedAt: true,
+        cancelledAt: true,
+        estimatedMinutes: true,
+        actualMinutes: true,
+        createdAt: true,
+        room: {
+          select: {
+            id: true,
+            number: true,
+            type: true,
+            floor: true,
+            occupancy: true,
+            cleanliness: true,
+          },
+        },
+        notes: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+            authorId: true,
+          },
+        },
+        assignedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
         assignedUsers: {
-          include: { user: { omit: { passwordHash: true } } },
+          select: {
+            assignedAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,
+              },
+            },
+          },
         },
       },
     });
@@ -84,21 +128,18 @@ export const POST = withErrorHandling(
 
     if (!canCreateAssignment({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
-
-    const json = (await req.json()) as AssignmentCreationBody;
-    const { roomId, dueAt, cleaners } = json;
-    const parsedDueAt = new Date(dueAt);
-    if (!parsedDueAt || !roomId)
-      throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS);
-
+    const validated = assignmentCreationSchema.parse(await req.json());
+    const { roomId, dueAt, cleaners, estimatedMinutes, priority } = validated;
     const newAssignment = await prisma.assignment.create({
       data: {
         roomId,
-        dueAt: parsedDueAt,
+        dueAt,
         assignedById: userId,
         assignedUsers: {
           create: cleaners.map((userId) => ({ userId })),
         },
+        estimatedMinutes,
+        priority,
       },
     });
 

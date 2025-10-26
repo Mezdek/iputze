@@ -1,6 +1,6 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath, queryKeys } from '@lib/shared';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { AssignmentParams } from '@/types';
 
@@ -9,7 +9,7 @@ export const useDeleteAssignment = ({
   assignmentId,
 }: AssignmentParams) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (): Promise<null> => {
       const res = await api.delete<null>(
         getPath({ hotelId, assignmentId }).API.ASSIGNMENT

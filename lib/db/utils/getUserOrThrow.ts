@@ -9,7 +9,7 @@ export const getUserOrThrow = async (
 ): Promise<SafeUserWithRoles> => {
   const sessionId = req.cookies.get(SESSION_COOKIE_KEY)?.value;
 
-  if (!sessionId) throw APP_ERRORS.unauthorized();
+  if (!sessionId) throw APP_ERRORS.unauthorized('No session');
 
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
@@ -41,11 +41,3 @@ export const getUserOrThrow = async (
   }
   return session.user;
 };
-
-// TODO
-// Cleanup job ( to be used via cron or on startup)
-export async function cleanupExpiredSessions() {
-  await prisma.session.deleteMany({
-    where: { expiresAt: { lt: new Date() } },
-  });
-}

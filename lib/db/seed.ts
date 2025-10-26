@@ -25,6 +25,8 @@ const colors = {
   cyan: '\x1b[36m',
 };
 
+const BCRYPT_ROUNDS = 12;
+
 const log = (message: string, color: string = colors.reset) => {
   console.log(`${color}${message}${colors.reset}`);
 };
@@ -48,7 +50,7 @@ const createUser = async (userData: TUser & { hotelId: string }) => {
   let user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
-    const passwordHash = await hash(password, 10);
+    const passwordHash = await hash(password, BCRYPT_ROUNDS);
 
     user = await prisma.user.create({
       data: {

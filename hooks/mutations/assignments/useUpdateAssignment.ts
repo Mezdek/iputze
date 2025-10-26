@@ -1,7 +1,7 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath, queryKeys } from '@lib/shared';
 import type { Assignment } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { AssignmentParams, AssignmentUpdateBody } from '@/types';
 
@@ -10,7 +10,7 @@ export const useUpdateAssignment = ({
   assignmentId,
 }: AssignmentParams) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (data: AssignmentUpdateBody): Promise<Assignment> => {
       const res = await api.patch<Assignment>(
         getPath({ hotelId, assignmentId }).API.ASSIGNMENT,

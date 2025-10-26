@@ -1,12 +1,12 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { ClientError, ErrorCodes, getPath, queryKeys } from '@lib/shared';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import { ApiError, type RoomParams } from '@/types';
 
 export const useDeleteRoom = ({ hotelId, roomId }: RoomParams) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (): Promise<null> => {
       try {
         const res = await api.delete<null>(

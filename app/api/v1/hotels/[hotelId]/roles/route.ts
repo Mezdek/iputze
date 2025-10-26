@@ -15,7 +15,9 @@ import type { RoleCollectionParams, TRoleWithUser } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoleCollectionParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+    const { hotelId: hotelIdParam } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
 
     const { roles } = await getUserOrThrow(req);
 
@@ -40,7 +42,9 @@ export const GET = withErrorHandling(
 
 export const POST = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoleCollectionParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+    const { hotelId: hotelIdParam } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
 
     const { roles, id } = await getUserOrThrow(req);
 

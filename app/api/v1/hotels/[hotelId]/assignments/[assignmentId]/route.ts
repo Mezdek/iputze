@@ -2,11 +2,13 @@ import { getAssignmentAccessContext, prisma } from '@lib/db';
 import { canDeleteAssignment } from '@lib/server';
 import {
   APP_ERRORS,
+  assignmentUpdateSchema,
   GeneralErrors,
   HttpStatus,
+  validateStatusTransition,
   withErrorHandling,
 } from '@lib/shared';
-import type { Assignment } from '@prisma/client';
+import { type Assignment, AssignmentStatus } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
@@ -36,21 +38,62 @@ export const PATCH = withErrorHandling(
     const { assignmentId, isAdmin, isAssignmentCleaner, isHotelManager } =
       await getAssignmentAccessContext({ params, req });
 
-    const data = (await req.json()) as AssignmentUpdateBody;
+    const data = assignmentUpdateSchema.parse(await req.json());
     let updateData: Partial<AssignmentUpdateBody> = {};
 
     if (isAdmin) {
       updateData = data;
     } else if (isHotelManager) {
-      if ('status' in data && data.status !== undefined)
-        throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
-      updateData = {};
+      // Managers can only update specific fields
+      const allowedFields = ['notes', 'isActive', 'priority'];
+      updateData = Object.keys(data)
+        .filter((key) => allowedFields.includes(key))
+        .reduce((obj, key) => {
+          obj[key] = data[key];
+          return obj;
+        }, {} as Partial<AssignmentUpdateBody>);
+
+      // Prevent status changes
+      if ('status' in data) {
+        throw APP_ERRORS.forbidden('Managers cannot change assignment status');
+      }
     } else if (isAssignmentCleaner) {
       if (!('status' in data) || data.status === undefined)
         throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS);
       updateData = { status: data.status };
     } else {
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
+    }
+
+    if ('status' in updateData && updateData.status) {
+      const currentAssignment = await prisma.assignment.findUnique({
+        where: { id: assignmentId },
+        select: { status: true },
+      });
+
+      if (currentAssignment) {
+        validateStatusTransition(currentAssignment.status, updateData.status);
+      }
+
+      // Auto-set timestamps based on status
+      if (
+        updateData.status === AssignmentStatus.IN_PROGRESS &&
+        !updateData.startedAt
+      ) {
+        updateData.startedAt = new Date();
+      }
+      if (
+        updateData.status === AssignmentStatus.COMPLETED &&
+        !updateData.completedAt
+      ) {
+        updateData.completedAt = new Date();
+      }
+      if (
+        updateData.status === AssignmentStatus.CANCELLED &&
+        !updateData.cancelledAt
+      ) {
+        updateData.cancelledAt = new Date();
+      }
     }
 
     const updatedAssignment = await prisma.assignment.update({

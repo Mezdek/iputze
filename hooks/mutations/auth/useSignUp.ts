@@ -1,11 +1,10 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath } from '@lib/shared';
-import { useMutation } from '@tanstack/react-query';
 
 import type { SignUpRequestBody, SignUpResponse } from '@/types';
 
 export const useSignUp = () =>
-  useMutation({
+  useMutationWithToast({
     mutationFn: async (data: SignUpRequestBody): Promise<SignUpResponse> => {
       const res = await api.post<SignUpResponse>(getPath().API.SIGNUP, data);
       return res;

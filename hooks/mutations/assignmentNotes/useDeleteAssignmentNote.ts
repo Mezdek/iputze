@@ -1,6 +1,6 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath, queryKeys } from '@lib/shared';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { AssignmentNoteParams } from '@/types';
 
@@ -9,7 +9,7 @@ export const useDeleteAssignmentNote = ({
   assignmentId,
 }: Partial<AssignmentNoteParams>) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async ({
       assignmentNoteId,
     }: {

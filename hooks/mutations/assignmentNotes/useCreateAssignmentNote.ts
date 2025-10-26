@@ -1,7 +1,7 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath, queryKeys } from '@lib/shared';
 import type { AssignmentNote } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type {
   AssignmentNoteCollectionParams,
@@ -13,7 +13,7 @@ export const useCreateAssignmentNote = ({
   assignmentId,
 }: AssignmentNoteCollectionParams) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (
       data: AssignmentNoteCreationBody
     ): Promise<AssignmentNote> => {

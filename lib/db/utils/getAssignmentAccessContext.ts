@@ -23,9 +23,11 @@ export const getAssignmentAccessContext = async ({
   params: AssignmentNoteCollectionParams;
   req: NextRequest;
 }): Promise<AssignmentAccessContext> => {
-  const hotel = await getHotelOrThrow(params.hotelId);
+  const { assignmentId: assignmentIdParam, hotelId: hotelIdParam } =
+    await params;
+  const hotel = await getHotelOrThrow(hotelIdParam);
   const { id: hotelId } = hotel;
-  const assignment = await getAssignmentOrThrow(params.assignmentId);
+  const assignment = await getAssignmentOrThrow(assignmentIdParam);
   const { id: assignmentId } = assignment;
 
   if (assignment.room.hotelId !== hotelId)

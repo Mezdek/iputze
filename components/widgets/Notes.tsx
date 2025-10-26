@@ -35,6 +35,7 @@ import type {
 
 const PREDEFINED_NOTES = ['needs blankets', 'broken lamp', 'broken bed'];
 const OTHER = 'Write yourself';
+const MAX_NOTE_LENGTH = 30;
 
 export function Notes({
   assignmentId,
@@ -102,9 +103,6 @@ export function Notes({
 
   const handleDelete = async (assignmentNote: AssignmentNote) => {
     try {
-      if (assignmentNote.authorId !== userId) {
-        throw new Error('NOT_AUTHOR');
-      }
       await deleteNote({ assignmentNoteId: assignmentNote.id });
       addToast({
         title: 'Deleted!',
@@ -112,20 +110,12 @@ export function Notes({
         color: 'success',
       });
     } catch (err: unknown) {
-      if (err instanceof Error && err.message === 'NOT_AUTHOR') {
-        addToast({
-          title: 'Not allowed',
-          description: 'Only the author can delete this note',
-          color: 'warning',
-        });
-      } else {
-        console.error(err);
-        addToast({
-          title: 'Error!',
-          description: 'Note deletion failed',
-          color: 'danger',
-        });
-      }
+      console.error(err);
+      addToast({
+        title: 'Error!',
+        description: 'Note deletion failed',
+        color: 'danger',
+      });
     }
   };
 
@@ -172,12 +162,14 @@ export function Notes({
                     baseRef={inputRefBase}
                     className={isOther ? '' : 'hidden'}
                     endContent={
-                      <span>{inputRef.current?.value.length}/30</span>
+                      <span>
+                        {inputRef.current?.value.length}/{MAX_NOTE_LENGTH}
+                      </span>
                     }
                     form={FORM}
                     isDisabled={!isOther}
                     label="Custom note"
-                    maxLength={30}
+                    maxLength={MAX_NOTE_LENGTH}
                     name="content"
                     placeholder="Write your note"
                     ref={inputRef}
