@@ -1,7 +1,8 @@
 'use client';
 //TODO add showErrorToast
 
-import { api, getPath } from '@lib';
+import { api } from '@lib/client';
+import { getPath } from '@lib/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 

@@ -1,4 +1,5 @@
-import { api, ClientError, ErrorCodes, getPath, queryKeys } from '@lib';
+import { api } from '@lib/client';
+import { ClientError, ErrorCodes, getPath, queryKeys } from '@lib/shared';
 import type { Room } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

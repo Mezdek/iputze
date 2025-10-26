@@ -23,7 +23,7 @@ import {
   useCreateAssignmentNote,
   useDeleteAssignmentNote,
 } from '@hooks';
-import { parseFormData } from '@lib';
+import { parseFormData } from '@lib/shared';
 import type { AssignmentNote } from '@prisma/client';
 import type { FormEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';

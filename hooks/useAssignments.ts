@@ -1,4 +1,5 @@
-import { api, getPath, queryKeys } from '@lib';
+import { api } from '@lib/client';
+import { getPath, queryKeys } from '@lib/shared';
 import { useQuery } from '@tanstack/react-query';
 
 import type { AssignmentCollectionParams, TAssignmentResponse } from '@/types';

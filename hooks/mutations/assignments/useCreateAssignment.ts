@@ -1,4 +1,5 @@
-import { api, getPath, queryKeys } from '@lib';
+import { api } from '@lib/client';
+import { getPath, queryKeys } from '@lib/shared';
 import type { Assignment } from '@prisma/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

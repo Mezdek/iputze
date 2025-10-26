@@ -2,7 +2,7 @@
 
 import { LoadingScreen } from '@components';
 import { useMe } from '@hooks';
-import { getPath } from '@lib';
+import { getPath } from '@lib/shared';
 import { useRouter } from 'next/navigation';
 import type { ComponentType } from 'react';
 import { useEffect } from 'react';

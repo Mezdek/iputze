@@ -1,5 +1,5 @@
 import { addToast } from '@heroui/react';
-import { ClientError, ErrorCodes } from '@lib';
+import { ClientError, ErrorCodes } from '@lib/shared';
 import { useTranslations } from 'next-intl';
 
 export function useErrorToast() {

@@ -5,4 +5,5 @@ export * from './useErrorToast';
 export * from './useHotels';
 export * from './useMe';
 export * from './useRoles';
+export * from './useRoom';
 export * from './useRooms';

@@ -12,7 +12,7 @@ import {
   Tabs,
 } from '@heroui/react';
 import { useErrorToast, useSignIn, useSignUp } from '@hooks';
-import { getPath, parseFormData } from '@lib';
+import { getPath, parseFormData } from '@lib/shared';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';

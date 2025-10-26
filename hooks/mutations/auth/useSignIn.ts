@@ -1,4 +1,5 @@
-import { api, getPath } from '@lib';
+import { api } from '@lib/client';
+import { getPath } from '@lib/shared';
 import { useMutation } from '@tanstack/react-query';
 
 import type { SignInRequestBody, SignInResponse } from '@/types';
