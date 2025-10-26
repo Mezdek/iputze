@@ -1,7 +1,7 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath, queryKeys } from '@lib/shared';
 import type { Assignment } from '@prisma/client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type {
   AssignmentCollectionParams,
@@ -12,7 +12,7 @@ export const useCreateAssignment = ({
   hotelId,
 }: AssignmentCollectionParams) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (data: AssignmentCreationBody): Promise<Assignment> => {
       const res = await api.post<Assignment>(
         getPath({ hotelId }).API.ASSIGNMENTS,

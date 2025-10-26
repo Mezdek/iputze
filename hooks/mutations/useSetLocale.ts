@@ -1,13 +1,12 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath } from '@lib/shared';
-import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import type { Locale } from '@/i18n';
 
 export const useSetLocale = () => {
   const router = useRouter();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (data: { locale: Locale }): Promise<null> => {
       const res = await api.post<null>(getPath().API.LOCALE, data);
       return res;

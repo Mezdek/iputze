@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@heroui/react';
 import { useAssignments } from '@hooks';
+import { formatTimeInTimezone } from '@lib/shared';
 import { AssignmentStatus } from '@prisma/client';
 import { useParams } from 'next/navigation';
 import { memo, useCallback, useMemo, useState } from 'react';
@@ -109,12 +110,6 @@ function isSameDay(date1: Date, date2: Date): boolean {
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
   );
-}
-
-function formatTime(date: Date | string | null): string {
-  if (!date) return '--:--';
-  const d = new Date(date);
-  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 }
 
 function formatDateRange(start: Date, end: Date): string {
@@ -594,7 +589,7 @@ const TaskCard = memo(function TaskCard({ task }: TaskCardProps) {
   const statusStyle = STATUS_COLORS[task.status];
   const priorityColor =
     PRIORITY_COLORS[task.priority as keyof typeof PRIORITY_COLORS];
-  const timeStr = formatTime(task.startedAt || task.dueAt);
+  const timeStr = formatTimeInTimezone(task.dueAt);
 
   const assignedNames = task.cleaners.map(({ name }) => name).join(', ');
 

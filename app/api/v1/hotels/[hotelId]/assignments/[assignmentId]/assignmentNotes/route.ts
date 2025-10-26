@@ -1,13 +1,14 @@
 import { getAssignmentAccessContext, prisma } from '@lib/db';
-import { HttpStatus, withErrorHandling } from '@lib/shared';
+import {
+  assignmentNoteSchema,
+  HttpStatus,
+  withErrorHandling,
+} from '@lib/shared';
 import type { AssignmentNote } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import type {
-  AssignmentNoteCollectionParams,
-  AssignmentNoteCreationBody,
-} from '@/types';
+import type { AssignmentNoteCollectionParams } from '@/types';
 
 export const GET = withErrorHandling(
   async (
@@ -35,12 +36,12 @@ export const POST = withErrorHandling(
       req,
     });
 
-    const data = (await req.json()) as AssignmentNoteCreationBody;
+    const { content } = assignmentNoteSchema.parse(await req.json());
 
     // Create the new note
     const assignmentNote = await prisma.assignmentNote.create({
       data: {
-        content: data.content,
+        content,
         assignmentId,
         authorId: userId,
       },

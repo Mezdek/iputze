@@ -17,8 +17,8 @@ export const PATCH = withErrorHandling(
     const data = (await req.json()) as RoleUpdateBody;
     if (!data.level && !data.status)
       throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS);
-
-    const targetRole = await getRoleOrThrow(params.roleId);
+    const { roleId } = await params;
+    const targetRole = await getRoleOrThrow(roleId);
 
     const newLevel = data.level;
     const newStatus = data.status;

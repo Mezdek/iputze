@@ -108,6 +108,7 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
+  timezone     String    @default("UTC")
 
   roles           Role[]
   assignmentUsers AssignmentUser[]
@@ -168,15 +169,12 @@ model Assignment {
   notes           AssignmentNote[]
   AssignmentImage AssignmentImage[]
 
-  // EXISTING INDEXES
   @@index([roomId, status, dueAt])
   @@index([assignedById, status])
   @@index([dueAt, priority])
   @@index([status, createdAt])
-  @@index([roomId, status])
-  // NEW INDEXES FOR TIMELINE VIEW
-  @@index([dueAt, status]) // For filtering by week + status
-  @@index([roomId, dueAt]) // For room-specific timeline queries
+  @@index([dueAt, status])
+  @@index([roomId, dueAt])
 }
 
 model AssignmentUser {

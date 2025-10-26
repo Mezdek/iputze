@@ -15,7 +15,9 @@ import type { HotelParams } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: HotelParams }) => {
-    const hotel = await getHotelOrThrow(params.hotelId);
+    const { hotelId: hotelIdParam } = await params;
+
+    const hotel = await getHotelOrThrow(hotelIdParam);
 
     const { roles } = await getUserOrThrow(req);
 
@@ -28,7 +30,9 @@ export const GET = withErrorHandling(
 
 export const PATCH = withErrorHandling(
   async (req: NextRequest, { params }: { params: HotelParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+    const { hotelId: hotelIdParam } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
 
     const { roles } = await getUserOrThrow(req);
 
@@ -82,7 +86,9 @@ export const PATCH = withErrorHandling(
 
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: HotelParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
+    const { hotelId: hotelIdParam } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
 
     const { roles } = await getUserOrThrow(req);
 

@@ -1,12 +1,12 @@
-import { api } from '@lib/client';
+import { api, useMutationWithToast } from '@lib/client';
 import { getPath, queryKeys } from '@lib/shared';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import type { RoleParams } from '@/types';
 
 export const useDeleteRole = ({ hotelId, roleId }: RoleParams) => {
   const queryClient = useQueryClient();
-  return useMutation({
+  return useMutationWithToast({
     mutationFn: async (): Promise<null> => {
       const res = await api.delete<null>(getPath({ hotelId, roleId }).API.ROLE);
       return res;

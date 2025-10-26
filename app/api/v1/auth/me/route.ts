@@ -30,10 +30,22 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   } else {
     const hotelIds = roles.map((r) => r.hotelId);
     hotels = await prisma.hotel.findMany({ where: { id: { in: hotelIds } } });
-    rolesWithHotels = roles.map(({ userId: _userId, hotelId, ...role }) => ({
-      ...role,
-      hotel: { ...hotels.find((hotel) => hotel.id === hotelId)! },
-    }));
+    rolesWithHotels = roles
+      .map(({ userId: _userId, hotelId, ...role }) => {
+        const hotel = hotels.find((hotel) => hotel.id === hotelId);
+
+        if (!hotel) {
+          console.warn(
+            `Role ${role.id} references non-existent hotel ${hotelId}`
+          );
+          return null;
+        }
+        return {
+          ...role,
+          hotel,
+        };
+      })
+      .filter((role): role is NonNullable<typeof role> => role !== null);
   }
   // Send the user informatin with all the roles they have
   return NextResponse.json<MeResponse>(

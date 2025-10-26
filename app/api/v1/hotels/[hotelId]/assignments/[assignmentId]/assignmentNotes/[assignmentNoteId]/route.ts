@@ -13,13 +13,18 @@ import type { AssignmentNoteParams } from '@/types';
 // To-Do Refactor
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: AssignmentNoteParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
-    const { id: assignmentId } = await getAssignmentOrThrow(
-      params.assignmentId
-    );
+    const {
+      hotelId: hotelIdParam,
+      assignmentId: assignmentIdParam,
+      assignmentNoteId,
+    } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
+    const { id: assignmentId } = await getAssignmentOrThrow(assignmentIdParam);
     const { id: authorId } = await getUserOrThrow(req);
+
     const assignmentNote = await getAssignmentNoteOrThrow({
-      assignmentNoteId: params.assignmentNoteId,
+      assignmentNoteId,
       expectedAssignmentId: assignmentId,
       expectedHotelId: hotelId,
       expectedAuthorId: authorId,

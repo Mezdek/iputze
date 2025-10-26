@@ -20,7 +20,7 @@ import { getRolesByLevel } from '@lib/server';
 import { parseFormData } from '@lib/shared';
 import { RoleLevel } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import type { FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 
 import type { AssignmentCreationBody, TRoleWithUser } from '@/types';
 
@@ -37,6 +37,8 @@ export function AssignmentCreation({
   const { mutateAsync: createAssignment } = useCreateAssignment({ hotelId });
   const t = useTranslations('assignment.creation');
   const { showErrorToast } = useErrorToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const FORM = 'assignment_creation_form';
 
   const allCleaners = getRolesByLevel<TRoleWithUser>({
     roles: roles ?? [],
@@ -46,12 +48,15 @@ export function AssignmentCreation({
 
   const handleCreate = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const data = parseFormData<AssignmentCreationBody>(e.currentTarget, {
-      cleaners: [],
-      dueAt: new Date(),
-      roomId,
-    });
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     try {
+      const data = parseFormData<AssignmentCreationBody>(e.currentTarget, {
+        cleaners: [],
+        dueAt: new Date(),
+        roomId,
+      });
       await createAssignment(data);
       onClose();
       addToast({
@@ -61,6 +66,8 @@ export function AssignmentCreation({
       });
     } catch (e: unknown) {
       showErrorToast(e);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -89,12 +96,12 @@ export function AssignmentCreation({
               </ModalHeader>
 
               <ModalBody>
-                <Form id="assignment_creation_form" onSubmit={handleCreate}>
+                <Form id={FORM} onSubmit={handleCreate}>
                   <Select
                     fullWidth
                     isRequired
                     errorMessage={t('inputs.cleaners.error_message')}
-                    form="assignment_creation_form"
+                    form={FORM}
                     isDisabled={allCleaners.length === 0}
                     label={t('inputs.cleaners.label')}
                     name="cleaners"
@@ -111,7 +118,7 @@ export function AssignmentCreation({
                     defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
                     description={t('inputs.dua_date.description')}
                     errorMessage={t('inputs.dua_date.error_message')}
-                    form="assignment_creation_form"
+                    form={FORM}
                     label={t('inputs.dua_date.label')}
                     minValue={today(getLocalTimeZone())}
                     name="dueAt"
@@ -125,7 +132,9 @@ export function AssignmentCreation({
                 </Button>
                 <Button
                   color="primary"
-                  form="assignment_creation_form"
+                  form={FORM}
+                  isDisabled={isSubmitting}
+                  isLoading={isSubmitting}
                   type="submit"
                 >
                   {t('inputs.submit_button')}

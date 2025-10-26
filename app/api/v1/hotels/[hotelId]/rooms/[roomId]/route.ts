@@ -9,18 +9,21 @@ import {
   APP_ERRORS,
   GeneralErrors,
   HttpStatus,
+  roomUpdateSchema,
   withErrorHandling,
 } from '@lib/shared';
 import type { Room } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import type { RoomParams, RoomUpdateBody } from '@/types';
+import type { RoomParams } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
-    const room = await getRoomOrThrow(params.roomId, hotelId);
+    const { hotelId: hotelIdParam, roomId } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
+    const room = await getRoomOrThrow(roomId, hotelId);
     const { roles } = await getUserOrThrow(req);
 
     if (!canViewRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
@@ -30,13 +33,14 @@ export const GET = withErrorHandling(
 
 export const PATCH = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
-    const room = await getRoomOrThrow(params.roomId, hotelId);
+    const { hotelId: hotelIdParam, roomId } = await params;
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
+    const room = await getRoomOrThrow(roomId, hotelId);
     const { roles } = await getUserOrThrow(req);
 
     if (!canUpdateRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
-    // To-Do Add Validation
-    const data = (await req.json()) as RoomUpdateBody;
+
+    const data = roomUpdateSchema.parse(await req.json());
     const updatedRoom = await prisma.room.update({
       where: { id: room.id, hotelId },
       data,
@@ -47,8 +51,10 @@ export const PATCH = withErrorHandling(
 
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomParams }) => {
-    const { id: hotelId } = await getHotelOrThrow(params.hotelId);
-    const room = await getRoomOrThrow(params.roomId, hotelId);
+    const { hotelId: hotelIdParam, roomId } = await params;
+
+    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
+    const room = await getRoomOrThrow(roomId, hotelId);
     const { roles } = await getUserOrThrow(req);
     if (!canDeleteRoom({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
