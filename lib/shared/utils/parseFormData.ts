@@ -1,5 +1,5 @@
 //TODO try to replace with a react hook
-export function parseFormData<T extends Record<string, any>>(
+export function parseFormData<T extends object>(
   form: HTMLFormElement,
   defaultValue: T
 ): T {
@@ -9,10 +9,13 @@ export function parseFormData<T extends Record<string, any>>(
 
   for (const [k, value] of formData.entries()) {
     const key = k as keyof T;
-    if (Array.isArray(result[key])) {
-      (result[key] as unknown as any[]).push(value);
-    } else {
-      result[key] = value as T[typeof key];
+    if (key in result) {
+      if (Array.isArray(result[key])) {
+        const currentArray = result[key] as unknown[];
+        (result[key] as unknown) = [...currentArray, value];
+      } else {
+        result[key] = value as T[typeof key];
+      }
     }
   }
   return result;

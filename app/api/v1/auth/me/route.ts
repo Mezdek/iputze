@@ -1,5 +1,5 @@
 import { getUserOrThrow, prisma } from '@lib/db';
-import { getAdminRole, isAdmin } from '@lib/server';
+import { getAdminRole } from '@lib/server';
 import { HttpStatus, withErrorHandling } from '@lib/shared';
 import type { Hotel, Role } from '@prisma/client';
 import type { NextRequest } from 'next/server';
@@ -9,22 +9,17 @@ import type { MeResponse, TRole } from '@/types';
 
 export const GET = withErrorHandling(async (req: NextRequest) => {
   const { roles, ...user } = await getUserOrThrow(req);
-  const userIsAdmin = isAdmin({ roles });
-
+  const adminRole = getAdminRole<Role>({ roles });
   let hotels: Hotel[], rolesWithHotels: TRole[];
 
-  if (userIsAdmin) {
+  if (adminRole !== undefined) {
     // An admin has control over all the hotels
     hotels = await prisma.hotel.findMany();
     // Extend the admin role to all hotels
-    const {
-      hotelId: _hotelId,
-      userId: _userId,
-      ...adminRole
-    } = getAdminRole<Role>({ roles });
+    const { hotelId: _hotelId, userId: _userId, ...adminRoleRest } = adminRole;
 
     rolesWithHotels = hotels.map((hotel) => ({
-      ...adminRole,
+      ...adminRoleRest,
       hotel,
     }));
   } else {

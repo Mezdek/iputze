@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     value: locale,
     path: '/',
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env['NODE_ENV'] === 'production',
     sameSite: 'lax',
   });
 

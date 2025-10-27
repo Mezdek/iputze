@@ -67,16 +67,10 @@ export const GET = withErrorHandling(
         estimatedMinutes: true,
         actualMinutes: true,
         createdAt: true,
-        room: {
-          select: {
-            id: true,
-            number: true,
-            type: true,
-            floor: true,
-            occupancy: true,
-            cleanliness: true,
-          },
-        },
+        cancellationNote: true,
+
+        room: true,
+
         notes: {
           select: {
             id: true,
@@ -84,16 +78,23 @@ export const GET = withErrorHandling(
             createdAt: true,
             updatedAt: true,
             authorId: true,
+            deletedAt: true,
           },
         },
+
         assignedBy: {
           select: {
             id: true,
             name: true,
             email: true,
             avatarUrl: true,
+            createdAt: true,
+            notes: true,
+            updatedAt: true,
+            deletedAt: true,
           },
         },
+
         assignedUsers: {
           select: {
             assignedAt: true,
@@ -103,6 +104,10 @@ export const GET = withErrorHandling(
                 name: true,
                 email: true,
                 avatarUrl: true,
+                createdAt: true,
+                notes: true,
+                updatedAt: true,
+                deletedAt: true,
               },
             },
           },

@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
 
   // Define allowed origins (your app's domains)
   const allowedOrigins = [
-    process.env.NEXT_PUBLIC_APP_URL, // Production URL
+    process.env['NEXT_PUBLIC_APP_URL'], // Production URL
     'http://localhost:3000', // Development
     'http://localhost:3001', // Alternative dev port
   ].filter(Boolean) as string[];

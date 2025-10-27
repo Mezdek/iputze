@@ -32,10 +32,24 @@ const log = (message: string, color: string = colors.reset) => {
 };
 
 // Create or get hotel
-const createHotel = async ({ name, ...rest }: THotel) => {
+const createHotel = async ({
+  name,
+  address,
+  phone,
+  email,
+  description,
+}: THotel) => {
   let hotel = await prisma.hotel.findUnique({ where: { name } });
   if (!hotel) {
-    hotel = await prisma.hotel.create({ data: { name, ...rest } });
+    hotel = await prisma.hotel.create({
+      data: {
+        name,
+        address: address ?? null,
+        phone: phone ?? null,
+        email: email ?? null,
+        description: description ?? null,
+      },
+    });
     log(`  ✓ Created hotel: ${name}`, colors.green);
   } else {
     log(`  ↺ Hotel already exists: ${name}`, colors.yellow);
@@ -44,8 +58,8 @@ const createHotel = async ({ name, ...rest }: THotel) => {
 };
 
 // Create or get user with role
-const createUser = async (userData: TUser & { hotelId: string }) => {
-  const { email, hotelId, level, name, password, avatarUrl, notes } = userData;
+const createUser = async (userData: TUser, hotelId: string) => {
+  const { email, level, name, password, avatarUrl, notes } = userData;
 
   let user = await prisma.user.findUnique({ where: { email } });
 
@@ -57,8 +71,8 @@ const createUser = async (userData: TUser & { hotelId: string }) => {
         name,
         email,
         passwordHash,
-        avatarUrl,
-        notes,
+        avatarUrl: avatarUrl ?? null,
+        notes: notes ?? null,
       },
     });
     log(`  ✓ Created user: ${name} (${email})`, colors.green);
@@ -98,7 +112,16 @@ const createRoom = async (
   hotelId: string,
   userEmailMap: Map<string, string>
 ) => {
-  const { number, defaultCleanerEmails, ...rest } = roomData;
+  const {
+    number,
+    defaultCleanerEmails,
+    occupancy,
+    cleanliness,
+    type,
+    capacity,
+    floor,
+    notes,
+  } = roomData;
 
   const existingRoom = await prisma.room.findUnique({
     where: {
@@ -118,7 +141,12 @@ const createRoom = async (
     data: {
       number,
       hotelId,
-      ...rest,
+      occupancy,
+      cleanliness,
+      type,
+      capacity,
+      floor,
+      notes: notes ?? null,
     },
   });
 
@@ -137,7 +165,7 @@ const createRoom = async (
     }
   }
 
-  log(`  ✓ Created room: ${number} (${rest.type})`, colors.green);
+  log(`  ✓ Created room: ${number} (${type})`, colors.green);
   return room;
 };
 
@@ -231,69 +259,57 @@ const createAssignment = async (
 
 async function main() {
   log('\n🌱 Starting database seed...', colors.blue);
-  log('═══════════════════════════════════════\n', colors.blue);
+  log('╔═══════════════════════════════════╗\n', colors.blue);
 
   // Clear existing data (optional - uncomment if you want to start fresh)
-  // log('🗑️  Clearing existing data...', colors.yellow);
-  // await prisma.assignmentNote.deleteMany();
-  // await prisma.assignmentUser.deleteMany();
-  // await prisma.assignment.deleteMany();
-  // await prisma.defaultCleaners.deleteMany();
-  // await prisma.room.deleteMany();
-  // await prisma.role.deleteMany();
-  // await prisma.session.deleteMany();
-  // await prisma.refreshToken.deleteMany();
-  // await prisma.user.deleteMany();
-  // await prisma.hotel.deleteMany();
-  // await prisma.auditLog.deleteMany();
-  // log('✓ Cleared all data\n', colors.green);
+  log('🗑️  Clearing existing data...', colors.yellow);
+  await prisma.assignmentNote.deleteMany();
+  await prisma.assignmentUser.deleteMany();
+  await prisma.assignment.deleteMany();
+  await prisma.defaultCleaners.deleteMany();
+  await prisma.room.deleteMany();
+  await prisma.role.deleteMany();
+  await prisma.session.deleteMany();
+  await prisma.refreshToken.deleteMany();
+  await prisma.user.deleteMany();
+  await prisma.hotel.deleteMany();
+  await prisma.auditLog.deleteMany();
+  log('✓ Cleared all data\n', colors.green);
 
   // 1. Create Hotels
   log('🏨 Creating hotels...', colors.blue);
-  const zentraleH = await createHotel(hotels.zentrale);
-  const laLunaH = await createHotel(hotels.laLuna);
-  const khanAlHarirH = await createHotel(hotels.khanAlHarir);
+  const zentraleH = await createHotel(hotels['zentrale']);
+  const laLunaH = await createHotel(hotels['laLuna']);
+  const khanAlHarirH = await createHotel(hotels['khanAlHarir']);
   log('');
 
   // 2. Create Users and Roles
   log('👥 Creating users and roles...', colors.blue);
 
-  const admin1 = await createUser({ ...users.admin1, hotelId: zentraleH.id });
-  const admin2 = await createUser({ ...users.admin2, hotelId: zentraleH.id });
+  const admin1 = await createUser(users['admin1'], zentraleH.id);
+  const admin2 = await createUser(users['admin2'], zentraleH.id);
 
-  const managerLaLuna = await createUser({
-    ...users.managerLaLuna,
-    hotelId: laLunaH.id,
-  });
-  const cleanerLaLuna1 = await createUser({
-    ...users.cleanerLaLuna1,
-    hotelId: laLunaH.id,
-  });
-  const cleanerLaLuna2 = await createUser({
-    ...users.cleanerLaLuna2,
-    hotelId: laLunaH.id,
-  });
-  const cleanerLaLuna3 = await createUser({
-    ...users.cleanerLaLuna3,
-    hotelId: laLunaH.id,
-  });
+  const managerLaLuna = await createUser(users['managerLaLuna'], laLunaH.id);
+  const cleanerLaLuna1 = await createUser(users['cleanerLaLuna1'], laLunaH.id);
+  const cleanerLaLuna2 = await createUser(users['cleanerLaLuna2'], laLunaH.id);
+  const cleanerLaLuna3 = await createUser(users['cleanerLaLuna3'], laLunaH.id);
 
-  const managerKhanAlHarir = await createUser({
-    ...users.managerKhanAlHarir,
-    hotelId: khanAlHarirH.id,
-  });
-  const cleanerKhanAlHarir1 = await createUser({
-    ...users.cleanerKhanAlHarir1,
-    hotelId: khanAlHarirH.id,
-  });
-  const cleanerKhanAlHarir2 = await createUser({
-    ...users.cleanerKhanAlHarir2,
-    hotelId: khanAlHarirH.id,
-  });
-  const cleanerKhanAlHarir3 = await createUser({
-    ...users.cleanerKhanAlHarir3,
-    hotelId: khanAlHarirH.id,
-  });
+  const managerKhanAlHarir = await createUser(
+    users['managerKhanAlHarir'],
+    khanAlHarirH.id
+  );
+  const cleanerKhanAlHarir1 = await createUser(
+    users['cleanerKhanAlHarir1'],
+    khanAlHarirH.id
+  );
+  const cleanerKhanAlHarir2 = await createUser(
+    users['cleanerKhanAlHarir2'],
+    khanAlHarirH.id
+  );
+  const cleanerKhanAlHarir3 = await createUser(
+    users['cleanerKhanAlHarir3'],
+    khanAlHarirH.id
+  );
   log('');
 
   // Create email-to-userId map
@@ -340,9 +356,9 @@ async function main() {
   log('');
 
   // Summary
-  log('═══════════════════════════════════════', colors.blue);
+  log('╔═══════════════════════════════════╗', colors.blue);
   log('✅ Database seeding completed!', colors.green);
-  log('═══════════════════════════════════════\n', colors.blue);
+  log('╚═══════════════════════════════════╝\n', colors.blue);
 
   // Print summary statistics
   const hotelCount = await prisma.hotel.count();
@@ -358,8 +374,8 @@ async function main() {
   log('');
 
   // Print login credentials
-  log('🔑 Login Credentials:', colors.blue);
-  log('═══════════════════════════════════════', colors.blue);
+  log('🔐 Login Credentials:', colors.blue);
+  log('╔═══════════════════════════════════╗', colors.blue);
   log('\n👑 Admins:', colors.yellow);
   log('   Email: anwar@iputze.com', colors.cyan);
   log('   Password: anwar@shabbout', colors.cyan);
@@ -386,12 +402,13 @@ async function main() {
   log('   - bertha@cleaners.com / bertha@bernard', colors.cyan);
   log('   - dora@cleaners.com / dora@daniel', colors.cyan);
   log('   - fatima@cleaners.com / fatima@rashid', colors.cyan);
-  log('\n═══════════════════════════════════════\n', colors.blue);
+  log('\n╚═══════════════════════════════════╝\n', colors.blue);
 }
 
 main()
-  .catch((e) => {
-    console.error('❌ Error seeding database:', e);
+  .catch((e: unknown) => {
+    const message = e instanceof Error ? e.message : 'Unknown error';
+    console.error('❌ Error seeding database:', message);
     process.exit(1);
   })
   .finally(async () => {

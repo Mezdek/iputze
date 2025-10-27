@@ -2,8 +2,8 @@ import { APP_ERRORS, AuthErrors } from '@lib/shared';
 import { Redis } from '@upstash/redis';
 
 const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+  url: process.env['UPSTASH_REDIS_REST_URL']!,
+  token: process.env['UPSTASH_REDIS_REST_TOKEN']!,
 });
 
 type RateLimitConfig = {
@@ -68,7 +68,10 @@ export const checkRateLimit = async (
   keyPrefix: string,
   preset: RateLimitPreset = 'auth'
 ): Promise<void> => {
-  if (process.env.NODE_ENV === 'development' && !process.env.TEST_RATE_LIMIT) {
+  if (
+    process.env.NODE_ENV === 'development' &&
+    !process.env['TEST_RATE_LIMIT']
+  ) {
     return;
   }
 

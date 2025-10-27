@@ -45,13 +45,13 @@ export const PATCH = withErrorHandling(
       updateData = data;
     } else if (isHotelManager) {
       // Managers can only update specific fields
-      const allowedFields = ['notes', 'isActive', 'priority'];
-      updateData = Object.keys(data)
-        .filter((key) => allowedFields.includes(key))
-        .reduce((obj, key) => {
-          obj[key] = data[key];
-          return obj;
-        }, {} as Partial<AssignmentUpdateBody>);
+      const allowedFields: (keyof AssignmentUpdateBody)[] = ['priority'];
+
+      for (const key of allowedFields) {
+        if (key in data && data[key] !== undefined) {
+          updateData[key] = data[key] as any;
+        }
+      }
 
       // Prevent status changes
       if ('status' in data) {

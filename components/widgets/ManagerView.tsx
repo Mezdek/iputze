@@ -27,7 +27,7 @@ export function ManagerView({ user }: InjectedAuthProps) {
     <div className="flex flex-col gap-2 p-2 h-full">
       <Room.Nav navigate={handleNavigate} />
       {view === 'FLOOR_MAP' ? (
-        <FloorMapView room={room} setRoom={setRoom} user={user} />
+        <FloorMapView room={room} setRoom={setRoom} />
       ) : (
         <WeeklyTimelineView />
       )}

@@ -11,6 +11,7 @@ import {
   SESSION_COOKIE_KEY,
   withErrorHandling,
 } from '@lib/shared';
+import type { Prisma } from '@prisma/client';
 import { compare } from 'bcrypt';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -38,47 +39,51 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
   );
 
   // Create session and enforce concurrent limit in a transaction
-  const session = await prisma.$transaction(async (tx) => {
-    // Get current active sessions (sorted newest first)
-    const activeSessions = await tx.session.findMany({
-      where: {
-        userId: user.id,
-        expiresAt: { gt: new Date() },
-        revokedAt: null,
-      },
-      orderBy: { createdAt: 'desc' },
-      select: { id: true },
-    });
+  const session = await prisma.$transaction(
+    async (tx: Prisma.TransactionClient) => {
+      // Get current active sessions (sorted newest first)
+      const activeSessions = await tx.session.findMany({
+        where: {
+          userId: user.id,
+          expiresAt: { gt: new Date() },
+          revokedAt: null,
+        },
+        orderBy: { createdAt: 'desc' },
+        select: { id: true },
+      });
 
-    // If at or over limit, delete oldest sessions
-    if (activeSessions.length >= MAX_CONCURRENT_SESSIONS) {
-      const sessionsToKeep = activeSessions.slice(
-        0,
-        MAX_CONCURRENT_SESSIONS - 1
-      );
-      const sessionIdsToKeep = new Set(sessionsToKeep.map((s) => s.id));
+      // If at or over limit, delete oldest sessions
+      if (activeSessions.length >= MAX_CONCURRENT_SESSIONS) {
+        const sessionsToKeep = activeSessions.slice(
+          0,
+          MAX_CONCURRENT_SESSIONS - 1
+        );
+        const sessionIdsToKeep = new Set(
+          sessionsToKeep.map((s: { id: string }) => s.id)
+        );
 
-      const sessionsToDelete = activeSessions
-        .filter((s) => !sessionIdsToKeep.has(s.id))
-        .map((s) => s.id);
+        const sessionsToDelete = activeSessions
+          .filter((s: { id: string }) => !sessionIdsToKeep.has(s.id))
+          .map((s: { id: string }) => s.id);
 
-      if (sessionsToDelete.length > 0) {
-        await tx.session.deleteMany({
-          where: { id: { in: sessionsToDelete } },
-        });
+        if (sessionsToDelete.length > 0) {
+          await tx.session.deleteMany({
+            where: { id: { in: sessionsToDelete } },
+          });
+        }
       }
-    }
 
-    // Create new session
-    return tx.session.create({
-      data: {
-        userId: user.id,
-        expiresAt,
-        ipAddress: req.headers.get('x-forwarded-for') ?? undefined,
-        userAgent: req.headers.get('user-agent') ?? undefined,
-      },
-    });
-  });
+      // Create new session
+      return tx.session.create({
+        data: {
+          userId: user.id,
+          expiresAt,
+          ipAddress: req.headers.get('x-forwarded-for') ?? null,
+          userAgent: req.headers.get('user-agent') ?? null,
+        },
+      });
+    }
+  );
 
   const res = NextResponse.json<SignInResponse>(
     { user: { id: user.id, email: user.email, name: user.name } },

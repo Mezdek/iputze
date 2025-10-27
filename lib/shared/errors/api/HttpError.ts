@@ -32,7 +32,7 @@ export class HttpError extends Error implements IHttpError {
       status: this.status,
     };
     if (process.env.NODE_ENV === 'development' && this.stack) {
-      errorObj.stack = this.stack;
+      errorObj['stack'] = this.stack;
     }
     return errorObj;
   }

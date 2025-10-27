@@ -28,9 +28,9 @@ function getViewForRole(
   const role = user.roles.find((r) => r.hotel.id === hotelId);
 
   if (!role) return DeniedAccessView;
-  if (role.status === RoleStatus.DISABLED) return DisabledView;
+  if (role['status'] === RoleStatus.DISABLED) return DisabledView;
 
-  return ViewSelector[role.level];
+  return ViewSelector[role['level']];
 }
 
 function Hotel({ user }: InjectedAuthProps) {

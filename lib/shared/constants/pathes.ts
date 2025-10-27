@@ -1,9 +1,9 @@
 type getPathProps = {
-  hotelId?: string | number;
-  roomId?: string | number;
-  roleId?: string | number;
-  assignmentId?: number | string;
-  assignmentNoteId?: number | string;
+  hotelId?: number | string | undefined;
+  roomId?: number | string | undefined;
+  roleId?: number | string | undefined;
+  assignmentId?: number | string | undefined;
+  assignmentNoteId?: number | string | undefined;
 };
 
 export const getPath = (props?: getPathProps) => {

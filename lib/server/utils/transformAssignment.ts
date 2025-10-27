@@ -8,10 +8,10 @@ import type {
 import type { SafeUser, TAssignmentResponse } from '@/types';
 
 export function transformAssignment(
-  assignment: Assignment & {
-    assignedUsers: (AssignmentUser & { user: SafeUser })[];
+  assignment: Omit<Assignment, 'assignedById' | 'roomId'> & {
+    assignedUsers: (Pick<AssignmentUser, 'assignedAt'> & { user: SafeUser })[];
     room: Room;
-    notes: AssignmentNote[];
+    notes: Omit<AssignmentNote, 'assignmentId'>[];
     assignedBy: SafeUser | null;
   }
 ): TAssignmentResponse {

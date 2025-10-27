@@ -1,5 +1,6 @@
 export * from './auth';
 export * from './errors';
+export * from './features';
 export * from './httpStatus';
 export * from './i18n_temp';
 export * from './pathes';

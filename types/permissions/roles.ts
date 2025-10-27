@@ -3,8 +3,8 @@ import type { Role, RoleLevel, RoleStatus } from '@prisma/client';
 export interface RoleManagementModification {
   roles: Role[];
   targetRole: Role;
-  newLevel?: RoleLevel;
-  newStatus?: RoleStatus;
+  newLevel?: RoleLevel | undefined;
+  newStatus?: RoleStatus | undefined;
 }
 
 export interface RoleManagement {

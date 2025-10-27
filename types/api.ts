@@ -55,6 +55,13 @@ export interface AssignmentCreationBody {
 
 export interface AssignmentUpdateBody {
   status?: AssignmentStatus;
+  priority?: number;
+  estimatedMinutes?: number;
+  actualMinutes?: number;
+  completedAt?: Date;
+  startedAt?: Date;
+  cancelledAt?: Date;
+  cancellationNote?: string;
 }
 
 // AssignmentNotes
@@ -118,10 +125,18 @@ export interface RoomCreationBody {
   number: string;
   occupancy?: RoomOccupancy;
   cleanliness?: RoomCleanliness;
+  type?: string;
+  capacity?: number;
+  floor?: string;
+  notes?: string;
 }
 
 export interface RoomUpdateBody {
   number?: string;
   occupancy?: RoomOccupancy;
   cleanliness?: RoomCleanliness;
+  type?: string;
+  capacity?: number;
+  floor?: string;
+  notes?: string;
 }

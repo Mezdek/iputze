@@ -3,13 +3,13 @@ import type { RoleLevel, RoomCleanliness, RoomOccupancy } from '@prisma/client';
 // Hotels
 export type THotel = {
   name: string;
-  address?: string;
-  phone?: string;
-  email?: string;
-  description?: string;
+  address?: string | undefined;
+  phone?: string | undefined;
+  email?: string | undefined;
+  description?: string | undefined;
 };
 
-export const hotels: Record<string, THotel> = {
+export const hotels = {
   zentrale: {
     name: 'Zentrale',
     address: 'Hauptstraße 1, 10963 Berlin',
@@ -32,7 +32,7 @@ export const hotels: Record<string, THotel> = {
     email: 'manager@khan-alharir.com',
     phone: '+49303456781',
   },
-};
+} as const;
 
 // Users
 export type TUser = {
@@ -41,11 +41,11 @@ export type TUser = {
   password: string;
   hotelName: string;
   level: RoleLevel;
-  avatarUrl?: string;
-  notes?: string;
+  avatarUrl?: string | undefined;
+  notes?: string | undefined;
 };
 
-export const users: Record<string, TUser> = {
+export const users = {
   admin1: {
     email: 'anwar@iputze.com',
     name: 'Anwar Shabbout',
@@ -140,7 +140,7 @@ export const users: Record<string, TUser> = {
     level: 'CLEANER',
     avatarUrl: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia',
   },
-};
+} as const;
 
 // Rooms
 export type TRoom = {
@@ -150,8 +150,8 @@ export type TRoom = {
   type: string;
   capacity: number;
   floor: string;
-  notes?: string;
-  defaultCleanerEmails?: string[]; // Emails of default cleaners
+  notes?: string | undefined;
+  defaultCleanerEmails?: string[] | undefined; // Emails of default cleaners
 };
 
 export const roomsLaLuna: TRoom[] = [
@@ -511,7 +511,7 @@ export type TAssignmentTemplate = {
   priority: number;
   dueHoursFromNow: number; // Hours from now
   assignedCleanerEmails: string[];
-  notes?: string;
+  notes?: string | undefined;
 };
 
 export const assignmentsLaLuna: TAssignmentTemplate[] = [

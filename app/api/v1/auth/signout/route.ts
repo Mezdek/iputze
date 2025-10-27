@@ -1,3 +1,4 @@
+import { prisma } from '@lib/db';
 import {
   HttpStatus,
   ResponseCookieOptions,
@@ -7,8 +8,6 @@ import {
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { prisma } from '@/lib/db';
-
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const sessionId = req.cookies.get(SESSION_COOKIE_KEY)?.value;
 
@@ -17,9 +16,11 @@ export const POST = withErrorHandling(async (req: NextRequest) => {
       .delete({
         where: { id: sessionId },
       })
-      .catch((error) => {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('Session deletion failed:', error.message);
+      .catch((error: unknown) => {
+        if (process.env['NODE_ENV'] === 'development') {
+          const message =
+            error instanceof Error ? error.message : 'Unknown error';
+          console.warn('Session deletion failed:', message);
         }
       });
   }

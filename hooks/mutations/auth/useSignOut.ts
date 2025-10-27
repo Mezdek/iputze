@@ -1,16 +1,16 @@
 'use client';
 //TODO add showErrorToast
 
-import { api, useMutationWithToast } from '@lib/client';
+import { api } from '@lib/client';
 import { getPath } from '@lib/shared';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 export const useSignOut = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutationWithToast({
+  return useMutation({
     mutationFn: async (): Promise<null> => {
       const res = await api.post<null>(getPath().API.SIGNOUT);
       return res;

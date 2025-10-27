@@ -1,101 +1,155 @@
 import { getHotelOrThrow, getUserOrThrow, prisma } from '@lib/db';
-import { canDeleteHotel, canUpdateHotel, canViewHotel } from '@lib/server';
+import {
+  canCreateAssignment,
+  hasManagerPermission,
+  isHotelCleaner,
+  transformAssignment,
+} from '@lib/server';
 import {
   APP_ERRORS,
-  DefaultMessages,
+  assignmentCreationSchema,
   GeneralErrors,
   HttpStatus,
   withErrorHandling,
 } from '@lib/shared';
-import type { Hotel } from '@prisma/client';
+import type { Assignment } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import type { HotelParams } from '@/types';
+import type { AssignmentCollectionParams, TAssignmentResponse } from '@/types';
 
 export const GET = withErrorHandling(
-  async (req: NextRequest, { params }: { params: HotelParams }) => {
-    const { hotelId: hotelIdParam } = await params;
-
-    const hotel = await getHotelOrThrow(hotelIdParam);
-
-    const { roles } = await getUserOrThrow(req);
-
-    if (!canViewHotel({ roles, hotelId: hotel.id }))
-      throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
-
-    return NextResponse.json<Hotel>(hotel);
-  }
-);
-
-export const PATCH = withErrorHandling(
-  async (req: NextRequest, { params }: { params: HotelParams }) => {
+  async (
+    req: NextRequest,
+    { params }: { params: AssignmentCollectionParams }
+  ) => {
     const { hotelId: hotelIdParam } = await params;
 
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
 
-    const { roles } = await getUserOrThrow(req);
+    const { roles, id: userId } = await getUserOrThrow(req);
+    const { searchParams } = new URL(req.url);
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
-    if (!canUpdateHotel({ roles })) throw APP_ERRORS.forbidden();
+    let baseWhere;
 
-    //to-do: validate update fields
-    const data: Record<string, any> = await req.json(); // eslint-disable-line
+    const isRanged = !!startDate && !!endDate;
 
-    const updateFields: string[] = Object.keys(data);
-    const forbiddenFields: string[] = ['id', 'createdAt', 'updatedAt'];
+    if (hasManagerPermission({ hotelId, roles })) {
+      baseWhere = { room: { hotelId } };
+    } else if (isHotelCleaner({ hotelId, roles })) {
+      baseWhere = { assignedUsers: { some: { userId } } };
+    } else {
+      throw APP_ERRORS.forbidden();
+    }
+    const where = isRanged
+      ? {
+          ...baseWhere,
+          dueAt: {
+            gte: new Date(startDate),
+            lte: new Date(endDate),
+          },
+        }
+      : baseWhere;
 
-    const forbiddenFieldsContained = updateFields.filter((f) =>
-      forbiddenFields.includes(f)
-    );
-    const allowedFields: string[] = updateFields.filter(
-      (f) => !forbiddenFields.includes(f)
-    );
+    const assignments = await prisma.assignment.findMany({
+      where,
+      orderBy: { dueAt: 'asc' },
+      select: {
+        id: true,
+        status: true,
+        priority: true,
+        dueAt: true,
+        startedAt: true,
+        completedAt: true,
+        cancelledAt: true,
+        estimatedMinutes: true,
+        actualMinutes: true,
+        createdAt: true,
+        cancellationNote: true,
 
-    // Filtered object containing only allowed fields
-    const filteredData: Record<string, any> = // eslint-disable-line
-      allowedFields.reduce(
-        (acc, field) => {
-          acc[field] = data[field];
-          return acc;
+        room: true,
+
+        notes: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+            authorId: true,
+            deletedAt: true,
+          },
         },
-        {} as Record<string, any> // eslint-disable-line
-      );
 
-    // Now, `filteredData` contains only the allowed fields
-    const updatedHotel = await prisma.hotel.update({
-      where: { id: hotelId },
-      data: filteredData,
-    });
-    const forbiddenMessage = `These Fields Are Not Allowed To Be Updated: ${forbiddenFieldsContained.reduce(
-      (acc, cur) => {
-        acc += `${cur}, `;
-        return acc;
+        assignedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+            createdAt: true,
+            notes: true,
+            updatedAt: true,
+            deletedAt: true,
+          },
+        },
+
+        assignedUsers: {
+          select: {
+            assignedAt: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,
+                createdAt: true,
+                notes: true,
+                updatedAt: true,
+                deletedAt: true,
+              },
+            },
+          },
+        },
       },
-      ''
-    )}`;
-
-    return NextResponse.json<Hotel>(updatedHotel, {
-      status: HttpStatus.OK,
-      statusText:
-        forbiddenFieldsContained.length > 0
-          ? forbiddenMessage
-          : DefaultMessages[200],
     });
+
+    const transformedAssignments = assignments.map(transformAssignment);
+
+    return NextResponse.json<TAssignmentResponse[]>(transformedAssignments);
   }
 );
 
-export const DELETE = withErrorHandling(
-  async (req: NextRequest, { params }: { params: HotelParams }) => {
-    const { hotelId: hotelIdParam } = await params;
+export const POST = withErrorHandling(
+  async (
+    req: NextRequest,
+    { params }: { params: AssignmentCollectionParams }
+  ) => {
+    const { hotelId: paramsHotelId } = await params;
+    const { id: hotelId } = await getHotelOrThrow(paramsHotelId);
 
-    const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
+    const { roles, id: userId } = await getUserOrThrow(req);
 
-    const { roles } = await getUserOrThrow(req);
+    if (!canCreateAssignment({ roles, hotelId }))
+      throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
+    const validated = assignmentCreationSchema.parse(await req.json());
+    const { roomId, dueAt, cleaners, estimatedMinutes, priority } = validated;
+    const newAssignment = await prisma.assignment.create({
+      data: {
+        roomId,
+        dueAt,
+        assignedById: userId,
+        assignedUsers: {
+          create: cleaners.map((cleanerId: string) => ({ userId: cleanerId })),
+        },
+        estimatedMinutes,
+        priority,
+      },
+    });
 
-    if (!canDeleteHotel({ roles })) throw APP_ERRORS.forbidden();
-
-    await prisma.hotel.delete({ where: { id: hotelId } });
-
-    return new Response(null, { status: HttpStatus.NO_CONTENT });
+    return NextResponse.json<Assignment>(newAssignment, {
+      status: HttpStatus.CREATED,
+    });
   }
 );
