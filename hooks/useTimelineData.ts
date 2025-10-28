@@ -6,7 +6,7 @@ import type {
   DayData,
   StatusFilterType,
   TAssignmentResponse,
-  ViewMode,
+  TimeLineViewMode,
   WeekBoundaries,
 } from '@/types';
 
@@ -21,7 +21,7 @@ interface UseTimelineDataReturn {
   weekBoundaries: WeekBoundaries;
   cleanersList: CleanerWithTasks[];
   weekData: DayData[];
-  viewMode: ViewMode;
+  viewMode: TimeLineViewMode;
   totalAssignments: number;
 }
 
@@ -31,7 +31,9 @@ export function useTimelineData({
   statusFilter,
   selectedCleanerId,
 }: UseTimelineDataParams): UseTimelineDataReturn {
-  const viewMode: ViewMode = selectedCleanerId ? 'selected' : 'overview';
+  const viewMode: TimeLineViewMode = selectedCleanerId
+    ? 'selected'
+    : 'overview';
 
   // Calculate week boundaries
   const weekBoundaries = useMemo((): WeekBoundaries => {

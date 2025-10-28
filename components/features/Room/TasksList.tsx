@@ -10,6 +10,7 @@ import {
 } from '@heroui/react';
 import { capitalize } from '@lib/shared';
 import type { AssignmentStatus } from '@prisma/client';
+import { useState } from 'react';
 
 import type { TAssignmentResponse } from '@/types';
 
@@ -20,6 +21,8 @@ export function TasksList({
   status: AssignmentStatus | undefined;
   tasks: TAssignmentResponse[];
 }) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   const filtered = status
     ? tasks.filter((task) => task.status === status)
     : tasks;
@@ -31,7 +34,11 @@ export function TasksList({
           <p className="text-sm">
             {index + 1}/{length}
           </p>
-          <Room.TaskDetails task={task} />
+          <Room.TaskDetails
+            isOpen={isOpen}
+            task={task}
+            onClose={() => setIsOpen(false)}
+          />
         </CardHeader>
         <CardBody className="gap-2">
           <p>Status: {capitalize(task.status, '_', 'FIRST_WORD_ONLY')}</p>

@@ -2,6 +2,7 @@
 import { Room } from '@components';
 import { Avatar, AvatarGroup, Tooltip } from '@heroui/react';
 import { capitalize } from '@lib/shared';
+import { useState } from 'react';
 
 import type { SafeUser, TAssignmentResponse } from '@/types';
 
@@ -12,6 +13,7 @@ export function TasksOverview({
   task: TAssignmentResponse;
   defaultCleaners?: { user: SafeUser }[];
 }) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div>
       <p className="font-semibold mb-2">Current Assignment</p>
@@ -20,7 +22,11 @@ export function TasksOverview({
           <p className="text-warning-800 font-medium">
             {capitalize(task.status, '_', 'ALL_WORDS')}
           </p>
-          <Room.TaskDetails className="h-full" task={task} />
+          <Room.TaskDetails
+            isOpen={isOpen}
+            task={task}
+            onClose={() => setIsOpen(false)}
+          />
         </div>
         {task.startedAt && (
           <p className="text-warning-600 text-sm">

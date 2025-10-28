@@ -79,7 +79,42 @@ export const GET = withErrorHandling(
             updatedAt: true,
             authorId: true,
             deletedAt: true,
+            author: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,
+                createdAt: true,
+                notes: true,
+                updatedAt: true,
+                deletedAt: true,
+                timezone: true,
+              },
+            },
           },
+        },
+
+        AssignmentImage: {
+          select: {
+            uploadedAt: true,
+            id: true,
+            url: true,
+            uploader: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,
+                createdAt: true,
+                notes: true,
+                updatedAt: true,
+                deletedAt: true,
+                timezone: true,
+              },
+            },
+          },
+          orderBy: { uploadedAt: 'desc' },
         },
 
         assignedBy: {
@@ -92,6 +127,7 @@ export const GET = withErrorHandling(
             notes: true,
             updatedAt: true,
             deletedAt: true,
+            timezone: true,
           },
         },
 
@@ -108,6 +144,7 @@ export const GET = withErrorHandling(
                 notes: true,
                 updatedAt: true,
                 deletedAt: true,
+                timezone: true,
               },
             },
           },

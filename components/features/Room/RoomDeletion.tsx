@@ -34,7 +34,6 @@ export function RoomDeletion({
     const entries = Object.entries(props);
     const validatedEntries = entries.filter((entry) => entry[1] !== undefined);
     const valid = Object.fromEntries(validatedEntries);
-    console.log({ valid });
     return valid as Partial<T>;
   };
 

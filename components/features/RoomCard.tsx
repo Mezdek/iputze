@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge, Card, CardBody, Chip, cn } from '@heroui/react';
+import { Card, CardBody, Chip, cn } from '@heroui/react';
 import { getStatusColorClass } from '@lib/client';
 import { memo } from 'react';
 
@@ -35,7 +35,7 @@ export const RoomCard = memo(function RoomCard({
     >
       <CardBody className="p-3 space-y-2">
         {/* Room number and status */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col justify-between">
           <div className="flex items-center gap-1">
             <span className="font-bold text-lg text-foreground">
               {room.number}
@@ -56,28 +56,20 @@ export const RoomCard = memo(function RoomCard({
 
         {/* Room details */}
         {room.type && (
-          <div className="text-xs text-default-500 truncate" title={room.type}>
+          <div className="text-xs truncate" title={room.type}>
             {room.type}
           </div>
         )}
 
-        {/* Task count badge */}
-        {room.taskCount > 0 && (
-          <Badge
-            color="primary"
-            content={room.taskCount}
-            placement="top-right"
-            size="sm"
-          >
-            <div className="text-xs text-default-600 px-2 py-1 bg-default-100 rounded-full">
-              {room.taskCount} {room.taskCount === 1 ? 'task' : 'tasks'}
-            </div>
-          </Badge>
-        )}
-
         {/* Floor indicator if present */}
         {room.floor !== undefined && room.floor !== null && (
-          <div className="text-xs text-default-400">Floor {room.floor}</div>
+          <div className="text-xs">Floor {room.floor}</div>
+        )}
+        {/* Task count badge */}
+        {room.taskCount > 0 && (
+          <p className="text-xs px-2 py-1 bg-default-100 rounded-full w-fit">
+            {room.taskCount} {room.taskCount === 1 ? 'task' : 'tasks'}
+          </p>
         )}
       </CardBody>
     </Card>

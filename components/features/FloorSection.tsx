@@ -28,7 +28,7 @@ export const FloorSection = memo(function FloorSection({
         <h3 className="text-lg font-semibold text-foreground">
           Floor {floorNumber}
         </h3>
-        <p className="text-xs text-default-500">
+        <p className="text-xs">
           {floor.length} {floor.length === 1 ? 'room' : 'rooms'}
         </p>
       </div>

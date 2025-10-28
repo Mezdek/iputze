@@ -1,4 +1,5 @@
 export * from './mutations';
+export * from './useAssignmentImages';
 export * from './useAssignmentNotes';
 export * from './useAssignments';
 export * from './useErrorToast';

@@ -21,7 +21,7 @@ export interface DayData {
   tasks: TAssignmentResponse[];
 }
 
-export type ViewMode = 'overview' | 'selected';
+export type TimeLineViewMode = 'overview' | 'selected';
 export type StatusFilterType = 'all' | AssignmentStatus;
 
 export interface WeekBoundaries {

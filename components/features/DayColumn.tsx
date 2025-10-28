@@ -1,11 +1,11 @@
 import { CleanerChip, EmptyDayState, TaskCard } from '@components';
 import { memo } from 'react';
 
-import type { DayData, ViewMode } from '@/types';
+import type { DayData, TimeLineViewMode } from '@/types';
 
 interface DayColumnProps {
   day: DayData;
-  viewMode: ViewMode;
+  viewMode: TimeLineViewMode;
   onChipClick: (cleanerId: string) => void;
 }
 

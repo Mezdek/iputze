@@ -33,7 +33,6 @@ export const GET = withErrorHandling(
     const endDate = searchParams.get('endDate');
 
     let baseWhere;
-
     const isRanged = !!startDate && !!endDate;
 
     if (hasManagerPermission({ hotelId, roles })) {
@@ -45,14 +44,13 @@ export const GET = withErrorHandling(
     }
     const where = isRanged
       ? {
-          ...baseWhere,
           dueAt: {
+            ...baseWhere,
             gte: new Date(startDate),
             lte: new Date(endDate),
           },
         }
       : baseWhere;
-
     const assignments = await prisma.assignment.findMany({
       where,
       orderBy: { dueAt: 'asc' },
@@ -68,9 +66,7 @@ export const GET = withErrorHandling(
         actualMinutes: true,
         createdAt: true,
         cancellationNote: true,
-
         room: true,
-
         notes: {
           select: {
             id: true,
@@ -79,7 +75,42 @@ export const GET = withErrorHandling(
             updatedAt: true,
             authorId: true,
             deletedAt: true,
+            author: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,
+                createdAt: true,
+                notes: true,
+                updatedAt: true,
+                deletedAt: true,
+                timezone: true,
+              },
+            },
           },
+        },
+
+        AssignmentImage: {
+          select: {
+            uploadedAt: true,
+            id: true,
+            url: true,
+            uploader: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,
+                createdAt: true,
+                notes: true,
+                updatedAt: true,
+                deletedAt: true,
+                timezone: true,
+              },
+            },
+          },
+          orderBy: { uploadedAt: 'desc' },
         },
 
         assignedBy: {
@@ -92,9 +123,9 @@ export const GET = withErrorHandling(
             notes: true,
             updatedAt: true,
             deletedAt: true,
+            timezone: true,
           },
         },
-
         assignedUsers: {
           select: {
             assignedAt: true,
@@ -108,6 +139,7 @@ export const GET = withErrorHandling(
                 notes: true,
                 updatedAt: true,
                 deletedAt: true,
+                timezone: true,
               },
             },
           },

@@ -40,7 +40,8 @@ CREATE TABLE "User" (
     "notes" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "deletedAt" DATETIME
+    "deletedAt" DATETIME,
+    "timezone" TEXT NOT NULL DEFAULT 'UTC'
 );
 
 -- CreateTable
@@ -231,9 +232,6 @@ CREATE INDEX "Assignment_dueAt_priority_idx" ON "Assignment"("dueAt", "priority"
 
 -- CreateIndex
 CREATE INDEX "Assignment_status_createdAt_idx" ON "Assignment"("status", "createdAt");
-
--- CreateIndex
-CREATE INDEX "Assignment_roomId_status_idx" ON "Assignment"("roomId", "status");
 
 -- CreateIndex
 CREATE INDEX "Assignment_dueAt_status_idx" ON "Assignment"("dueAt", "status");

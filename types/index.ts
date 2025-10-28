@@ -1,7 +1,6 @@
-export * from './api';
+export type * from './api';
 export * from './errors';
-export * from './features';
-export type * from './params';
+export type * from './features';
 export type * from './permissions';
-export * from './utilities';
-export * from './withAuthGuard';
+export type * from './utilities';
+export type * from './withAuthGuard';
