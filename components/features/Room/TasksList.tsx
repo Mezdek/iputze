@@ -1,5 +1,5 @@
 'use client';
-import { Room } from '@components';
+import { TaskDetails } from '@components';
 import {
   Avatar,
   AvatarGroup,
@@ -34,7 +34,7 @@ export function TasksList({
           <p className="text-sm">
             {index + 1}/{length}
           </p>
-          <Room.TaskDetails
+          <TaskDetails
             isOpen={isOpen}
             task={task}
             onClose={() => setIsOpen(false)}

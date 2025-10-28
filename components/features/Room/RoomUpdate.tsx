@@ -1,30 +1,26 @@
 'use client';
 
-import { Icons, Room } from '@components';
+import { Icons } from '@components';
 import {
   addToast,
   Button,
   type ButtonProps,
-  Form,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Select,
-  SelectItem,
-  Textarea,
   useDisclosure,
 } from '@heroui/react';
 import { useErrorToast, useUpdateRoom } from '@hooks';
 import { parseFormData } from '@lib/shared';
 import type { Room as TRoom } from '@prisma/client';
-import { RoomCleanliness, RoomOccupancy } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import type { FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 
 import type { RoomUpdateBody } from '@/types';
+
+import { RoomForm } from './RoomForm';
 
 export function RoomUpdate({
   room,
@@ -41,21 +37,28 @@ export function RoomUpdate({
   });
   const t = useTranslations('room');
   const { showErrorToast } = useErrorToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const FORM = `room_update_form_${room.id}`;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     const data = parseFormData<RoomUpdateBody>(e.currentTarget, {});
+
     try {
       await updateRoom(data);
       onClose();
       addToast({
         title: 'Room Updated!',
-        description: `Room #${data.number} has been updated successfully`,
+        description: `Room #${data.number || room.number} has been updated successfully`,
         color: 'success',
       });
     } catch (e: unknown) {
       showErrorToast(e);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -89,129 +92,24 @@ export function RoomUpdate({
                 {t('update_panel.header', { number: room.number })}
               </ModalHeader>
               <ModalBody>
-                <Form
-                  className="grid grid-cols-2"
+                <RoomForm
                   id={FORM}
+                  mode="update"
+                  room={room}
                   onSubmit={handleSubmit}
-                >
-                  <Input
-                    required
-                    className="w-full"
-                    defaultValue={room.number}
-                    errorMessage={t(
-                      'update_panel.inputs.room_number.error_message'
-                    )}
-                    form={FORM}
-                    label={t('update_panel.inputs.room_number.label')}
-                    name="number"
-                    placeholder={t(
-                      'update_panel.inputs.room_number.placeholder'
-                    )}
-                    variant="bordered"
-                  />
-                  <Input
-                    required
-                    className="w-full"
-                    defaultValue={room.floor ?? undefined}
-                    errorMessage={t(
-                      'update_panel.inputs.room_number.error_message'
-                    )}
-                    form={FORM}
-                    label={'floor'}
-                    name="floor"
-                    placeholder={'floor'}
-                    variant="bordered"
-                  />
-                  <Input
-                    required
-                    className="w-full"
-                    defaultValue={
-                      room.capacity ? `${room.capacity}` : undefined
-                    }
-                    errorMessage={t(
-                      'update_panel.inputs.room_number.error_message'
-                    )}
-                    form={FORM}
-                    label={'capacity'}
-                    name="capacity"
-                    placeholder={'capacity'}
-                    variant="bordered"
-                  />
-                  <Select
-                    required
-                    className="w-full"
-                    defaultSelectedKeys={[room.type ?? 'Single']}
-                    form={FORM}
-                    label={'type'}
-                    name="type"
-                    // placeholder={'type'}
-                  >
-                    {Object.values([
-                      'Single',
-                      'Suite',
-                      'Standard',
-                      'Deluxe',
-                    ]).map((status) => (
-                      <SelectItem key={status}>{status}</SelectItem>
-                    ))}
-                  </Select>
-                  <Select
-                    required
-                    className="w-full"
-                    defaultSelectedKeys={[room.cleanliness]}
-                    form={FORM}
-                    label={t('update_panel.inputs.cleanliness.label')}
-                    name="cleanliness"
-                    placeholder={t(
-                      'update_panel.inputs.cleanliness.placeholder'
-                    )}
-                  >
-                    {Object.values(RoomCleanliness).map((status) => (
-                      <SelectItem key={status}>
-                        {t(`cleanliness_status.${status}`)}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  <Select
-                    required
-                    className="w-full"
-                    defaultSelectedKeys={[room.occupancy]}
-                    form={FORM}
-                    label={t('update_panel.inputs.occupancy.label')}
-                    name="occupancy"
-                    placeholder={t('update_panel.inputs.occupancy.placeholder')}
-                  >
-                    {Object.values(RoomOccupancy).map((status) => (
-                      <SelectItem key={status}>
-                        {t(`occupancy_status.${status}`)}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                  <Textarea
-                    required
-                    className="w-full col-span-2"
-                    defaultValue={room.notes ?? ''}
-                    errorMessage={t(
-                      'update_panel.inputs.room_number.error_message'
-                    )}
-                    form={FORM}
-                    label={'notes'}
-                    maxLength={30}
-                    name="notes"
-                    placeholder={'write a note...'}
-                    variant="bordered"
-                  />
-                </Form>
+                />
               </ModalBody>
               <ModalFooter className="gap-3">
-                <Room.RoomDeletion
-                  modalButtonProps={{ text: '' }}
-                  room={room}
-                />
                 <Button color="danger" variant="flat" onPress={onCloseModal}>
                   {t('update_panel.buttons.close')}
                 </Button>
-                <Button color="primary" form={FORM} type="submit">
+                <Button
+                  color="primary"
+                  form={FORM}
+                  isDisabled={isSubmitting}
+                  isLoading={isSubmitting}
+                  type="submit"
+                >
                   {t('update_panel.buttons.submit')}
                 </Button>
               </ModalFooter>

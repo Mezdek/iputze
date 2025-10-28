@@ -13,6 +13,41 @@ cloudinary.config({
   api_secret: process.env['CLOUDINARY_API_SECRET'],
 });
 
+/**
+ * GET /api/v1/hotels/[hotelId]/assignments/[assignmentId]/images
+ * Fetch all non-deleted images for an assignment
+ */
+export const GET = withErrorHandling(
+  async (req: NextRequest, { params }: { params: AssignmentParams }) => {
+    const { assignmentId } = await getAssignmentAccessContext({
+      params,
+      req,
+    });
+
+    const images = await prisma.assignmentImage.findMany({
+      where: {
+        assignmentId,
+        deletedAt: null, // Only return non-deleted images
+      },
+      include: {
+        uploader: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+      },
+      orderBy: {
+        uploadedAt: 'desc',
+      },
+    });
+
+    return NextResponse.json(images, { status: HttpStatus.OK });
+  }
+);
+
 export const POST = withErrorHandling(
   async (req: NextRequest, { params }: { params: AssignmentParams }) => {
     const { assignmentId, userId } = await getAssignmentAccessContext({

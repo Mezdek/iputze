@@ -86,6 +86,7 @@ export const GET = withErrorHandling(
                 updatedAt: true,
                 deletedAt: true,
                 timezone: true,
+                bio: true,
               },
             },
           },
@@ -96,6 +97,10 @@ export const GET = withErrorHandling(
             uploadedAt: true,
             id: true,
             url: true,
+            deletedAt: true,
+            deletedBy: true,
+            exif: true,
+            uploadedBy: true,
             uploader: {
               select: {
                 id: true,
@@ -107,6 +112,7 @@ export const GET = withErrorHandling(
                 updatedAt: true,
                 deletedAt: true,
                 timezone: true,
+                bio: true,
               },
             },
           },
@@ -124,6 +130,7 @@ export const GET = withErrorHandling(
             updatedAt: true,
             deletedAt: true,
             timezone: true,
+            bio: true,
           },
         },
         assignedUsers: {
@@ -140,6 +147,7 @@ export const GET = withErrorHandling(
                 updatedAt: true,
                 deletedAt: true,
                 timezone: true,
+                bio: true,
               },
             },
           },

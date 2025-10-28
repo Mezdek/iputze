@@ -1,32 +1,32 @@
 'use client';
-import { Room } from '@components';
 import { Chip } from '@heroui/react';
-import { capitalize } from '@lib/shared';
+import { capitalize, ROOM_OCCUPANCY_COLORS } from '@lib/shared';
 import {
   AssignmentStatus,
   RoomCleanliness,
   RoomOccupancy,
 } from '@prisma/client';
+import type { ReactNode } from 'react';
 
 import type { RoomWithHotel, TAssignmentResponse } from '@/types';
 
 const RoomOccupancyColors = {
-  [RoomOccupancy.VACANT]: 'success',
-  [RoomOccupancy.OCCUPIED]: 'warning',
-  [RoomOccupancy.UNAVAILABLE]: 'danger',
+  [RoomOccupancy.VACANT]: ROOM_OCCUPANCY_COLORS.VACANT,
+  [RoomOccupancy.OCCUPIED]: ROOM_OCCUPANCY_COLORS.OCCUPIED,
+  [RoomOccupancy.UNAVAILABLE]: ROOM_OCCUPANCY_COLORS.UNAVAILABLE,
   undefined: 'default',
 } as const;
 
-export function StatusBar({
-  tasks,
-  room,
-}: {
+interface StatusBarProps {
   room: RoomWithHotel;
   tasks: TAssignmentResponse[];
-}) {
+  actions?: ReactNode;
+}
+
+export function StatusBar({ tasks, room, actions }: StatusBarProps) {
   return (
     <div className="flex justify-between w-full p-2">
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         <Chip
           className="h-full cursor-default"
           color={RoomOccupancyColors[room.occupancy]}
@@ -56,7 +56,7 @@ export function StatusBar({
           </Chip>
         )}
       </div>
-      <Room.RoomUpdate isIconOnly room={room} />
+      {actions && <div className="flex gap-2">{actions}</div>}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 'use client';
-import { Room } from '@components';
+import { TaskDetails } from '@components';
 import { Avatar, AvatarGroup, Tooltip } from '@heroui/react';
 import { capitalize } from '@lib/shared';
 import { useState } from 'react';
@@ -22,7 +22,7 @@ export function TasksOverview({
           <p className="text-warning-800 font-medium">
             {capitalize(task.status, '_', 'ALL_WORDS')}
           </p>
-          <Room.TaskDetails
+          <TaskDetails
             isOpen={isOpen}
             task={task}
             onClose={() => setIsOpen(false)}

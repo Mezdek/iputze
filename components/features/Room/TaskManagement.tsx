@@ -1,5 +1,5 @@
 'use client';
-import { Room } from '@components';
+import { TasksList } from '@components';
 import {
   Button,
   Modal,
@@ -82,7 +82,7 @@ export function TaskManagement({
             </div>
           </ModalHeader>
           <ModalBody>
-            <Room.TasksList status={status} tasks={tasks} />
+            <TasksList status={status} tasks={tasks} />
           </ModalBody>
           <ModalFooter>
             <Button variant="flat" onPress={onClose}>

@@ -5,6 +5,7 @@ import {
   Button,
   DatePicker,
   Form,
+  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -12,10 +13,11 @@ import {
   ModalHeader,
   Select,
   SelectItem,
+  TimeInput,
   useDisclosure,
 } from '@heroui/react';
 import { useCreateAssignment, useErrorToast, useRoles, useRoom } from '@hooks';
-import { getLocalTimeZone, today } from '@internationalized/date';
+import { getLocalTimeZone, now, today } from '@internationalized/date';
 import { getRolesByLevel } from '@lib/server';
 import { parseFormData } from '@lib/shared';
 import { RoleLevel } from '@prisma/client';
@@ -23,6 +25,14 @@ import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
 import type { AssignmentCreationBody, TRoleWithUser } from '@/types';
+
+const PRIORITY_OPTIONS = [
+  { value: 0, label: 'Normal' },
+  { value: 1, label: 'Low Priority' },
+  { value: 2, label: 'Medium Priority' },
+  { value: 3, label: 'High Priority' },
+  { value: 4, label: 'Urgent' },
+];
 
 export function AssignmentCreation({
   roomId,
@@ -86,6 +96,8 @@ export function AssignmentCreation({
         aria-labelledby="create-assignment-title"
         isOpen={isOpen}
         placement="center"
+        scrollBehavior="inside"
+        size="2xl"
         onOpenChange={onOpenChange}
       >
         <ModalContent>
@@ -96,7 +108,12 @@ export function AssignmentCreation({
               </ModalHeader>
 
               <ModalBody>
-                <Form id={FORM} onSubmit={handleCreate}>
+                <Form
+                  className="flex flex-col gap-4"
+                  id={FORM}
+                  onSubmit={handleCreate}
+                >
+                  {/* Cleaners Selection */}
                   <Select
                     fullWidth
                     isRequired
@@ -113,15 +130,84 @@ export function AssignmentCreation({
                     ))}
                   </Select>
 
-                  <DatePicker
-                    isRequired
-                    defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
-                    description={t('inputs.dua_date.description')}
-                    errorMessage={t('inputs.dua_date.error_message')}
+                  {allCleaners.length === 0 && (
+                    <p className="text-sm text-danger">
+                      {t('no_cleaners', {
+                        default:
+                          'No cleaners available. Please add cleaners first.',
+                      })}
+                    </p>
+                  )}
+
+                  {/* Date and Time */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <DatePicker
+                      isRequired
+                      defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
+                      description={t('inputs.due_date.description')}
+                      errorMessage={t('inputs.due_date.error_message')}
+                      form={FORM}
+                      label={t('inputs.due_date.label', {
+                        default: 'Due Date',
+                      })}
+                      minValue={today(getLocalTimeZone())}
+                      name="dueAt"
+                    />
+
+                    <TimeInput
+                      defaultValue={now(getLocalTimeZone())}
+                      description={t('inputs.due_time.description', {
+                        default: 'Select time',
+                      })}
+                      form={FORM}
+                      hourCycle={24}
+                      label={t('inputs.due_time.label', {
+                        default: 'Due Time',
+                      })}
+                      name="dueTime"
+                    />
+                  </div>
+
+                  {/* Priority */}
+                  <Select
+                    defaultSelectedKeys={['0']}
+                    description={t('inputs.priority.description', {
+                      default: 'Set task priority level',
+                    })}
                     form={FORM}
-                    label={t('inputs.dua_date.label')}
-                    minValue={today(getLocalTimeZone())}
-                    name="dueAt"
+                    label={t('inputs.priority.label', { default: 'Priority' })}
+                    name="priority"
+                    placeholder={t('inputs.priority.placeholder', {
+                      default: 'Select priority',
+                    })}
+                  >
+                    {PRIORITY_OPTIONS.map(({ value, label }) => (
+                      <SelectItem key={String(value)}>
+                        {t(
+                          `inputs.priority.options.${label.toLowerCase().replace(' ', '_')}`,
+                          {
+                            default: label,
+                          }
+                        )}
+                      </SelectItem>
+                    ))}
+                  </Select>
+
+                  {/* Estimated Minutes */}
+                  <Input
+                    description={t('inputs.estimated_minutes.description', {
+                      default: 'Expected time to complete (optional)',
+                    })}
+                    form={FORM}
+                    label={t('inputs.estimated_minutes.label', {
+                      default: 'Estimated Time (minutes)',
+                    })}
+                    min="1"
+                    name="estimatedMinutes"
+                    placeholder={t('inputs.estimated_minutes.placeholder', {
+                      default: 'e.g., 30',
+                    })}
+                    type="number"
                   />
                 </Form>
               </ModalBody>
@@ -133,7 +219,7 @@ export function AssignmentCreation({
                 <Button
                   color="primary"
                   form={FORM}
-                  isDisabled={isSubmitting}
+                  isDisabled={isSubmitting || allCleaners.length === 0}
                   isLoading={isSubmitting}
                   type="submit"
                 >

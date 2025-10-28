@@ -105,10 +105,11 @@ model User {
   passwordHash String
   avatarUrl    String?
   notes        String?
+  bio          String?
+  timezone     String    @default("UTC")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
-  timezone     String    @default("UTC")
 
   roles           Role[]
   assignmentUsers AssignmentUser[]
@@ -119,8 +120,10 @@ model User {
   defaultCleaners DefaultCleaners[]
   modifiedRooms   Room[]            @relation("RoomModifier")
   AssignmentImage AssignmentImage[]
+  deletedImages   AssignmentImage[] @relation("ImageDeletor")
   UserStats       UserStats?
   Achievement     Achievement[]
+  WeeklyActivity  WeeklyActivity[]
 
   @@index([email])
   @@index([deletedAt])
@@ -228,7 +231,16 @@ model AssignmentImage {
 
   uploadedAt DateTime @default(now())
 
+  // Soft delete fields
+  deletedAt DateTime?
+  deletedBy String?
+  deletor   User?     @relation("ImageDeletor", fields: [deletedBy], references: [id])
+
+  // EXIF metadata (JSON)
+  exif Json?
+
   @@index([assignmentId])
+  @@index([deletedAt])
 }
 
 // Add to schema.prisma for the XP/Performance feature
@@ -245,6 +257,20 @@ model UserStats {
   lastUpdated DateTime @updatedAt
 
   @@index([totalXP])
+}
+
+model WeeklyActivity {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  weekStart DateTime // Start of week (Monday)
+  weekEnd   DateTime // End of week (Sunday)
+  xpEarned  Int      @default(0)
+  hotelId   String // Track which hotel they were active in
+  createdAt DateTime @default(now())
+
+  @@unique([userId, weekStart, hotelId])
+  @@index([userId, weekStart])
 }
 
 model Achievement {

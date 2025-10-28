@@ -1,29 +1,14 @@
-import { Nav } from './Nav';
-import { RoomCreation } from './RoomCreation';
-import { RoomDeletion } from './RoomDeletion';
-import { RoomDetails } from './RoomDetails';
-import { RoomInfo } from './RoomInfo';
-import { RoomsMap } from './RoomsMap';
-import { RoomUpdate } from './RoomUpdate';
-import { roomStatus, StatusBar, type TRoomStatus } from './StatusBar';
-import { TaskDetails } from './TaskDetails';
-import { TaskManagement } from './TaskManagement';
-import { TasksOverview } from './TaskOverview';
-import { TasksList } from './TasksList';
-
-const Room = {
-  RoomInfo,
-  StatusBar,
-  TaskDetails,
-  TaskManagement,
-  TasksOverview,
-  TasksList,
-  RoomsMap,
-  RoomUpdate,
-  RoomDeletion,
-  RoomCreation,
-  Nav,
-  roomStatus,
-};
-export { Room, RoomDetails };
-export type { TRoomStatus };
+export * from './Nav';
+export * from './RoomCreation';
+export * from './RoomDeletion';
+export * from './RoomDetails';
+export * from './RoomForm';
+export * from './RoomInfo';
+export * from './RoomUpdate';
+//
+export * from './RoomAssignments';
+//
+export * from './TaskDetails';
+export * from './TaskManagement';
+export * from './TaskOverview';
+export * from './TasksList';

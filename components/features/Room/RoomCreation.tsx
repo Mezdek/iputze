@@ -3,35 +3,37 @@
 import {
   addToast,
   Button,
-  Form,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Select,
-  SelectItem,
   useDisclosure,
 } from '@heroui/react';
 import { useCreateRoom, useErrorToast } from '@hooks';
 import { parseFormData } from '@lib/shared';
 import { RoomCleanliness, RoomOccupancy } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import type { FormEvent } from 'react';
+import { type FormEvent, useState } from 'react';
 
 import type { RoomCollectionParams, RoomCreationBody } from '@/types';
+
+import { RoomForm } from './RoomForm';
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { mutateAsync: createRoom } = useCreateRoom({ hotelId });
   const t = useTranslations('room');
   const { showErrorToast } = useErrorToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const FORM = 'room_creation_form';
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     const data = parseFormData<RoomCreationBody>(e.currentTarget, {
       number: '',
       cleanliness: RoomCleanliness.CLEAN,
@@ -48,6 +50,8 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
       });
     } catch (error) {
       showErrorToast(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -69,68 +73,19 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                 {t('creation_panel.header')}
               </ModalHeader>
               <ModalBody>
-                <Form
-                  className="flex flex-col gap-4"
-                  id={FORM}
-                  onSubmit={handleSubmit}
-                >
-                  <Input
-                    autoFocus //eslint-disable-line
-                    isRequired
-                    errorMessage={t(
-                      'creation_panel.inputs.room_number.error_message'
-                    )}
-                    form={FORM}
-                    label={t('creation_panel.inputs.room_number.label')}
-                    name="number"
-                    placeholder={t(
-                      'creation_panel.inputs.room_number.placeholder'
-                    )}
-                    variant="bordered"
-                  />
-
-                  <Select
-                    isRequired
-                    className="max-w-xs"
-                    defaultSelectedKeys={[RoomCleanliness.CLEAN]}
-                    form={FORM}
-                    label={t('creation_panel.inputs.cleanliness.label')}
-                    name="cleanliness"
-                    placeholder={t(
-                      'creation_panel.inputs.cleanliness.placeholder'
-                    )}
-                  >
-                    {Object.values(RoomCleanliness).map((status) => (
-                      <SelectItem key={status}>
-                        {t(`cleanliness_status.${status}`)}
-                      </SelectItem>
-                    ))}
-                  </Select>
-
-                  <Select
-                    isRequired
-                    className="max-w-xs"
-                    defaultSelectedKeys={[RoomOccupancy.VACANT]}
-                    form={FORM}
-                    label={t('creation_panel.inputs.occupancy.label')}
-                    name="occupancy"
-                    placeholder={t(
-                      'creation_panel.inputs.occupancy.placeholder'
-                    )}
-                  >
-                    {Object.values(RoomOccupancy).map((status) => (
-                      <SelectItem key={status}>
-                        {t(`occupancy_status.${status}`)}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </Form>
+                <RoomForm id={FORM} mode="create" onSubmit={handleSubmit} />
               </ModalBody>
               <ModalFooter className="gap-3">
                 <Button color="danger" variant="flat" onPress={onClose}>
                   {t('creation_panel.buttons.close')}
                 </Button>
-                <Button color="primary" form={FORM} type="submit">
+                <Button
+                  color="primary"
+                  form={FORM}
+                  isDisabled={isSubmitting}
+                  isLoading={isSubmitting}
+                  type="submit"
+                >
                   {t('creation_panel.buttons.submit')}
                 </Button>
               </ModalFooter>

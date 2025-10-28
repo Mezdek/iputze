@@ -1,6 +1,6 @@
 'use client';
 
-import { AssignmentTile, HotelBanner, ListRenderer } from '@components';
+import { AssignmentCard, HotelBanner, ListRenderer } from '@components';
 import { useAssignments } from '@hooks';
 import { useParams } from 'next/navigation';
 
@@ -18,7 +18,8 @@ export function CleanerView({ user }: InjectedAuthProps) {
       <HotelBanner hotelName={role.hotel.name} />
       <ListRenderer data={assignments} isLoading={isLoading}>
         {(assignment) => (
-          <AssignmentTile
+          <AssignmentCard
+            showImages
             assignment={assignment}
             key={assignment.id}
             user={user}

@@ -102,7 +102,7 @@ export function NotesSection({
                 color="primary"
                 size="sm"
                 variant="flat"
-                onClick={() => setIsAddingNote(true)}
+                onPress={() => setIsAddingNote(true)}
               >
                 + Add Note
               </Button>
@@ -199,7 +199,8 @@ function NoteCard({
   note: AssignmentNoteWithAuthor;
   onDelete?: (note: AssignmentNoteWithAuthor) => void;
 }) {
-  const isEdited = note.updatedAt.getTime() !== note.createdAt.getTime();
+  const isEdited =
+    new Date(note.updatedAt).getTime() !== new Date(note.createdAt).getTime();
 
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">

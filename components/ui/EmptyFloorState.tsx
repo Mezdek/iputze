@@ -1,6 +1,6 @@
 'use client';
 
-import { Room } from '@components';
+import { RoomCreation } from '@components';
 import { Card } from '@heroui/react';
 import { memo } from 'react';
 
@@ -22,7 +22,7 @@ export const EmptyFloorState = memo(function EmptyFloorState({
               Start by creating your first room to see the floor map
             </p>
           </div>
-          <Room.RoomCreation hotelId={hotelId} />
+          <RoomCreation hotelId={hotelId} />
         </div>
       </Card>
     </div>
