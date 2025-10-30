@@ -39,6 +39,12 @@ enum TaskStatus {
   CANCELLED
 }
 
+enum TaskPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
 enum AuditAction {
   CREATE
   UPDATE
@@ -146,10 +152,10 @@ model Role {
 }
 
 model Task {
-  id       String     @id @default(uuid())
+  id       String       @id @default(uuid())
   roomId   String
-  status   TaskStatus @default(PENDING)
-  priority Int        @default(0)
+  status   TaskStatus   @default(PENDING)
+  priority TaskPriority @default(LOW)
 
   // Timestamps
   createdAt        DateTime  @default(now())

@@ -22,11 +22,11 @@ type TSubmitButtonProps = {
 } & ButtonProps;
 
 export type ApprovalRequestProps = {
-  header: string;
-  question: string;
-  cancelButtonProps: TCancelButtonProps;
-  modalButtonProps: TModalButtonProps;
-  submitButtonProps: TSubmitButtonProps;
+  header?: string;
+  question?: string;
+  cancelButtonProps?: TCancelButtonProps;
+  modalButtonProps?: TModalButtonProps;
+  submitButtonProps?: TSubmitButtonProps;
 };
 
 export function ApprovalRequest({
@@ -35,7 +35,7 @@ export function ApprovalRequest({
   header,
   question,
   modalButtonProps,
-}: Partial<ApprovalRequestProps>) {
+}: ApprovalRequestProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const t = useTranslations('ApprovalRequest');
   const { showErrorToast } = useErrorToast();

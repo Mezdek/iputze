@@ -34,7 +34,7 @@ export function TaskHeader({
           <div className="flex gap-2 flex-wrap items-center">
             <TaskStatus status={status} />
 
-            {priority > 0 && (
+            {priority !== 'LOW' && (
               <Chip color="warning" size="sm" variant="flat">
                 {t('priority')}: {priority}
               </Chip>

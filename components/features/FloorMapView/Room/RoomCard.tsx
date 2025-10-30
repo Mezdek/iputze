@@ -4,13 +4,7 @@ import { Card, CardBody, Chip, cn } from '@heroui/react';
 import { getStatusColorClass } from '@lib/client';
 import { memo } from 'react';
 
-import type { RoomWithStatus } from '@/types';
-
-interface RoomCardProps {
-  room: RoomWithStatus;
-  isSelected: boolean;
-  onClick: () => void;
-}
+import type { RoomCardProps } from './types';
 
 export const RoomCard = memo(function RoomCard({
   room,
@@ -20,7 +14,7 @@ export const RoomCard = memo(function RoomCard({
   const statusColorClass = getStatusColorClass(room.status.status);
 
   // Check if room has high-priority tasks
-  const hasHighPriority = room.tasks?.some((task) => task.priority >= 1);
+  const hasHighPriority = room.tasks?.some((task) => task.priority === 'HIGH');
 
   return (
     <Card

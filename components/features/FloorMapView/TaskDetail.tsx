@@ -87,7 +87,7 @@ export function TaskDetail({
             <Chip color={TASK_STATUS_COLORS[status]} size="sm" variant="flat">
               {capitalize(status, '_', 'ALL_WORDS')}
             </Chip>
-            {priority > 0 && (
+            {priority !== 'LOW' && (
               <Chip color="warning" size="sm" variant="flat">
                 Priority: {priority}
               </Chip>

@@ -3,6 +3,7 @@ import type {
   Role,
   Room,
   Task,
+  TaskPriority,
   TaskStatus,
   TaskUser,
 } from '@prisma/client';
@@ -42,7 +43,7 @@ export interface TaskCreationBody {
 
 export interface TaskUpdateBody {
   status?: TaskStatus;
-  priority?: number;
+  priority?: TaskPriority;
   estimatedMinutes?: number;
   actualMinutes?: number;
   completedAt?: Date;

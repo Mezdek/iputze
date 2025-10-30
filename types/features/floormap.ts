@@ -1,3 +1,5 @@
+import type { TaskPriority } from '@prisma/client';
+
 import type { RoomWithHotel, TaskResponse } from '@/types';
 
 // Actual room statuses matching existing StatusBar logic
@@ -14,7 +16,7 @@ export interface RoomStatusInfo {
   status: RoomStatus;
   color: 'success' | 'warning' | 'danger' | 'default';
   label: string;
-  priority: number;
+  priority: TaskPriority;
   description?: string;
 }
 

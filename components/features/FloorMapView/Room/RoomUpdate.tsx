@@ -1,6 +1,6 @@
 'use client';
 
-import { Icons } from '@components';
+import { Icons, RoomForm } from '@components';
 import {
   addToast,
   Button,
@@ -19,8 +19,6 @@ import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
 import type { RoomUpdateBody } from '@/types';
-
-import { RoomForm } from './RoomForm';
 
 export function RoomUpdate({
   room,

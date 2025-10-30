@@ -1,5 +1,10 @@
 import { APP_ERRORS, AuthErrors } from '@lib/shared';
-import { RoomCleanliness, RoomOccupancy, TaskStatus } from '@prisma/client';
+import {
+  RoomCleanliness,
+  RoomOccupancy,
+  TaskPriority,
+  TaskStatus,
+} from '@prisma/client';
 import { z } from 'zod';
 
 export const roomCreationSchema = z.object({
@@ -21,7 +26,7 @@ export const taskCreationSchema = z.object({
   dueAt: z.string().datetime().or(z.date()),
   cleaners: z.array(z.string().uuid()).min(1, 'At least one cleaner required'),
   estimatedMinutes: z.number().int().positive().optional(),
-  priority: z.number().int().min(0).max(2).default(0),
+  priority: z.nativeEnum(TaskPriority).optional(),
 });
 
 export const noteSchema = z.object({
@@ -49,7 +54,7 @@ export const roomUpdateSchema = z.object({
 
 export const taskUpdateSchema = z.object({
   status: z.nativeEnum(TaskStatus).optional(),
-  priority: z.number().int().min(0).max(2).optional(),
+  priority: z.nativeEnum(TaskPriority).optional(),
   estimatedMinutes: z.number().int().positive().optional(),
   actualMinutes: z.number().int().positive().optional(),
   completedAt: z.date().optional(),

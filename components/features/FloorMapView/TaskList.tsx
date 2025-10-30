@@ -2,6 +2,7 @@
 
 import { TaskItem } from '@components';
 import { Card, CardBody } from '@heroui/react';
+import { sortByPriority } from '@lib/shared/';
 import type { TaskStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
@@ -31,7 +32,7 @@ export function TaskList({
   const sortedTasks = [...filteredTasks].sort((a, b) => {
     // First sort by priority
     if (a.priority !== b.priority) {
-      return b.priority - a.priority;
+      return sortByPriority(a, b);
     }
     // Then by due date
     return new Date(a.dueAt).getTime() - new Date(b.dueAt).getTime();

@@ -31,7 +31,7 @@ export function calculateRoomStatus(
     status: 'occupied' as RoomStatus,
     color: 'danger',
     label: 'Needs cleaning',
-    priority: 1,
+    priority: 'MEDIUM',
   };
 
   // Room is clean
@@ -40,7 +40,7 @@ export function calculateRoomStatus(
       status: 'available' as RoomStatus,
       color: 'success',
       label: 'Clean',
-      priority: 0,
+      priority: 'LOW',
     };
   }
 
@@ -50,7 +50,7 @@ export function calculateRoomStatus(
       status: 'cleaning' as RoomStatus,
       color: 'warning',
       label: 'Being cleaned',
-      priority: 2,
+      priority: 'HIGH',
     };
   }
 
@@ -60,7 +60,7 @@ export function calculateRoomStatus(
       status: 'occupied' as RoomStatus,
       color: 'warning',
       label: 'Has been assigned',
-      priority: 1,
+      priority: 'MEDIUM',
     };
   }
 
@@ -88,31 +88,4 @@ export function getStatusColorClass(status: RoomStatus): string {
   };
 
   return colorMap[status] || 'bg-default-50 border-default-200';
-}
-
-/**
- * Sort rooms by status priority (highest first) then by room number
- */
-export function sortRoomsByStatus(
-  rooms: Array<{ status: RoomStatusInfo; number: string }>
-): typeof rooms {
-  return [...rooms].sort((a, b) => {
-    // Sort by priority descending
-    if (a.status.priority !== b.status.priority) {
-      return b.status.priority - a.status.priority;
-    }
-    // Then by room number ascending
-    return a.number.localeCompare(b.number, undefined, { numeric: true });
-  });
-}
-
-/**
- * Filter rooms by status
- */
-export function filterRoomsByStatus(
-  rooms: Array<{ status: RoomStatusInfo }>,
-  statusFilter: RoomStatus | 'all'
-): typeof rooms {
-  if (statusFilter === 'all') return rooms;
-  return rooms.filter((room) => room.status.status === statusFilter);
 }

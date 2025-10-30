@@ -52,7 +52,7 @@ export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
             <h3 className="text-base font-semibold">
               {t('header', { number: task.room.number })}
             </h3>
-            {priority > 0 && (
+            {priority !== 'LOW' && (
               <Chip color="warning" size="sm" variant="flat">
                 Priority: {priority}
               </Chip>

@@ -3,14 +3,20 @@
 import { ApprovalRequest, type ApprovalRequestProps } from '@components';
 import { addToast } from '@heroui/react';
 import { useDeleteRoom, useErrorToast } from '@hooks';
-import type { Room } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
+import { filterDefinedProps } from '@/lib/shared';
+import type { RoomParams } from '@/types';
+
+interface RoomDeletionProps extends ApprovalRequestProps, RoomParams {
+  roomNumber: string;
+}
 export function RoomDeletion({
-  room,
+  hotelId,
+  roomId,
+  roomNumber,
   ...props
-}: { room: Room } & Partial<ApprovalRequestProps>) {
-  const { hotelId, id: roomId, number: roomNumber } = room;
+}: RoomDeletionProps) {
   const { mutateAsync: deleteRoom } = useDeleteRoom({ hotelId, roomId });
   const t = useTranslations('room.deletion_panel');
   const { showErrorToast } = useErrorToast();
@@ -28,16 +34,7 @@ export function RoomDeletion({
     }
   };
 
-  const validateProps = <T extends Record<string, unknown>>(
-    props: T
-  ): Partial<T> => {
-    const entries = Object.entries(props);
-    const validatedEntries = entries.filter((entry) => entry[1] !== undefined);
-    const valid = Object.fromEntries(validatedEntries);
-    return valid as Partial<T>;
-  };
-
-  const validProps = validateProps(props);
+  const validProps = filterDefinedProps(props);
 
   return (
     <ApprovalRequest
@@ -45,14 +42,14 @@ export function RoomDeletion({
       modalButtonProps={{
         text: t('buttons.open'),
         color: 'warning',
-        title: 'Hello',
+        title: 'Delete',
       }}
-      question={t('approval_question', { number: room.number })}
+      question={t('approval_question', { number: roomNumber })}
       submitButtonProps={{
         text: t('buttons.submit'),
         color: 'warning',
         submitHandler: handleDelete,
-        title: 'Hi',
+        title: 'Delete',
       }}
       {...validProps}
     />

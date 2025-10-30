@@ -1,4 +1,9 @@
-import type { RoleLevel, RoomCleanliness, RoomOccupancy } from '@prisma/client';
+import type {
+  RoleLevel,
+  RoomCleanliness,
+  RoomOccupancy,
+  TaskPriority,
+} from '@prisma/client';
 
 // Hotels
 export type THotel = {
@@ -507,7 +512,7 @@ export const roomsKhanAlHarir: TRoom[] = [
 export type TTaskTemplate = {
   roomNumber: string;
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
-  priority: number;
+  priority: TaskPriority;
   dueHoursFromNow: number; // Hours from now
   assignedCleanerEmails: string[];
   notes?: string | undefined;
@@ -517,7 +522,7 @@ export const tasksLaLuna: TTaskTemplate[] = [
   {
     roomNumber: '101',
     status: 'PENDING',
-    priority: 1,
+    priority: 'MEDIUM',
     dueHoursFromNow: 2,
     assignedCleanerEmails: ['charles@cleaners.com'],
     notes: 'Gast checkt bald aus',
@@ -525,14 +530,14 @@ export const tasksLaLuna: TTaskTemplate[] = [
   {
     roomNumber: '104',
     status: 'IN_PROGRESS',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 3,
     assignedCleanerEmails: ['charles@cleaners.com'],
   },
   {
     roomNumber: '201',
     status: 'PENDING',
-    priority: 2,
+    priority: 'HIGH',
     dueHoursFromNow: 1,
     assignedCleanerEmails: ['sofia@cleaners.com', 'charles@cleaners.com'],
     notes: 'Urgent - VIP Gast kommt',
@@ -540,14 +545,14 @@ export const tasksLaLuna: TTaskTemplate[] = [
   {
     roomNumber: '301',
     status: 'PENDING',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 4,
     assignedCleanerEmails: ['charles@cleaners.com'],
   },
   {
     roomNumber: '303',
     status: 'IN_PROGRESS',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 2,
     assignedCleanerEmails: ['sofia@cleaners.com'],
   },
@@ -557,35 +562,35 @@ export const tasksKhanAlHarir: TTaskTemplate[] = [
   {
     roomNumber: '101',
     status: 'PENDING',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 2,
     assignedCleanerEmails: ['bertha@cleaners.com'],
   },
   {
     roomNumber: '104',
     status: 'IN_PROGRESS',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 3,
     assignedCleanerEmails: ['bertha@cleaners.com'],
   },
   {
     roomNumber: '201',
     status: 'PENDING',
-    priority: 1,
+    priority: 'MEDIUM',
     dueHoursFromNow: 2,
     assignedCleanerEmails: ['bertha@cleaners.com'],
   },
   {
     roomNumber: '202',
     status: 'IN_PROGRESS',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 4,
     assignedCleanerEmails: ['dora@cleaners.com'],
   },
   {
     roomNumber: '205',
     status: 'PENDING',
-    priority: 2,
+    priority: 'HIGH',
     dueHoursFromNow: 1,
     assignedCleanerEmails: ['bertha@cleaners.com', 'fatima@cleaners.com'],
     notes: 'VIP Suite - Extra sorgfältig',
@@ -593,21 +598,21 @@ export const tasksKhanAlHarir: TTaskTemplate[] = [
   {
     roomNumber: '301',
     status: 'PENDING',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 5,
     assignedCleanerEmails: ['fatima@cleaners.com'],
   },
   {
     roomNumber: '304',
     status: 'IN_PROGRESS',
-    priority: 0,
+    priority: 'LOW',
     dueHoursFromNow: 3,
     assignedCleanerEmails: ['fatima@cleaners.com'],
   },
   {
     roomNumber: '401',
     status: 'PENDING',
-    priority: 2,
+    priority: 'HIGH',
     dueHoursFromNow: 2,
     assignedCleanerEmails: [
       'bertha@cleaners.com',
