@@ -1,4 +1,4 @@
-import type { RoomWithHotel, TAssignmentResponse } from '@/types';
+import type { RoomWithHotel, TaskResponse } from '@/types';
 
 // Actual room statuses matching existing StatusBar logic
 export enum RoomStatus {
@@ -21,14 +21,14 @@ export interface RoomStatusInfo {
 export interface RoomWithStatus extends RoomWithHotel {
   status: RoomStatusInfo;
   taskCount: number;
-  tasks?: TAssignmentResponse[];
+  tasks?: TaskResponse[];
 }
 
 export type FloorGroup = RoomWithStatus[];
 
 export interface FloorMapData {
   floors: FloorGroup[] | undefined;
-  selectedRoomTasks: TAssignmentResponse[];
+  selectedRoomTasks: TaskResponse[];
   isLoading: boolean;
   error: Error | null;
   hasRooms: boolean;

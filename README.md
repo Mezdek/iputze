@@ -6,7 +6,7 @@ Modern hotel cleaning coordination platform connecting managers and cleaning sta
 
 - **Multi-hotel management** - Single platform for multiple properties
 - **Role-based access** - Admin, Manager, Cleaner, Pending
-- **Real-time assignments** - Task creation, tracking, and completion
+- **Real-time tasks** - Task creation, tracking, and completion
 - **Timeline view** - Weekly scheduling and workload visualization
 - **Task documentation** - Notes and image uploads for quality assurance
 - **Performance tracking** - XP system and achievement badges
@@ -77,8 +77,8 @@ API follows RESTful conventions:
 
 - `GET /api/hotels` - List hotels
 - `POST /api/hotels/:id/rooms` - Create room
-- `GET /api/hotels/:id/assignments` - List assignments
-- `PATCH /api/hotels/:id/assignments/:id` - Update assignment
+- `GET /api/hotels/:id/tasks` - List tasks
+- `PATCH /api/hotels/:id/tasks/:id` - Update task
 
 ## 🧪 Testing
 

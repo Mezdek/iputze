@@ -6,6 +6,6 @@
   "ManagerView": {
     "no_rooms_message": "No rooms have been created yet.",
     "no_workers_message": "No workers are assigned to this hotel yet.",
-    "mo_assignments_message": "No assignments have been created yet."
+    "mo_tasks_message": "No tasks have been created yet."
   }
 }

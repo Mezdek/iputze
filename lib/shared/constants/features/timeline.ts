@@ -1,22 +1,22 @@
-import { AssignmentStatus } from '@prisma/client';
+import { TaskStatus } from '@prisma/client';
 
 import type { StatusStyle } from '@/types';
 
-// Using HeroUI semantic colors for assignment statuses
-export const STATUS_STYLES: Record<AssignmentStatus, StatusStyle> = {
-  [AssignmentStatus.PENDING]: {
+// Using HeroUI semantic colors for task statuses
+export const STATUS_STYLES: Record<TaskStatus, StatusStyle> = {
+  [TaskStatus.PENDING]: {
     color: 'default',
     variant: 'flat',
   },
-  [AssignmentStatus.IN_PROGRESS]: {
+  [TaskStatus.IN_PROGRESS]: {
     color: 'warning',
     variant: 'flat',
   },
-  [AssignmentStatus.COMPLETED]: {
+  [TaskStatus.COMPLETED]: {
     color: 'success',
     variant: 'flat',
   },
-  [AssignmentStatus.CANCELLED]: {
+  [TaskStatus.CANCELLED]: {
     color: 'danger',
     variant: 'flat',
   },
@@ -51,11 +51,11 @@ export const DAY_NAMES = [
   'Sun',
 ] as const;
 
-export const STATUS_LABELS: Record<AssignmentStatus, string> = {
-  [AssignmentStatus.PENDING]: 'Pending',
-  [AssignmentStatus.IN_PROGRESS]: 'In Progress',
-  [AssignmentStatus.COMPLETED]: 'Completed',
-  [AssignmentStatus.CANCELLED]: 'Cancelled',
+export const STATUS_LABELS: Record<TaskStatus, string> = {
+  [TaskStatus.PENDING]: 'Pending',
+  [TaskStatus.IN_PROGRESS]: 'In Progress',
+  [TaskStatus.COMPLETED]: 'Completed',
+  [TaskStatus.CANCELLED]: 'Cancelled',
 } as const;
 
 export const PRIORITY_LABELS = {

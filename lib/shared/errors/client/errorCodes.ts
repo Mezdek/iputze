@@ -5,13 +5,13 @@ export const ErrorCodes = {
       DUPLICATE: 'duplicate_room_number_creation',
     },
     DELETION: {
-      HAS_ASSIGNMENTS: 'room_has_assignments',
+      HAS_TASKS: 'room_has_tasks',
     },
     UPDATE: {
       DUPLICATE: 'duplicate_room_number_update',
     },
   },
-  assignment: {
+  task: {
     UNKNOWN: 'unknown',
   },
 } as const;

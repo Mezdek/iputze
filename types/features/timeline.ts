@@ -1,6 +1,6 @@
-import type { AssignmentStatus } from '@prisma/client';
+import type { TaskStatus } from '@prisma/client';
 
-import type { TAssignmentResponse } from '@/types';
+import type { TaskResponse } from '@/types';
 
 export interface CleanerWithTasks {
   id: string;
@@ -8,7 +8,7 @@ export interface CleanerWithTasks {
   email: string;
   avatarUrl: string | null;
   color?: string;
-  tasksThisWeek: TAssignmentResponse[];
+  tasksThisWeek: TaskResponse[];
 }
 
 export interface DayData {
@@ -18,11 +18,16 @@ export interface DayData {
   isToday: boolean;
   isWeekend: boolean;
   cleaners: CleanerWithTasks[];
-  tasks: TAssignmentResponse[];
+  tasks: TaskResponse[];
 }
 
 export type TimeLineViewMode = 'overview' | 'selected';
-export type StatusFilterType = 'all' | AssignmentStatus;
+export type StatusFilterType =
+  | 'all'
+  | TaskStatus
+  | 'has-notes'
+  | 'has-images'
+  | 'has-media';
 
 export interface WeekBoundaries {
   start: Date;

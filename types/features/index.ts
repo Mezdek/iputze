@@ -1,3 +1,3 @@
-export * from './assignments';
 export * from './floormap';
+export * from './tasks';
 export * from './timeline';

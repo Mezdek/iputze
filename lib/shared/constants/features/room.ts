@@ -34,9 +34,9 @@ export const ROOM_CLEANLINESS_COLORS = {
 } as const;
 
 /**
- * Assignment status colors
+ * Task status colors
  */
-export const ASSIGNMENT_STATUS_COLORS = {
+export const TASK_STATUS_COLORS = {
   PENDING: 'warning',
   IN_PROGRESS: 'primary',
   COMPLETED: 'success',

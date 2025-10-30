@@ -1,28 +1,25 @@
 import { getHotelOrThrow, getUserOrThrow, prisma } from '@lib/db';
 import {
-  canCreateAssignment,
+  canCreateTask,
   hasManagerPermission,
   isHotelCleaner,
-  transformAssignment,
+  transformTask,
 } from '@lib/server';
 import {
   APP_ERRORS,
-  assignmentCreationSchema,
   GeneralErrors,
   HttpStatus,
+  taskCreationSchema,
   withErrorHandling,
 } from '@lib/shared';
-import type { Assignment } from '@prisma/client';
+import type { Task } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import type { AssignmentCollectionParams, TAssignmentResponse } from '@/types';
+import type { TaskCollectionParams, TaskResponse } from '@/types';
 
 export const GET = withErrorHandling(
-  async (
-    req: NextRequest,
-    { params }: { params: AssignmentCollectionParams }
-  ) => {
+  async (req: NextRequest, { params }: { params: TaskCollectionParams }) => {
     const { hotelId: hotelIdParam } = await params;
 
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
@@ -53,7 +50,7 @@ export const GET = withErrorHandling(
         }
       : baseWhere;
 
-    const assignments = await prisma.assignment.findMany({
+    const tasks = await prisma.task.findMany({
       where,
       orderBy: { dueAt: 'asc' },
       select: {
@@ -72,47 +69,27 @@ export const GET = withErrorHandling(
         room: true,
 
         notes: {
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-            authorId: true,
-            deletedAt: true,
+          include: {
             author: {
               select: {
+                avatarUrl: true,
+                email: true,
                 id: true,
                 name: true,
-                email: true,
-                avatarUrl: true,
-                createdAt: true,
-                notes: true,
-                updatedAt: true,
-                deletedAt: true,
-                timezone: true,
-                bio: true,
               },
             },
           },
+          orderBy: { createdAt: 'desc' },
         },
 
-        AssignmentImage: {
-          select: {
-            uploadedAt: true,
-            id: true,
-            url: true,
+        images: {
+          include: {
             uploader: {
               select: {
+                avatarUrl: true,
+                email: true,
                 id: true,
                 name: true,
-                email: true,
-                avatarUrl: true,
-                createdAt: true,
-                notes: true,
-                updatedAt: true,
-                deletedAt: true,
-                timezone: true,
-                bio: true,
               },
             },
           },
@@ -125,16 +102,10 @@ export const GET = withErrorHandling(
             name: true,
             email: true,
             avatarUrl: true,
-            createdAt: true,
-            notes: true,
-            updatedAt: true,
-            deletedAt: true,
-            timezone: true,
-            bio: true,
           },
         },
 
-        assignedUsers: {
+        cleaners: {
           select: {
             assignedAt: true,
             user: {
@@ -143,12 +114,6 @@ export const GET = withErrorHandling(
                 name: true,
                 email: true,
                 avatarUrl: true,
-                createdAt: true,
-                notes: true,
-                updatedAt: true,
-                deletedAt: true,
-                timezone: true,
-                bio: true,
               },
             },
           },
@@ -156,32 +121,29 @@ export const GET = withErrorHandling(
       },
     });
 
-    const transformedAssignments = assignments.map(transformAssignment);
+    const transformedTask = tasks.map(transformTask);
 
-    return NextResponse.json<TAssignmentResponse[]>(transformedAssignments);
+    return NextResponse.json<TaskResponse[]>(transformedTask);
   }
 );
 
 export const POST = withErrorHandling(
-  async (
-    req: NextRequest,
-    { params }: { params: AssignmentCollectionParams }
-  ) => {
+  async (req: NextRequest, { params }: { params: TaskCollectionParams }) => {
     const { hotelId: paramsHotelId } = await params;
     const { id: hotelId } = await getHotelOrThrow(paramsHotelId);
 
     const { roles, id: userId } = await getUserOrThrow(req);
 
-    if (!canCreateAssignment({ roles, hotelId }))
+    if (!canCreateTask({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
-    const validated = assignmentCreationSchema.parse(await req.json());
+    const validated = taskCreationSchema.parse(await req.json());
     const { roomId, dueAt, cleaners, estimatedMinutes, priority } = validated;
-    const newAssignment = await prisma.assignment.create({
+    const newTask = await prisma.task.create({
       data: {
         roomId,
         dueAt,
         assignedById: userId,
-        assignedUsers: {
+        cleaners: {
           create: cleaners.map((cleanerId: string) => ({ userId: cleanerId })),
         },
         estimatedMinutes,
@@ -189,7 +151,7 @@ export const POST = withErrorHandling(
       },
     });
 
-    return NextResponse.json<Assignment>(newAssignment, {
+    return NextResponse.json<Task>(newTask, {
       status: HttpStatus.CREATED,
     });
   }

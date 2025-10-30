@@ -7,16 +7,16 @@ import {
   StatusFilter,
 } from '@components';
 import { Button, Card } from '@heroui/react';
-import { useAssignments, useTimelineData } from '@hooks';
+import { useTasks, useTimelineData } from '@hooks';
 import { addWeeks, formatDateRange, getWeekStart } from '@lib/shared';
 import { useParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 
-import type { StatusFilterType } from '@/types';
+import type { InjectedAuthProps, StatusFilterType } from '@/types';
 
-export function WeeklyTimelineView() {
+export function WeeklyTimelineView(props: InjectedAuthProps) {
   const { hotelId } = useParams<{ hotelId: string }>();
-  const { data: assignments, isLoading, error } = useAssignments({ hotelId });
+  const { data: tasks, isLoading, error } = useTasks({ hotelId });
 
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
     getWeekStart(new Date())
@@ -26,10 +26,10 @@ export function WeeklyTimelineView() {
   );
   const [statusFilter, setStatusFilter] = useState<StatusFilterType>('all');
 
-  const { weekBoundaries, cleanersList, weekData, viewMode, totalAssignments } =
+  const { weekBoundaries, cleanersList, weekData, viewMode, totalTasks } =
     useTimelineData({
       currentWeekStart,
-      assignments,
+      tasks,
       statusFilter,
       selectedCleanerId,
     });
@@ -82,7 +82,7 @@ export function WeeklyTimelineView() {
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
             <p className="text-danger text-lg font-semibold mb-2">
-              Error loading assignments
+              Error loading tasks
             </p>
             <p className="text-default-500 text-sm">
               {error instanceof Error
@@ -161,8 +161,8 @@ export function WeeklyTimelineView() {
       {/* Stats Summary */}
       <div className="flex items-center gap-4 text-sm text-default-600">
         <span>
-          <strong className="text-foreground">{totalAssignments}</strong>{' '}
-          {totalAssignments === 1 ? 'assignment' : 'assignments'} this week
+          <strong className="text-foreground">{totalTasks}</strong>{' '}
+          {totalTasks === 1 ? 'task' : 'tasks'} this week
         </span>
         {viewMode === 'overview' && (
           <span>
@@ -179,6 +179,7 @@ export function WeeklyTimelineView() {
             <DayColumn
               day={day}
               key={day.date.toISOString()}
+              user={props.user}
               viewMode={viewMode}
               onChipClick={handleChipClick}
             />

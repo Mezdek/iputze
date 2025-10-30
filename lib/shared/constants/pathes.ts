@@ -2,8 +2,9 @@ type getPathProps = {
   hotelId?: number | string | undefined;
   roomId?: number | string | undefined;
   roleId?: number | string | undefined;
-  assignmentId?: number | string | undefined;
-  assignmentNoteId?: number | string | undefined;
+  taskId?: number | string | undefined;
+  noteId?: number | string | undefined;
+  imageId?: number | string | undefined;
 };
 
 export const getPath = (props?: getPathProps) => {
@@ -19,10 +20,12 @@ export const getPath = (props?: getPathProps) => {
       ROOM: `/hotels/${props?.hotelId}/rooms/${props?.roomId}`,
       ROLES: `/hotels/${props?.hotelId}/roles`,
       ROLE: `/hotels/${props?.hotelId}/roles/${props?.roleId}`,
-      ASSIGNMENTS: `/hotels/${props?.hotelId}/assignments`,
-      ASSIGNMENT: `/hotels/${props?.hotelId}/assignments/${props?.assignmentId}`,
-      ASSIGNMENTNOTES: `/hotels/${props?.hotelId}/assignments/${props?.assignmentId}/assignmentNotes`,
-      ASSIGNMENTNOTE: `/hotels/${props?.hotelId}/assignments/${props?.assignmentId}/assignmentNotes/${props?.assignmentNoteId}`,
+      TASKS: `/hotels/${props?.hotelId}/tasks`,
+      TASK: `/hotels/${props?.hotelId}/tasks/${props?.taskId}`,
+      NOTES: `/hotels/${props?.hotelId}/tasks/${props?.taskId}/notes`,
+      NOTE: `/hotels/${props?.hotelId}/tasks/${props?.taskId}/notes/${props?.noteId}`,
+      IMAGES: `/hotels/${props?.hotelId}/tasks/${props?.taskId}/notes`,
+      IMAGE: `/hotels/${props?.hotelId}/tasks/${props?.taskId}/notes/${props?.imageId}`,
       LOCALE: '/set-locale',
     },
     DASHBOARD: '/dashboard',

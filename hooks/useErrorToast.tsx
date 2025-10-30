@@ -8,9 +8,9 @@ export function useErrorToast() {
   const showErrorToast = (err: unknown) => {
     if (err instanceof ClientError) {
       const msg = ErrorCodes[err.context];
-      //@ts-expect-error
+      //@ts-expect-error i18n errors
       const title = t(`${err.context}.errors.${err.code}.title`);
-      //@ts-expect-error
+      //@ts-expect-error i18n errors
       const description = t(`${err.context}.errors.${err.code}.description`);
       if (msg) {
         addToast({ title, description, color: 'danger' });

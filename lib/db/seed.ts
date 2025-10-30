@@ -2,14 +2,14 @@ import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
 
 import {
-  assignmentsKhanAlHarir,
-  assignmentsLaLuna,
   hotels,
   roomsKhanAlHarir,
   roomsLaLuna,
-  type TAssignmentTemplate,
+  tasksKhanAlHarir,
+  tasksLaLuna,
   type THotel,
   type TRoom,
+  type TTaskTemplate,
   type TUser,
   users,
 } from './seeding/data';
@@ -59,7 +59,7 @@ const createHotel = async ({
 
 // Create or get user with role
 const createUser = async (userData: TUser, hotelId: string) => {
-  const { email, level, name, password, avatarUrl, notes } = userData;
+  const { email, level, name, password, avatarUrl } = userData;
 
   let user = await prisma.user.findUnique({ where: { email } });
 
@@ -72,7 +72,6 @@ const createUser = async (userData: TUser, hotelId: string) => {
         email,
         passwordHash,
         avatarUrl: avatarUrl ?? null,
-        notes: notes ?? null,
       },
     });
     log(`  ✓ Created user: ${name} (${email})`, colors.green);
@@ -169,9 +168,9 @@ const createRoom = async (
   return room;
 };
 
-// Create assignment
-const createAssignment = async (
-  assignmentData: TAssignmentTemplate,
+// Create task
+const createTask = async (
+  taskData: TTaskTemplate,
   hotelId: string,
   userEmailMap: Map<string, string>,
   managerUserId: string
@@ -183,7 +182,7 @@ const createAssignment = async (
     dueHoursFromNow,
     assignedCleanerEmails,
     notes,
-  } = assignmentData;
+  } = taskData;
 
   // Find room
   const room = await prisma.room.findUnique({
@@ -200,17 +199,17 @@ const createAssignment = async (
     return;
   }
 
-  // Check if assignment already exists
-  const existingAssignment = await prisma.assignment.findFirst({
+  // Check if task already exists
+  const existingTask = await prisma.task.findFirst({
     where: {
       roomId: room.id,
       status: { in: ['PENDING', 'IN_PROGRESS'] },
     },
   });
 
-  if (existingAssignment) {
-    log(`  ↺ Active assignment exists for room: ${roomNumber}`, colors.yellow);
-    return existingAssignment;
+  if (existingTask) {
+    log(`  ↺ Active task exists for room: ${roomNumber}`, colors.yellow);
+    return existingTask;
   }
 
   const dueAt = new Date();
@@ -218,7 +217,7 @@ const createAssignment = async (
 
   const startedAt = status === 'IN_PROGRESS' ? new Date() : null;
 
-  const assignment = await prisma.assignment.create({
+  const task = await prisma.task.create({
     data: {
       roomId: room.id,
       status,
@@ -233,9 +232,9 @@ const createAssignment = async (
   for (const email of assignedCleanerEmails) {
     const userId = userEmailMap.get(email);
     if (userId) {
-      await prisma.assignmentUser.create({
+      await prisma.taskUser.create({
         data: {
-          assignmentId: assignment.id,
+          taskId: task.id,
           userId,
         },
       });
@@ -244,17 +243,17 @@ const createAssignment = async (
 
   // Add note if provided
   if (notes) {
-    await prisma.assignmentNote.create({
+    await prisma.note.create({
       data: {
-        assignmentId: assignment.id,
+        taskId: task.id,
         authorId: managerUserId,
         content: notes,
       },
     });
   }
 
-  log(`  ✓ Created assignment: Room ${roomNumber} (${status})`, colors.green);
-  return assignment;
+  log(`  ✓ Created task: Room ${roomNumber} (${status})`, colors.green);
+  return task;
 };
 
 async function main() {
@@ -263,9 +262,9 @@ async function main() {
 
   // Clear existing data (optional - uncomment if you want to start fresh)
   log('🗑️  Clearing existing data...', colors.yellow);
-  await prisma.assignmentNote.deleteMany();
-  await prisma.assignmentUser.deleteMany();
-  await prisma.assignment.deleteMany();
+  await prisma.note.deleteMany();
+  await prisma.taskUser.deleteMany();
+  await prisma.task.deleteMany();
   await prisma.defaultCleaners.deleteMany();
   await prisma.room.deleteMany();
   await prisma.role.deleteMany();
@@ -331,23 +330,18 @@ async function main() {
   }
   log('');
 
-  // 5. Create Assignments for La Luna
-  log('📋 Creating assignments for La Luna...', colors.blue);
-  for (const assignmentData of assignmentsLaLuna) {
-    await createAssignment(
-      assignmentData,
-      laLunaH.id,
-      userEmailMap,
-      managerLaLuna.id
-    );
+  // 5. Create Tasks for La Luna
+  log('📋 Creating tasks for La Luna...', colors.blue);
+  for (const taskData of tasksLaLuna) {
+    await createTask(taskData, laLunaH.id, userEmailMap, managerLaLuna.id);
   }
   log('');
 
-  // 6. Create Assignments for Khan Al Harir
-  log('📋 Creating assignments for Khan Al Harir...', colors.blue);
-  for (const assignmentData of assignmentsKhanAlHarir) {
-    await createAssignment(
-      assignmentData,
+  // 6. Create Tasks for Khan Al Harir
+  log('📋 Creating tasks for Khan Al Harir...', colors.blue);
+  for (const taskData of tasksKhanAlHarir) {
+    await createTask(
+      taskData,
       khanAlHarirH.id,
       userEmailMap,
       managerKhanAlHarir.id
@@ -364,13 +358,13 @@ async function main() {
   const hotelCount = await prisma.hotel.count();
   const userCount = await prisma.user.count();
   const roomCount = await prisma.room.count();
-  const assignmentCount = await prisma.assignment.count();
+  const taskCount = await prisma.task.count();
 
   log('📊 Summary:', colors.cyan);
   log(`   Hotels: ${hotelCount}`, colors.cyan);
   log(`   Users: ${userCount}`, colors.cyan);
   log(`   Rooms: ${roomCount}`, colors.cyan);
-  log(`   Assignments: ${assignmentCount}`, colors.cyan);
+  log(`   Tasks: ${taskCount}`, colors.cyan);
   log('');
 
   // Print login credentials

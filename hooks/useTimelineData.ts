@@ -5,14 +5,14 @@ import type {
   CleanerWithTasks,
   DayData,
   StatusFilterType,
-  TAssignmentResponse,
+  TaskResponse,
   TimeLineViewMode,
   WeekBoundaries,
 } from '@/types';
 
 interface UseTimelineDataParams {
   currentWeekStart: Date;
-  assignments: TAssignmentResponse[] | undefined | null;
+  tasks: TaskResponse[] | undefined | null;
   statusFilter: StatusFilterType;
   selectedCleanerId: string | null;
 }
@@ -22,12 +22,12 @@ interface UseTimelineDataReturn {
   cleanersList: CleanerWithTasks[];
   weekData: DayData[];
   viewMode: TimeLineViewMode;
-  totalAssignments: number;
+  totalTasks: number;
 }
 
 export function useTimelineData({
   currentWeekStart,
-  assignments,
+  tasks,
   statusFilter,
   selectedCleanerId,
 }: UseTimelineDataParams): UseTimelineDataReturn {
@@ -43,31 +43,28 @@ export function useTimelineData({
     return { start, end };
   }, [currentWeekStart]);
 
-  // Filter assignments by week
-  const weekAssignments = useMemo(() => {
-    if (!assignments) return [];
+  // Filter tasks by week
+  const weekTasks = useMemo(() => {
+    if (!tasks) return [];
 
-    return assignments.filter((assignment) => {
-      const assignmentDate = new Date(assignment.dueAt);
-      return (
-        assignmentDate >= weekBoundaries.start &&
-        assignmentDate < weekBoundaries.end
-      );
+    return tasks.filter((task) => {
+      const taskDate = new Date(task.dueAt);
+      return taskDate >= weekBoundaries.start && taskDate < weekBoundaries.end;
     });
-  }, [assignments, weekBoundaries]);
+  }, [tasks, weekBoundaries]);
 
   // Apply status filter
-  const filteredAssignments = useMemo(() => {
-    if (statusFilter === 'all') return weekAssignments;
-    return weekAssignments.filter((a) => a.status === statusFilter);
-  }, [weekAssignments, statusFilter]);
+  const filteredTasks = useMemo(() => {
+    if (statusFilter === 'all') return weekTasks;
+    return weekTasks.filter((a) => a.status === statusFilter);
+  }, [weekTasks, statusFilter]);
 
   // Build cleaners map
   const cleanersMap = useMemo(() => {
     const map = new Map<string, CleanerWithTasks>();
 
-    filteredAssignments.forEach((assignment) => {
-      assignment.cleaners.forEach(({ id, name, email, avatarUrl }) => {
+    filteredTasks.forEach((task) => {
+      task.cleaners.forEach(({ id, name, email, avatarUrl }) => {
         if (!map.has(id)) {
           map.set(id, {
             id,
@@ -80,13 +77,13 @@ export function useTimelineData({
         }
         const cleaner = map.get(id);
         if (cleaner) {
-          cleaner.tasksThisWeek.push(assignment);
+          cleaner.tasksThisWeek.push(task);
         }
       });
     });
 
     return map;
-  }, [filteredAssignments]);
+  }, [filteredTasks]);
 
   // Get sorted cleaners list
   const cleanersList = useMemo(() => {
@@ -106,17 +103,17 @@ export function useTimelineData({
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Group assignments by date for O(1) lookup
-    const assignmentsByDate = new Map<string, TAssignmentResponse[]>();
-    filteredAssignments.forEach((assignment) => {
-      const dateKey = new Date(assignment.dueAt).toDateString();
-      const existing = assignmentsByDate.get(dateKey) ?? [];
-      assignmentsByDate.set(dateKey, [...existing, assignment]);
+    // Group tasks by date for O(1) lookup
+    const tasksByDate = new Map<string, TaskResponse[]>();
+    filteredTasks.forEach((task) => {
+      const dateKey = new Date(task.dueAt).toDateString();
+      const existing = tasksByDate.get(dateKey) ?? [];
+      tasksByDate.set(dateKey, [...existing, task]);
     });
 
     return weekDays.map((date, index) => {
       const dateKey = date.toDateString();
-      const dayTasks = assignmentsByDate.get(dateKey) ?? [];
+      const dayTasks = tasksByDate.get(dateKey) ?? [];
 
       // Filter by selected cleaner if in selected mode
       const visibleTasks =
@@ -154,13 +151,13 @@ export function useTimelineData({
         tasks: visibleTasks,
       };
     });
-  }, [weekDays, filteredAssignments, viewMode, selectedCleanerId, cleanersMap]);
+  }, [weekDays, filteredTasks, viewMode, selectedCleanerId, cleanersMap]);
 
   return {
     weekBoundaries,
     cleanersList,
     weekData,
     viewMode,
-    totalAssignments: filteredAssignments.length,
+    totalTasks: filteredTasks.length,
   };
 }

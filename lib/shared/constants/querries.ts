@@ -3,7 +3,8 @@ export const queryKeys = {
   rooms: 'rooms',
   hotels: 'hotels',
   roles: 'roles',
-  assignments: 'assignments',
-  assignmentNotes: 'assignmentNotes',
+  tasks: 'tasks',
+  notes: 'notes',
+  images: 'images',
   me: 'me',
 } as const;

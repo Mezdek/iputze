@@ -1,13 +1,10 @@
-import type { AssignmentParams } from '@/types';
+import type { TaskParams } from '@/types';
 
-export interface AssignmentNoteCreationBody {
-  content: string;
-}
-export interface AssignmentNoteUpdateBody {
+export interface NoteCreationBody {
   content: string;
 }
 
-export type AssignmentNoteCollectionParams = AssignmentParams;
-export type AssignmentNoteParams = AssignmentNoteCollectionParams & {
-  assignmentNoteId: string;
+export type NoteCollectionParams = TaskParams;
+export type NoteParams = NoteCollectionParams & {
+  noteId: string;
 };

@@ -15,10 +15,7 @@ export const useDeleteRoom = ({ hotelId, roomId }: RoomParams) => {
         return res;
       } catch (error: unknown) {
         if (error instanceof ApiError && error.isBadRequest()) {
-          throw new ClientError(
-            'room',
-            ErrorCodes.room.DELETION.HAS_ASSIGNMENTS
-          );
+          throw new ClientError('room', ErrorCodes.room.DELETION.HAS_TASKS);
         }
         throw new ClientError('room', ErrorCodes.room.UNKNOWN, error);
       }

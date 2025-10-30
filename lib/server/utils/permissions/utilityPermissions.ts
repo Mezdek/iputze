@@ -32,7 +32,7 @@ export const isHotelManager = ({
       isSameHotel(role, hotelId) && isManagerRole(role) && isActiveRole(role)
   );
 
-export const isAssignmentCleaner = ({
+export const isTaskCleaner = ({
   cleaners,
   user,
 }: {

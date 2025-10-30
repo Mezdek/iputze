@@ -5,6 +5,6 @@ export enum CustomSuccessMessages {
   HOTEL_DELETED_SUCCESSFULLY = 'Hotel Deleted Successfully',
   // Auth
   SESSION_TERMINATED = 'Session Terminated',
-  // Assignments
-  ASSIGNMENT_DELETED_SUCCESSFULLY = 'Assignment Deleted Successfully',
+  // Tasks
+  TASK_DELETED_SUCCESSFULLY = 'Task Deleted Successfully',
 }

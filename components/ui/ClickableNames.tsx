@@ -1,10 +1,10 @@
-import type { SafeUser } from '@/types';
+import type { BasicUser } from '@/types';
 
 export function ClickableNames({
   users,
   isDisabled = false,
 }: {
-  users: SafeUser[];
+  users: BasicUser[];
   isDisabled?: boolean;
 }) {
   const tw = isDisabled ? 'cursor-text' : 'cursor-pointer hover:underline';

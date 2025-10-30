@@ -1,22 +1,16 @@
 import { APP_ERRORS } from '@lib/shared';
-import { AssignmentStatus } from '@prisma/client';
+import { TaskStatus } from '@prisma/client';
 
-const VALID_TRANSITIONS: Record<AssignmentStatus, AssignmentStatus[]> = {
-  [AssignmentStatus.PENDING]: [
-    AssignmentStatus.IN_PROGRESS,
-    AssignmentStatus.CANCELLED,
-  ],
-  [AssignmentStatus.IN_PROGRESS]: [
-    AssignmentStatus.COMPLETED,
-    AssignmentStatus.CANCELLED,
-  ],
-  [AssignmentStatus.COMPLETED]: [], // Terminal state
-  [AssignmentStatus.CANCELLED]: [], // Terminal state
+const VALID_TRANSITIONS: Record<TaskStatus, TaskStatus[]> = {
+  [TaskStatus.PENDING]: [TaskStatus.IN_PROGRESS, TaskStatus.CANCELLED],
+  [TaskStatus.IN_PROGRESS]: [TaskStatus.COMPLETED, TaskStatus.CANCELLED],
+  [TaskStatus.COMPLETED]: [], // Terminal state
+  [TaskStatus.CANCELLED]: [], // Terminal state
 };
 
 export function validateStatusTransition(
-  fromStatus: AssignmentStatus,
-  toStatus: AssignmentStatus
+  fromStatus: TaskStatus,
+  toStatus: TaskStatus
 ): void {
   if (fromStatus === toStatus) return; // No transition
 

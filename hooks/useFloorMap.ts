@@ -1,13 +1,9 @@
-import { useAssignments, useRooms } from '@hooks';
+import { useRooms, useTasks } from '@hooks';
 import { calculateRoomStatus } from '@lib/client';
 import { groupByKey } from '@lib/shared';
 import { useMemo } from 'react';
 
-import type {
-  FloorMapData,
-  RoomWithStatus,
-  TAssignmentResponse,
-} from '@/types';
+import type { FloorMapData, RoomWithStatus, TaskResponse } from '@/types';
 
 interface UseFloorMapDataParams {
   hotelId: string;
@@ -32,18 +28,18 @@ export function useFloorMapData({
     data: tasks,
     isLoading: tasksLoading,
     error: tasksError,
-  } = useAssignments({ hotelId });
+  } = useTasks({ hotelId });
 
   // Create task lookup map for O(1) access by room ID
   const tasksByRoomId = useMemo(() => {
-    if (!tasks) return new Map<string, TAssignmentResponse[]>();
+    if (!tasks) return new Map<string, TaskResponse[]>();
 
     return tasks.reduce((map, task) => {
       const roomId = task.room.id;
       const existing = map.get(roomId) ?? [];
       map.set(roomId, [...existing, task]);
       return map;
-    }, new Map<string, TAssignmentResponse[]>());
+    }, new Map<string, TaskResponse[]>());
   }, [tasks]);
 
   // Group rooms by floor and enhance with status information

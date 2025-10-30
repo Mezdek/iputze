@@ -4,6 +4,8 @@ import type { TRole } from '@/types';
 
 export type SafeUser = Omit<User, 'passwordHash'>;
 
+export type BasicUser = Pick<User, 'avatarUrl' | 'email' | 'id' | 'name'>;
+
 export type SafeUserWithRoles = SafeUser & { roles: Role[] };
 
 export interface SignInRequestBody {

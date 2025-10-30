@@ -32,7 +32,7 @@ enum RoomCleanliness {
   DIRTY
 }
 
-enum AssignmentStatus {
+enum TaskStatus {
   PENDING
   IN_PROGRESS
   COMPLETED
@@ -47,9 +47,9 @@ enum AuditAction {
   LOGIN
   LOGOUT
   ROLE_CHANGE
-  ASSIGNMENT_START
-  ASSIGNMENT_COMPLETE
-  ASSIGNMENT_CANCEL
+  TASK_START
+  TASK_COMPLETE
+  TASK_CANCEL
 }
 
 // ---------- Domain models ----------
@@ -87,7 +87,7 @@ model Room {
 
   hotelId         String
   hotel           Hotel             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
-  assignments     Assignment[]
+  tasks           Task[]
   defaultCleaners DefaultCleaners[]
   modifier        User?             @relation("RoomModifier", fields: [lastModifiedBy], references: [id], onDelete: SetNull)
 
@@ -104,7 +104,6 @@ model User {
   email        String    @unique
   passwordHash String
   avatarUrl    String?
-  notes        String?
   bio          String?
   timezone     String    @default("UTC")
   createdAt    DateTime  @default(now())
@@ -112,15 +111,15 @@ model User {
   deletedAt    DateTime?
 
   roles           Role[]
-  assignmentUsers AssignmentUser[]
-  assignmentNotes AssignmentNote[]
+  taskUsers       TaskUser[]
+  notes           Note[]
   refreshTokens   RefreshToken[]
-  assignedTasks   Assignment[]      @relation("AssignedBy")
+  assignedTasks   Task[]            @relation("AssignedBy")
   sessions        Session[]
   defaultCleaners DefaultCleaners[]
   modifiedRooms   Room[]            @relation("RoomModifier")
-  AssignmentImage AssignmentImage[]
-  deletedImages   AssignmentImage[] @relation("ImageDeletor")
+  Image           Image[]
+  deletedImages   Image[]           @relation("ImageDeletor")
   UserStats       UserStats?
   Achievement     Achievement[]
   WeeklyActivity  WeeklyActivity[]
@@ -146,11 +145,11 @@ model Role {
   @@index([userId, status])
 }
 
-model Assignment {
-  id       String           @id @default(uuid())
+model Task {
+  id       String     @id @default(uuid())
   roomId   String
-  status   AssignmentStatus @default(PENDING)
-  priority Int              @default(0)
+  status   TaskStatus @default(PENDING)
+  priority Int        @default(0)
 
   // Timestamps
   createdAt        DateTime  @default(now())
@@ -167,10 +166,10 @@ model Assignment {
   assignedById String?
   assignedBy   User?   @relation("AssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
 
-  room            Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  assignedUsers   AssignmentUser[]
-  notes           AssignmentNote[]
-  AssignmentImage AssignmentImage[]
+  room     Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  cleaners TaskUser[]
+  notes    Note[]
+  images   Image[]
 
   @@index([roomId, status, dueAt])
   @@index([assignedById, status])
@@ -180,15 +179,15 @@ model Assignment {
   @@index([roomId, dueAt])
 }
 
-model AssignmentUser {
-  assignmentId String
-  userId       String
-  assignedAt   DateTime @default(now())
+model TaskUser {
+  taskId     String
+  userId     String
+  assignedAt DateTime @default(now())
 
-  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([assignmentId, userId])
+  @@id([taskId, userId])
   @@index([userId])
 }
 
@@ -204,30 +203,30 @@ model DefaultCleaners {
   @@index([userId])
 }
 
-model AssignmentNote {
-  id           String    @id @default(uuid())
-  assignmentId String
-  authorId     String
-  content      String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
+model Note {
+  id        String    @id @default(uuid())
+  taskId    String
+  authorId  String
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
-  @@index([assignmentId, createdAt])
+  @@index([taskId, createdAt])
   @@index([deletedAt])
 }
 
-model AssignmentImage {
-  id           String     @id @default(uuid())
-  assignmentId String
-  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+model Image {
+  id     String @id @default(uuid())
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   url        String // Cloudinary/S3 URL
-  uploadedBy String
-  uploader   User   @relation(fields: [uploadedBy], references: [id])
+  uploaderId String
+  uploader   User   @relation(fields: [uploaderId], references: [id])
 
   uploadedAt DateTime @default(now())
 
@@ -239,7 +238,7 @@ model AssignmentImage {
   // EXIF metadata (JSON)
   exif Json?
 
-  @@index([assignmentId])
+  @@index([taskId])
   @@index([deletedAt])
 }
 

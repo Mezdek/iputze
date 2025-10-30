@@ -1,1 +1,3 @@
-export * from './StatusBar';
+export * from './ImageGallery';
+export * from './NotesSection';
+export * from './TaskCreation';

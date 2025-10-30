@@ -249,14 +249,14 @@ export class ImageProcessingService {
    */
   async uploadImage(params: {
     file: File;
-    assignmentId: string;
+    taskId: string;
     compress?: boolean;
     generateThumbnail?: boolean;
     extractExif?: boolean;
   }): Promise<ImageUploadResult> {
     const {
       file,
-      assignmentId,
+      taskId,
       compress = true,
       generateThumbnail = true,
       extractExif = true,
@@ -274,13 +274,13 @@ export class ImageProcessingService {
 
     // Generate filename
     const timestamp = Date.now();
-    const fileName = `assignment_${assignmentId}_${timestamp}`;
+    const fileName = `task_${taskId}_${timestamp}`;
 
     // Upload to storage provider
     const uploadResult = await this.provider.upload({
       buffer,
       fileName,
-      folder: 'assignments',
+      folder: 'tasks',
       compress,
       generateThumbnail,
     });

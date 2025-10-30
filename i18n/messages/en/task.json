@@ -1,0 +1,78 @@
+{
+  "name": "Tasks",
+  "header": "Room {number}",
+  "creation": {
+    "modal_button": "Create Task",
+    "header": "New Task",
+    "inputs": {
+      "room_number": {
+        "label": "Room number",
+        "placeholder": "Select a room",
+        "error_message": "Please select a room"
+      },
+      "cleaners": {
+        "label": "Cleaners",
+        "placeholder": "Assign cleaners",
+        "error_message": "Please select at least one cleaner"
+      },
+      "due_date": {
+        "label": "Due Date",
+        "description": "Choose the date on which the cleaning should be completed",
+        "error_message": "Please select a due date"
+      },
+      "due_time": {
+        "label": "Due Time",
+        "description": "Choose the time on which the cleaning should be completed",
+        "error_message": "Please select a due time"
+      },
+      "priority": {
+        "label": "Priority",
+        "description": "Choose priority",
+        "placeholder": "Please choose a priority",
+        "options": {
+          "normal": "Normal",
+          "low_priority": "Low Priority",
+          "medium_priority": "Medium Priority",
+          "high_priority": "high_priority",
+          "urgent": "Urgent"
+        }
+      },
+      "estimated_minutes": {
+        "label": "Estimated minutes",
+        "description": "Estimate time",
+        "placeholder": "How many minutes?"
+      },
+      "close_button": "Cancel",
+      "submit_button": "Create"
+    },
+    "no_cleaners": "No cleaners available. Please add cleaners first."
+  },
+  "status": {
+    "CANCELLED": { "state": "Canceled", "button": "Restart" },
+    "COMPLETED": { "state": "Completed", "button": "" },
+    "IN_PROGRESS": { "state": "In Progress", "button": "Finish" },
+    "PENDING": { "state": "Pending", "button": "Start" }
+  },
+  "archived": "Archived",
+  "archive": "Archive",
+  "due_at": { "label": "Due", "date": "<strong>Due:</strong> {dueAt}" },
+  "cleaners": "<strong>Cleaners: </strong>",
+  "assigned_by": "<strong>Assigned by: </strong> {name}",
+  "created_at": "<strong>Created:</strong> {createdAt}",
+  "deleted": "Deleted account",
+  "empty_list": "'No tasks found'",
+  "estimated_time": "Estimated",
+  "actual_time": "Actual",
+  "status_changed": "Status Changed!",
+  "status_changed_desc": "Task set to {status}",
+  "images": "Images",
+  "priority": "Priority",
+  "overdue": "Overdue",
+  "due_date_passed": "Due date passed",
+  "errors": {
+    "unknown": {
+      "title": "Something went wrong!",
+      "description": "Please try again later"
+    }
+  }
+}

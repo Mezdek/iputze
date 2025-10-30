@@ -1,18 +1,14 @@
-import {
-  AssignmentStatus,
-  RoomCleanliness,
-  RoomOccupancy,
-} from '@prisma/client';
+import { RoomCleanliness, RoomOccupancy, TaskStatus } from '@prisma/client';
 
 import type {
   RoomStatus,
   RoomStatusInfo,
   RoomWithHotel,
-  TAssignmentResponse,
+  TaskResponse,
 } from '@/types';
 
 /**
- * Calculate room status based on room cleanliness and assignment status
+ * Calculate room status based on room cleanliness and task status
  * Matches the existing logic from StatusBar.tsx
  *
  * Priority order:
@@ -23,14 +19,12 @@ import type {
  */
 export function calculateRoomStatus(
   room: RoomWithHotel,
-  tasks: TAssignmentResponse[]
+  tasks: TaskResponse[]
 ): RoomStatusInfo {
   // Check for active tasks (not cancelled or completed)
-  const taskInProgress = tasks.some(
-    (t) => t.status === AssignmentStatus.IN_PROGRESS
-  );
+  const taskInProgress = tasks.some((t) => t.status === TaskStatus.IN_PROGRESS);
 
-  const taskPending = tasks.some((t) => t.status === AssignmentStatus.PENDING);
+  const taskPending = tasks.some((t) => t.status === TaskStatus.PENDING);
 
   // Default status: Needs cleaning
   let statusInfo: RoomStatusInfo = {

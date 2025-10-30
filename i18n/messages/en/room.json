@@ -14,6 +14,42 @@
   },
   "notes": "<strong>Notes: </strong> {notes}",
   "no_notes": "No Notes",
+  "form": {
+    "inputs": {
+      "room_number": {
+        "error_message": "Please provide room number",
+        "label": "Room Number",
+        "placeholder": "Enter new room number"
+      },
+      "cleanliness": {
+        "label": "Cleanliness Status",
+        "placeholder": "Select cleanliness status"
+      },
+      "occupancy": {
+        "label": "Occupancy Status",
+        "placeholder": "Select occupancy status"
+      },
+      "floor": {
+        "label": "Floor number",
+        "placeholder": "Select floor number",
+        "error_message": "Please provide floor number"
+      },
+      "capacity": {
+        "label": "Floor number",
+        "placeholder": "Select floor number",
+        "error_message": "Please provide floor number"
+      },
+      "type": {
+        "label": "Floor number",
+        "placeholder": "Select floor number",
+        "error_message": "Please provide floor number"
+      },
+      "notes": {
+        "label": "Floor number",
+        "placeholder": "Select floor number"
+      }
+    }
+  },
   "update_panel": {
     "header": " Edit room {number}",
     "inputs": {
@@ -65,6 +101,11 @@
       "occupancy": {
         "label": "Occupancy Status",
         "placeholder": "Select occupancy status"
+      },
+      "floor": {
+        "label": "Floor number",
+        "placeholder": "Select floor number",
+        "error_message": "Please provide floor number"
       }
     }
   },
@@ -77,9 +118,9 @@
       "title": "Something went wrong",
       "description": "Please try again later"
     },
-    "room_has_assignments": {
+    "room_has_tasks": {
       "title": "Room could not be deleted!",
-      "description": "There are still assignments attached to this room!"
+      "description": "There are still tasks attached to this room!"
     },
     "duplicate_room_number_update": {
       "title": "Room could not be updated!",

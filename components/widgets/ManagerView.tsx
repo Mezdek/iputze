@@ -10,7 +10,7 @@ export type TViews = 'FLOOR_MAP' | 'TIMELINE';
 export function ManagerView({ user }: InjectedAuthProps) {
   const [room, setRoom] = useState<RoomWithHotel>();
 
-  const [view, setView] = useState<TViews>('FLOOR_MAP');
+  const [view, setView] = useState<TViews>('TIMELINE');
   const handleNavigate = (view: RoomView | undefined) => {
     switch (view) {
       case 'FLOOR_MAP':
@@ -30,7 +30,7 @@ export function ManagerView({ user }: InjectedAuthProps) {
       {view === 'FLOOR_MAP' ? (
         <FloorMapView room={room} setRoom={setRoom} />
       ) : (
-        <WeeklyTimelineView />
+        <WeeklyTimelineView user={user} />
       )}
     </div>
   );

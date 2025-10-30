@@ -42,7 +42,6 @@ export type TUser = {
   hotelName: string;
   level: RoleLevel;
   avatarUrl?: string | undefined;
-  notes?: string | undefined;
 };
 
 export const users = {
@@ -504,8 +503,8 @@ export const roomsKhanAlHarir: TRoom[] = [
   },
 ];
 
-// Assignment Templates (will be created as pending/in-progress)
-export type TAssignmentTemplate = {
+// Task Templates (will be created as pending/in-progress)
+export type TTaskTemplate = {
   roomNumber: string;
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
   priority: number;
@@ -514,7 +513,7 @@ export type TAssignmentTemplate = {
   notes?: string | undefined;
 };
 
-export const assignmentsLaLuna: TAssignmentTemplate[] = [
+export const tasksLaLuna: TTaskTemplate[] = [
   {
     roomNumber: '101',
     status: 'PENDING',
@@ -554,7 +553,7 @@ export const assignmentsLaLuna: TAssignmentTemplate[] = [
   },
 ];
 
-export const assignmentsKhanAlHarir: TAssignmentTemplate[] = [
+export const tasksKhanAlHarir: TTaskTemplate[] = [
   {
     roomNumber: '101',
     status: 'PENDING',
