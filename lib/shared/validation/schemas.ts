@@ -39,7 +39,6 @@ export const taskCreationSchema = z.object({
   roomId: z.string().uuid('Invalid room ID'),
   dueAt: z.string().datetime().or(z.date()),
   cleaners: z.array(z.string().uuid()).min(1, 'At least one cleaner required'),
-  estimatedMinutes: z.number().int().positive().optional(),
   priority: z.nativeEnum(TaskPriority).optional(),
   notes: z.string().max(500).optional(),
 });
@@ -47,8 +46,6 @@ export const taskCreationSchema = z.object({
 export const taskUpdateSchema = z.object({
   status: z.nativeEnum(TaskStatus).optional(),
   priority: z.nativeEnum(TaskPriority).optional(),
-  estimatedMinutes: z.number().int().positive().optional(),
-  actualMinutes: z.number().int().positive().optional(),
   completedAt: z.date().optional(),
   startedAt: z.date().optional(),
   cancelledAt: z.date().optional(),

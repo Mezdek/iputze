@@ -1,11 +1,11 @@
 import type {
+  Cleaner,
   Note,
   Role,
   Room,
   Task,
   TaskPriority,
   TaskStatus,
-  TaskUser,
 } from '@prisma/client';
 
 import type {
@@ -31,7 +31,7 @@ export interface TaskAccessContext {
 export interface TaskResponse extends Omit<Task, 'assignedById' | 'roomId'> {
   room: Room;
   images: ImageResponse[];
-  cleaners: Cleaner[];
+  cleaners: TransformedCleaner[];
   assignedBy: BasicUser | null;
   notes: NoteWithAuthor[];
 }
@@ -40,7 +40,6 @@ export type TaskCreationBody = {
   roomId: string;
   dueAt: string | Date;
   cleaners: string[];
-  estimatedMinutes?: number | undefined;
   priority?: TaskPriority | undefined;
   notes?: string | undefined;
 };
@@ -48,8 +47,6 @@ export type TaskCreationBody = {
 export type TaskUpdateBody = {
   status?: TaskStatus | undefined;
   priority?: TaskPriority | undefined;
-  estimatedMinutes?: number | undefined;
-  actualMinutes?: number | undefined;
   completedAt?: Date | undefined;
   startedAt?: Date | undefined;
   cancelledAt?: Date | undefined;
@@ -67,7 +64,9 @@ export interface TransformTaskProps
   notes: (Note & { author: BasicUser })[];
   images: ImageWithUploader[];
   assignedBy: BasicUser | null;
-  cleaners: (Pick<TaskUser, 'assignedAt'> & { user: BasicUser })[];
+  cleaners: (Pick<Cleaner, 'assignedAt'> & { user: BasicUser })[];
 }
 
-export interface Cleaner extends Pick<TaskUser, 'assignedAt'>, BasicUser {}
+export interface TransformedCleaner
+  extends Pick<Cleaner, 'assignedAt'>,
+    BasicUser {}

@@ -5,13 +5,18 @@ type THasHotel = { hotelId: string } | { hotel: { id: string } };
 
 export const isActiveRole = (role: TBaseRole) =>
   role.status === RoleStatus.ACTIVE;
+
 export const isAdminRole = (role: TBaseRole) => role.level === RoleLevel.ADMIN;
+
 export const isManagerRole = (role: TBaseRole) =>
   role.level === RoleLevel.MANAGER;
+
 export const isCleanerRole = (role: TBaseRole) =>
   role.level === RoleLevel.CLEANER;
+
 export const isPendingRole = (role: TBaseRole) =>
   role.level === RoleLevel.PENDING;
+
 export const isSameHotel = (
   role: { hotelId: string } | { hotel: { id: string } },
   hotelId: string
@@ -34,11 +39,14 @@ export const isHotelManager = ({
 
 export const isTaskCleaner = ({
   cleaners,
-  user,
+  userId,
 }: {
   cleaners: { id: string }[];
-  user: { id: string };
-}) => !!cleaners && cleaners.some((cleaner) => cleaner.id === user.id);
+  userId: string;
+}) => {
+  if (!cleaners) return false;
+  return cleaners.some((cleaner) => cleaner.id === userId);
+};
 
 export const getRolesByLevel = <T extends TBaseRole>({
   roles,

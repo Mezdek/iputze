@@ -69,22 +69,20 @@ CREATE TABLE "Task" (
     "completedAt" DATETIME,
     "cancelledAt" DATETIME,
     "cancellationNote" TEXT,
-    "estimatedMinutes" INTEGER,
-    "actualMinutes" INTEGER,
     "assignedById" TEXT,
     CONSTRAINT "Task_assignedById_fkey" FOREIGN KEY ("assignedById") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Task_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
-CREATE TABLE "TaskUser" (
+CREATE TABLE "Cleaner" (
     "taskId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "assignedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY ("taskId", "userId"),
-    CONSTRAINT "TaskUser_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "TaskUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "Cleaner_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "Cleaner_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -256,7 +254,7 @@ CREATE INDEX "Task_dueAt_status_idx" ON "Task"("dueAt", "status");
 CREATE INDEX "Task_roomId_dueAt_idx" ON "Task"("roomId", "dueAt");
 
 -- CreateIndex
-CREATE INDEX "TaskUser_userId_idx" ON "TaskUser"("userId");
+CREATE INDEX "Cleaner_userId_idx" ON "Cleaner"("userId");
 
 -- CreateIndex
 CREATE INDEX "DefaultCleaners_userId_idx" ON "DefaultCleaners"("userId");

@@ -6,7 +6,6 @@ import {
   Button,
   DatePicker,
   Form,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -59,7 +58,6 @@ export function TaskCreation({
         cleaners: [],
         dueAt: new Date(),
         roomId,
-        estimatedMinutes: 0,
         notes: '',
         priority: 'LOW',
       });
@@ -68,7 +66,6 @@ export function TaskCreation({
       const data: TaskCreationBody = {
         ...formData,
         dueAt: new Date(`${dueAt} ${dueTime}`),
-        estimatedMinutes: Number(formData.estimatedMinutes),
       };
 
       await createTask(data);
@@ -187,21 +184,6 @@ export function TaskCreation({
                       </SelectItem>
                     ))}
                   </Select>
-
-                  {/* Estimated Minutes */}
-                  <Input
-                    defaultValue="45"
-                    description={t('inputs.estimated_minutes.description')}
-                    form={FORM}
-                    inputMode="numeric"
-                    label={t('inputs.estimated_minutes.label')}
-                    max="120"
-                    min="15"
-                    name="estimatedMinutes"
-                    placeholder={t('inputs.estimated_minutes.placeholder')}
-                    step="5"
-                    type="number"
-                  />
                 </Form>
               </ModalBody>
 

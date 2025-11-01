@@ -210,7 +210,7 @@ const createTask = async (
   // Assign cleaners
   if (cleanersIds.length > 0) {
     for (const userId of cleanersIds) {
-      await prisma.taskUser.create({
+      await prisma.cleaner.create({
         data: {
           taskId: task.id,
           userId,
@@ -241,7 +241,7 @@ async function main() {
   // Clear existing data (optional - uncomment if you want to start fresh)
   log('🗑️  Clearing existing data...', colors.yellow);
   await prisma.note.deleteMany();
-  await prisma.taskUser.deleteMany();
+  await prisma.cleaner.deleteMany();
   await prisma.task.deleteMany();
   await prisma.defaultCleaners.deleteMany();
   await prisma.room.deleteMany();

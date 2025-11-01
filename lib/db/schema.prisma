@@ -117,7 +117,7 @@ model User {
   deletedAt    DateTime?
 
   roles           Role[]
-  taskUsers       TaskUser[]
+  cleaners        Cleaner[]
   notes           Note[]
   refreshTokens   RefreshToken[]
   assignedTasks   Task[]            @relation("AssignedBy")
@@ -165,15 +165,11 @@ model Task {
   cancelledAt      DateTime?
   cancellationNote String?
 
-  // Time tracking
-  estimatedMinutes Int?
-  actualMinutes    Int?
-
   assignedById String?
   assignedBy   User?   @relation("AssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
 
-  room     Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  cleaners TaskUser[]
+  room     Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  cleaners Cleaner[]
   notes    Note[]
   images   Image[]
 
@@ -185,7 +181,7 @@ model Task {
   @@index([roomId, dueAt])
 }
 
-model TaskUser {
+model Cleaner {
   taskId     String
   userId     String
   assignedAt DateTime @default(now())
@@ -248,7 +244,6 @@ model Image {
   @@index([deletedAt])
 }
 
-// Add to schema.prisma for the XP/Performance feature
 model UserStats {
   id     String @id @default(uuid())
   userId String @unique

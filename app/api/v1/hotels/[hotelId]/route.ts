@@ -61,8 +61,6 @@ export const GET = withErrorHandling(
         startedAt: true,
         completedAt: true,
         cancelledAt: true,
-        estimatedMinutes: true,
-        actualMinutes: true,
         createdAt: true,
         cancellationNote: true,
 
@@ -137,7 +135,7 @@ export const POST = withErrorHandling(
     if (!canCreateTask({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
     const validated = taskCreationSchema.parse(await req.json());
-    const { roomId, dueAt, cleaners, estimatedMinutes, priority } = validated;
+    const { roomId, dueAt, cleaners, priority } = validated;
     const newTask = await prisma.task.create({
       data: {
         roomId,
@@ -146,7 +144,6 @@ export const POST = withErrorHandling(
         cleaners: {
           create: cleaners.map((cleanerId: string) => ({ userId: cleanerId })),
         },
-        estimatedMinutes,
         priority,
       },
     });

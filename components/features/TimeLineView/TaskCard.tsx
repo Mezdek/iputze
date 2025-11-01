@@ -44,8 +44,6 @@ export function TaskCard({
     createdAt,
     assignedBy,
     cleaners,
-    estimatedMinutes,
-    actualMinutes,
     room: { hotelId },
     notes,
     images,
@@ -96,31 +94,6 @@ export function TaskCard({
         </div>
 
         <Divider />
-
-        {/* Time Tracking */}
-        {(estimatedMinutes || actualMinutes) && (
-          <>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              {estimatedMinutes && (
-                <div>
-                  <span className="text-default-600 block">
-                    {t('estimated_time', { default: 'Estimated' })}
-                  </span>
-                  <span className="font-medium">{estimatedMinutes} min</span>
-                </div>
-              )}
-              {actualMinutes && (
-                <div>
-                  <span className="text-default-600 block">
-                    {t('actual_time')}
-                  </span>
-                  <span className="font-medium">{actualMinutes} min</span>
-                </div>
-              )}
-            </div>
-            <Divider />
-          </>
-        )}
 
         {/* Assigned By */}
         <div className="text-sm">

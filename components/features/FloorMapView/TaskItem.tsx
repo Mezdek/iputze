@@ -21,16 +21,7 @@ interface TaskItemProps extends Omit<CardProps, 'onClick'> {
 
 export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
   const t = useTranslations('task');
-  const {
-    status,
-    dueAt,
-    priority,
-    cleaners,
-    estimatedMinutes,
-    actualMinutes,
-    notes,
-    images,
-  } = task;
+  const { status, dueAt, priority, cleaners, notes, images } = task;
 
   const isOverdue = new Date(dueAt) < new Date() && status !== 'COMPLETED';
   const isPressable = !!onClick;
@@ -86,20 +77,6 @@ export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
             {cleaners.map(({ id, name }) => (
               <span key={id}>{name} </span>
             ))}
-          </div>
-        )}
-
-        {/* Time Estimates */}
-        {(estimatedMinutes || actualMinutes) && (
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-default-600">Time:</span>
-            <span className="font-medium">
-              {actualMinutes
-                ? `${actualMinutes} min (actual)`
-                : estimatedMinutes
-                  ? `${estimatedMinutes} min (est.)`
-                  : 'N/A'}
-            </span>
           </div>
         )}
 

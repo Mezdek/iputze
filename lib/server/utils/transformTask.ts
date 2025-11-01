@@ -1,12 +1,12 @@
-import type { TaskUser } from '@prisma/client';
+import type { Cleaner } from '@prisma/client';
 
 import type {
   BasicUser,
-  Cleaner,
   EXIF,
   ImageResponse,
   ImageWithUploader,
   TaskResponse,
+  TransformedCleaner,
   TransformTaskProps,
 } from '@/types';
 
@@ -22,8 +22,8 @@ export function transformTask(task: TransformTaskProps): TaskResponse {
 }
 
 function transformCleaner(
-  cleaner: Pick<TaskUser, 'assignedAt'> & { user: BasicUser }
-): Cleaner {
+  cleaner: Pick<Cleaner, 'assignedAt'> & { user: BasicUser }
+): TransformedCleaner {
   const { assignedAt, user } = cleaner;
   return { assignedAt, ...user };
 }

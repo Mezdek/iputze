@@ -35,11 +35,6 @@
           "HIGH": "high"
         }
       },
-      "estimated_minutes": {
-        "label": "Estimated minutes",
-        "description": "Estimate time",
-        "placeholder": "How many minutes?"
-      },
       "close_button": "Cancel",
       "submit_button": "Create"
     },

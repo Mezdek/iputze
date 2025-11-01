@@ -48,8 +48,6 @@ export function TaskDetail({
     dueAt,
     priority,
     cleaners,
-    estimatedMinutes,
-    actualMinutes,
     assignedBy,
     createdAt,
     startedAt,
@@ -124,27 +122,6 @@ export function TaskDetail({
                 />
 
                 <Divider />
-
-                {/* Time Tracking */}
-                {(estimatedMinutes || actualMinutes) && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      {estimatedMinutes && (
-                        <DetailRow
-                          label="Estimated Time"
-                          value={`${estimatedMinutes} minutes`}
-                        />
-                      )}
-                      {actualMinutes && (
-                        <DetailRow
-                          label="Actual Time"
-                          value={`${actualMinutes} minutes`}
-                        />
-                      )}
-                    </div>
-                    <Divider />
-                  </>
-                )}
 
                 {/* Assigned By */}
                 <DetailRow

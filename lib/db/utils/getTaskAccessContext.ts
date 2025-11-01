@@ -48,11 +48,11 @@ export const getTaskAccessContext = async ({
 
   if (isAdmin || isHotelManager) return returnable;
 
-  const taskUser = await prisma.taskUser.findUnique({
+  const cleaner = await prisma.cleaner.findUnique({
     where: { taskId_userId: { taskId, userId } },
   });
 
-  if (!taskUser) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
+  if (!cleaner) throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
 
-  return { ...returnable, isTaskCleaner: !!taskUser };
+  return { ...returnable, isTaskCleaner: !!cleaner };
 };

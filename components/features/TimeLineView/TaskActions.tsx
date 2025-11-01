@@ -35,7 +35,7 @@ export function TaskActions({ task, user, compact = false }: TaskActionsProps) {
     hotelId,
   });
 
-  const isTaskCleanerFlag = isTaskCleaner({ cleaners, user });
+  const isTaskCleanerFlag = isTaskCleaner({ cleaners, userId: user.id });
 
   // Only show actions for assigned cleaners and non-completed tasks
   if (!isTaskCleanerFlag || status === TaskStatus.COMPLETED) {
