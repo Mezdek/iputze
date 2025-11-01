@@ -1,12 +1,16 @@
 import { prisma } from '@lib/db';
 import { APP_ERRORS, RoomErrors } from '@lib/shared';
-import type { Room } from '@prisma/client';
+
+import type { RoomResponse } from '@/types';
 
 export const getRoomOrThrow = async (
   roomId: string,
   expectedHotelId?: string
-): Promise<Room> => {
-  const room = await prisma.room.findUnique({ where: { id: roomId } });
+): Promise<RoomResponse> => {
+  const room = await prisma.room.findUnique({
+    where: { id: roomId },
+    include: { defaultCleaners: true },
+  });
 
   if (!room) throw APP_ERRORS.notFound(RoomErrors.NOT_FOUND);
 

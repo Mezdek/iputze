@@ -106,7 +106,7 @@ export function WeeklyTimelineView(props: InjectedAuthProps) {
             aria-label="Previous week"
             size="sm"
             variant="flat"
-            onClick={handlePreviousWeek}
+            onPress={handlePreviousWeek}
           >
             ←
           </Button>
@@ -114,7 +114,7 @@ export function WeeklyTimelineView(props: InjectedAuthProps) {
             className="min-w-[100px]"
             size="sm"
             variant="flat"
-            onClick={handleToday}
+            onPress={handleToday}
           >
             Today
           </Button>
@@ -123,7 +123,7 @@ export function WeeklyTimelineView(props: InjectedAuthProps) {
             aria-label="Next week"
             size="sm"
             variant="flat"
-            onClick={handleNextWeek}
+            onPress={handleNextWeek}
           >
             →
           </Button>
@@ -139,7 +139,7 @@ export function WeeklyTimelineView(props: InjectedAuthProps) {
               color="default"
               size="sm"
               variant="flat"
-              onClick={() => handleCleanerSelect(null)}
+              onPress={() => handleCleanerSelect(null)}
             >
               ← Back to Overview
             </Button>

@@ -8,34 +8,20 @@ import {
   TaskDetail,
   TaskList,
 } from '@components';
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  type CardProps,
-  Divider,
-} from '@heroui/react';
-import type { User } from '@prisma/client';
+import { Card, CardBody, CardFooter, CardHeader, Divider } from '@heroui/react';
 import { RoomCleanliness, TaskStatus } from '@prisma/client';
 import { useState } from 'react';
 
-import type { RoomWithHotel, TaskResponse } from '@/types';
+import type { TaskResponse } from '@/types';
 
-interface RoomDetailsCardProps {
-  room: RoomWithHotel;
-  tasks: TaskResponse[];
-  defaultCleaners: {
-    user: User;
-  }[];
-}
+import type { RoomDetailsCardProps } from './types';
 
 export function RoomDetails({
   room,
   tasks,
   defaultCleaners,
   ...props
-}: RoomDetailsCardProps & CardProps) {
+}: RoomDetailsCardProps) {
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
 
   const activeTasks = tasks.filter(

@@ -1,10 +1,10 @@
+// @TODO create a constant default form object, for all similar cases as well
 'use client';
 
 import { Icons, RoomForm } from '@components';
 import {
   addToast,
   Button,
-  type ButtonProps,
   Modal,
   ModalBody,
   ModalContent,
@@ -14,20 +14,20 @@ import {
 } from '@heroui/react';
 import { useErrorToast, useUpdateRoom } from '@hooks';
 import { parseFormData } from '@lib/shared';
-import type { Room as TRoom } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
+import {
+  RoomFormModes,
+  type RoomUpdateProps,
+} from '@/components/features/FloorMapView/Room/types';
 import type { RoomUpdateBody } from '@/types';
 
 export function RoomUpdate({
   room,
   isIconOnly,
   ...buttonProps
-}: {
-  room: TRoom;
-  isIconOnly?: boolean;
-} & ButtonProps) {
+}: RoomUpdateProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { mutateAsync: updateRoom } = useUpdateRoom({
     hotelId: room.hotelId,
@@ -43,8 +43,20 @@ export function RoomUpdate({
     if (isSubmitting) return;
 
     setIsSubmitting(true);
-    const data = parseFormData<RoomUpdateBody>(e.currentTarget, {});
+    const formData = parseFormData<RoomUpdateBody>(e.currentTarget, {
+      capacity: 1,
+      cleanliness: 'DIRTY',
+      floor: '1',
+      notes: '',
+      number: '1',
+      occupancy: 'VACANT',
+      type: '',
+    });
 
+    const data: RoomUpdateBody = {
+      ...formData,
+      capacity: Number(formData.capacity),
+    };
     try {
       await updateRoom(data);
       onClose();
@@ -74,7 +86,7 @@ export function RoomUpdate({
         {isIconOnly ? (
           <Icons.Pencil className="size-9" />
         ) : (
-          t('update_panel.buttons.open')
+          t('update.buttons.open')
         )}
       </Button>
       <Modal
@@ -87,19 +99,19 @@ export function RoomUpdate({
           {(onCloseModal) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                {t('update_panel.header', { number: room.number })}
+                {t('update.header', { number: room.number })}
               </ModalHeader>
               <ModalBody>
                 <RoomForm
                   id={FORM}
-                  mode="update"
+                  mode={RoomFormModes.UPDATE}
                   room={room}
                   onSubmit={handleSubmit}
                 />
               </ModalBody>
               <ModalFooter className="gap-3">
                 <Button color="danger" variant="flat" onPress={onCloseModal}>
-                  {t('update_panel.buttons.close')}
+                  {t('update.buttons.close')}
                 </Button>
                 <Button
                   color="primary"
@@ -108,7 +120,7 @@ export function RoomUpdate({
                   isLoading={isSubmitting}
                   type="submit"
                 >
-                  {t('update_panel.buttons.submit')}
+                  {t('update.buttons.submit')}
                 </Button>
               </ModalFooter>
             </>

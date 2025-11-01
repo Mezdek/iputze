@@ -6,7 +6,9 @@ export type SafeUser = Omit<User, 'passwordHash'>;
 
 export type BasicUser = Pick<User, 'avatarUrl' | 'email' | 'id' | 'name'>;
 
-export type SafeUserWithRoles = SafeUser & { roles: Role[] };
+export interface SafeUserWithRoles extends SafeUser {
+  roles: Role[];
+}
 
 export interface SignInRequestBody {
   email: string;
@@ -17,11 +19,11 @@ export interface SignInResponse {
   user: { id: string; email: string; name: string };
 }
 
-export interface SignUpRequestBody {
+export type UserCreationBody = {
   name: string;
   email: string;
   password: string;
-}
+};
 
 export interface SignUpResponse {
   id: string;

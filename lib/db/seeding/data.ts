@@ -1,18 +1,6 @@
-import type {
-  RoleLevel,
-  RoomCleanliness,
-  RoomOccupancy,
-  TaskPriority,
-} from '@prisma/client';
+import type { TSEEDING_RoomCreation, TSEEDING_Task } from './types';
 
 // Hotels
-export type THotel = {
-  name: string;
-  address?: string | undefined;
-  phone?: string | undefined;
-  email?: string | undefined;
-  description?: string | undefined;
-};
 
 export const hotels = {
   zentrale: {
@@ -40,14 +28,6 @@ export const hotels = {
 } as const;
 
 // Users
-export type TUser = {
-  name: string;
-  email: string;
-  password: string;
-  hotelName: string;
-  level: RoleLevel;
-  avatarUrl?: string | undefined;
-};
 
 export const users = {
   admin1: {
@@ -147,18 +127,8 @@ export const users = {
 } as const;
 
 // Rooms
-export type TRoom = {
-  number: string;
-  occupancy: RoomOccupancy;
-  cleanliness: RoomCleanliness;
-  type: string;
-  capacity: number;
-  floor: string;
-  notes?: string | undefined;
-  defaultCleanerEmails?: string[] | undefined; // Emails of default cleaners
-};
 
-export const roomsLaLuna: TRoom[] = [
+export const roomsLaLuna: TSEEDING_RoomCreation[] = [
   // Ground Floor
   {
     number: '101',
@@ -167,7 +137,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['charles@cleaners.com'],
+    defaultCleanersEmails: ['charles@cleaners.com'],
   },
   {
     number: '102',
@@ -176,7 +146,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['elon@cleaners.com'],
+    defaultCleanersEmails: ['elon@cleaners.com'],
   },
   {
     number: '103',
@@ -185,7 +155,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Deluxe',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['sofia@cleaners.com'],
+    defaultCleanersEmails: ['sofia@cleaners.com'],
   },
   {
     number: '104',
@@ -194,7 +164,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['charles@cleaners.com'],
+    defaultCleanersEmails: ['charles@cleaners.com'],
   },
   {
     number: '105',
@@ -203,7 +173,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['elon@cleaners.com'],
+    defaultCleanersEmails: ['elon@cleaners.com'],
   },
 
   // First Floor
@@ -214,7 +184,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Deluxe',
     capacity: 3,
     floor: '2',
-    defaultCleanerEmails: ['sofia@cleaners.com', 'charles@cleaners.com'],
+    defaultCleanersEmails: ['sofia@cleaners.com', 'charles@cleaners.com'],
   },
   {
     number: '202',
@@ -223,7 +193,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '2',
-    defaultCleanerEmails: ['elon@cleaners.com'],
+    defaultCleanersEmails: ['elon@cleaners.com'],
   },
   {
     number: '203',
@@ -232,7 +202,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '2',
-    defaultCleanerEmails: ['charles@cleaners.com'],
+    defaultCleanersEmails: ['charles@cleaners.com'],
   },
   {
     number: '204',
@@ -242,7 +212,7 @@ export const roomsLaLuna: TRoom[] = [
     capacity: 2,
     floor: '2',
     notes: 'Wartung - Klimaanlage defekt',
-    defaultCleanerEmails: [],
+    defaultCleanersEmails: [],
   },
   {
     number: '205',
@@ -251,7 +221,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Suite',
     capacity: 4,
     floor: '2',
-    defaultCleanerEmails: ['sofia@cleaners.com'],
+    defaultCleanersEmails: ['sofia@cleaners.com'],
   },
 
   // Second Floor
@@ -262,7 +232,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Deluxe',
     capacity: 2,
     floor: '3',
-    defaultCleanerEmails: ['charles@cleaners.com'],
+    defaultCleanersEmails: ['charles@cleaners.com'],
   },
   {
     number: '302',
@@ -271,7 +241,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '3',
-    defaultCleanerEmails: ['elon@cleaners.com'],
+    defaultCleanersEmails: ['elon@cleaners.com'],
   },
   {
     number: '303',
@@ -280,7 +250,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '3',
-    defaultCleanerEmails: ['sofia@cleaners.com'],
+    defaultCleanersEmails: ['sofia@cleaners.com'],
   },
   {
     number: '304',
@@ -289,7 +259,7 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Deluxe',
     capacity: 3,
     floor: '3',
-    defaultCleanerEmails: ['charles@cleaners.com'],
+    defaultCleanersEmails: ['charles@cleaners.com'],
   },
   {
     number: '305',
@@ -298,11 +268,10 @@ export const roomsLaLuna: TRoom[] = [
     type: 'Suite',
     capacity: 4,
     floor: '3',
-    defaultCleanerEmails: ['sofia@cleaners.com', 'elon@cleaners.com'],
+    defaultCleanersEmails: ['sofia@cleaners.com', 'elon@cleaners.com'],
   },
 ];
-
-export const roomsKhanAlHarir: TRoom[] = [
+export const roomsKhanAlHarir: TSEEDING_RoomCreation[] = [
   // Ground Floor
   {
     number: '101',
@@ -311,7 +280,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['bertha@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com'],
   },
   {
     number: '102',
@@ -320,7 +289,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['dora@cleaners.com'],
+    defaultCleanersEmails: ['dora@cleaners.com'],
   },
   {
     number: '103',
@@ -329,7 +298,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Deluxe',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['fatima@cleaners.com'],
+    defaultCleanersEmails: ['fatima@cleaners.com'],
   },
   {
     number: '104',
@@ -338,7 +307,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['bertha@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com'],
   },
   {
     number: '105',
@@ -347,7 +316,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['dora@cleaners.com'],
+    defaultCleanersEmails: ['dora@cleaners.com'],
   },
   {
     number: '106',
@@ -356,7 +325,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '1',
-    defaultCleanerEmails: ['fatima@cleaners.com'],
+    defaultCleanersEmails: ['fatima@cleaners.com'],
   },
 
   // First Floor
@@ -367,7 +336,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Deluxe',
     capacity: 3,
     floor: '2',
-    defaultCleanerEmails: ['bertha@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com'],
   },
   {
     number: '202',
@@ -376,7 +345,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '2',
-    defaultCleanerEmails: ['dora@cleaners.com'],
+    defaultCleanersEmails: ['dora@cleaners.com'],
   },
   {
     number: '203',
@@ -385,7 +354,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '2',
-    defaultCleanerEmails: ['fatima@cleaners.com'],
+    defaultCleanersEmails: ['fatima@cleaners.com'],
   },
   {
     number: '204',
@@ -394,7 +363,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Deluxe',
     capacity: 2,
     floor: '2',
-    defaultCleanerEmails: ['bertha@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com'],
   },
   {
     number: '205',
@@ -404,7 +373,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     capacity: 4,
     floor: '2',
     notes: 'VIP Gast - Extra sorgfältig',
-    defaultCleanerEmails: ['bertha@cleaners.com', 'fatima@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com', 'fatima@cleaners.com'],
   },
   {
     number: '206',
@@ -413,7 +382,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '2',
-    defaultCleanerEmails: ['dora@cleaners.com'],
+    defaultCleanersEmails: ['dora@cleaners.com'],
   },
 
   // Second Floor
@@ -424,7 +393,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Deluxe',
     capacity: 2,
     floor: '3',
-    defaultCleanerEmails: ['fatima@cleaners.com'],
+    defaultCleanersEmails: ['fatima@cleaners.com'],
   },
   {
     number: '302',
@@ -433,7 +402,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '3',
-    defaultCleanerEmails: ['bertha@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com'],
   },
   {
     number: '303',
@@ -442,7 +411,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Standard',
     capacity: 2,
     floor: '3',
-    defaultCleanerEmails: ['dora@cleaners.com'],
+    defaultCleanersEmails: ['dora@cleaners.com'],
   },
   {
     number: '304',
@@ -451,7 +420,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Deluxe',
     capacity: 3,
     floor: '3',
-    defaultCleanerEmails: ['fatima@cleaners.com'],
+    defaultCleanersEmails: ['fatima@cleaners.com'],
   },
   {
     number: '305',
@@ -461,7 +430,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     capacity: 2,
     floor: '3',
     notes: 'Renovierung',
-    defaultCleanerEmails: [],
+    defaultCleanersEmails: [],
   },
   {
     number: '306',
@@ -470,7 +439,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Suite',
     capacity: 4,
     floor: '3',
-    defaultCleanerEmails: ['bertha@cleaners.com', 'fatima@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com', 'fatima@cleaners.com'],
   },
 
   // Third Floor
@@ -482,7 +451,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     capacity: 6,
     floor: '4',
     notes: 'Präsidentensuite - Besondere Aufmerksamkeit',
-    defaultCleanerEmails: [
+    defaultCleanersEmails: [
       'bertha@cleaners.com',
       'fatima@cleaners.com',
       'dora@cleaners.com',
@@ -495,7 +464,7 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Deluxe',
     capacity: 2,
     floor: '4',
-    defaultCleanerEmails: ['fatima@cleaners.com'],
+    defaultCleanersEmails: ['fatima@cleaners.com'],
   },
   {
     number: '403',
@@ -504,117 +473,132 @@ export const roomsKhanAlHarir: TRoom[] = [
     type: 'Deluxe',
     capacity: 2,
     floor: '4',
-    defaultCleanerEmails: ['bertha@cleaners.com'],
+    defaultCleanersEmails: ['bertha@cleaners.com'],
   },
 ];
 
 // Task Templates (will be created as pending/in-progress)
-export type TTaskTemplate = {
-  roomNumber: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
-  priority: TaskPriority;
-  dueHoursFromNow: number; // Hours from now
-  assignedCleanerEmails: string[];
-  notes?: string | undefined;
-};
 
-export const tasksLaLuna: TTaskTemplate[] = [
+export const tasksLaLuna: TSEEDING_Task[] = [
   {
     roomNumber: '101',
     status: 'PENDING',
     priority: 'MEDIUM',
-    dueHoursFromNow: 2,
-    assignedCleanerEmails: ['charles@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['charles@cleaners.com'],
     notes: 'Gast checkt bald aus',
   },
   {
     roomNumber: '104',
     status: 'IN_PROGRESS',
     priority: 'LOW',
-    dueHoursFromNow: 3,
-    assignedCleanerEmails: ['charles@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['charles@cleaners.com'],
   },
   {
     roomNumber: '201',
     status: 'PENDING',
     priority: 'HIGH',
-    dueHoursFromNow: 1,
-    assignedCleanerEmails: ['sofia@cleaners.com', 'charles@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['sofia@cleaners.com', 'charles@cleaners.com'],
     notes: 'Urgent - VIP Gast kommt',
   },
   {
     roomNumber: '301',
     status: 'PENDING',
     priority: 'LOW',
-    dueHoursFromNow: 4,
-    assignedCleanerEmails: ['charles@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['charles@cleaners.com'],
   },
   {
     roomNumber: '303',
     status: 'IN_PROGRESS',
     priority: 'LOW',
-    dueHoursFromNow: 2,
-    assignedCleanerEmails: ['sofia@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['sofia@cleaners.com'],
   },
 ];
 
-export const tasksKhanAlHarir: TTaskTemplate[] = [
+function tomorrowAt(time: string): Date {
+  const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/; // matches HH:MM in 24-hour format
+
+  if (typeof time !== 'string') {
+    throw new Error('Time must be a string');
+  }
+
+  if (!timePattern.test(time)) {
+    throw new Error('Invalid time format. Expected HH:MM in 24-hour format.');
+  }
+
+  const [hourStr, minuteStr] = time.split(':');
+  const hour = Number(hourStr);
+  const minute = Number(minuteStr);
+
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(hour, minute, 0, 0);
+
+  return tomorrow;
+}
+
+export const tasksKhanAlHarir: TSEEDING_Task[] = [
   {
     roomNumber: '101',
     status: 'PENDING',
     priority: 'LOW',
-    dueHoursFromNow: 2,
-    assignedCleanerEmails: ['bertha@cleaners.com'],
+    cleaners: ['bertha@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
   },
   {
     roomNumber: '104',
     status: 'IN_PROGRESS',
     priority: 'LOW',
-    dueHoursFromNow: 3,
-    assignedCleanerEmails: ['bertha@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['bertha@cleaners.com'],
   },
   {
     roomNumber: '201',
     status: 'PENDING',
     priority: 'MEDIUM',
-    dueHoursFromNow: 2,
-    assignedCleanerEmails: ['bertha@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['bertha@cleaners.com'],
   },
   {
     roomNumber: '202',
     status: 'IN_PROGRESS',
     priority: 'LOW',
-    dueHoursFromNow: 4,
-    assignedCleanerEmails: ['dora@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['dora@cleaners.com'],
   },
   {
     roomNumber: '205',
     status: 'PENDING',
     priority: 'HIGH',
-    dueHoursFromNow: 1,
-    assignedCleanerEmails: ['bertha@cleaners.com', 'fatima@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['bertha@cleaners.com', 'fatima@cleaners.com'],
     notes: 'VIP Suite - Extra sorgfältig',
   },
   {
     roomNumber: '301',
     status: 'PENDING',
     priority: 'LOW',
-    dueHoursFromNow: 5,
-    assignedCleanerEmails: ['fatima@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['fatima@cleaners.com'],
   },
   {
     roomNumber: '304',
     status: 'IN_PROGRESS',
     priority: 'LOW',
-    dueHoursFromNow: 3,
-    assignedCleanerEmails: ['fatima@cleaners.com'],
+    dueAt: tomorrowAt('11:00'),
+    cleaners: ['fatima@cleaners.com'],
   },
   {
     roomNumber: '401',
     status: 'PENDING',
     priority: 'HIGH',
-    dueHoursFromNow: 2,
-    assignedCleanerEmails: [
+    dueAt: tomorrowAt('11:00'),
+    cleaners: [
       'bertha@cleaners.com',
       'fatima@cleaners.com',
       'dora@cleaners.com',

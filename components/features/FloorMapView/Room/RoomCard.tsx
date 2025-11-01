@@ -2,6 +2,8 @@
 
 import { Card, CardBody, Chip, cn } from '@heroui/react';
 import { getStatusColorClass } from '@lib/client';
+import { TaskPriority } from '@prisma/client';
+import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 
 import type { RoomCardProps } from './types';
@@ -14,7 +16,11 @@ export const RoomCard = memo(function RoomCard({
   const statusColorClass = getStatusColorClass(room.status.status);
 
   // Check if room has high-priority tasks
-  const hasHighPriority = room.tasks?.some((task) => task.priority === 'HIGH');
+  const hasHighPriority = room.tasks?.some(
+    (task) => task.priority === TaskPriority.HIGH
+  );
+
+  const t = useTranslations('task');
 
   return (
     <Card
@@ -57,12 +63,12 @@ export const RoomCard = memo(function RoomCard({
 
         {/* Floor indicator if present */}
         {room.floor !== undefined && room.floor !== null && (
-          <div className="text-xs">Floor {room.floor}</div>
+          <div className="text-xs">{t('floor', { floor: room.floor })}</div>
         )}
         {/* Task count badge */}
         {room.taskCount > 0 && (
           <p className="text-xs px-2 py-1 bg-default-100 rounded-full w-fit">
-            {room.taskCount} {room.taskCount === 1 ? 'task' : 'tasks'}
+            {t('count', { count: room.taskCount })}
           </p>
         )}
       </CardBody>

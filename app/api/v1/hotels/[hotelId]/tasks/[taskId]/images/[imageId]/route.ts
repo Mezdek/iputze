@@ -1,21 +1,14 @@
 import { getTaskAccessContext, prisma } from '@lib/db';
+import { hasManagerPermission } from '@lib/server';
 import { APP_ERRORS, HttpStatus, withErrorHandling } from '@lib/shared';
 import { v2 as cloudinary } from 'cloudinary';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { hasManagerPermission } from '@/lib/server';
-import type { TaskParams } from '@/types';
+import { cloudinaryConfig } from '@/lib/services/imageStorage/config';
+import type { ImageParams } from '@/types';
 
-cloudinary.config({
-  cloud_name: process.env['CLOUDINARY_CLOUD_NAME'],
-  api_key: process.env['CLOUDINARY_API_KEY'],
-  api_secret: process.env['CLOUDINARY_API_SECRET'],
-});
-
-interface ImageParams extends TaskParams {
-  imageId: string;
-}
+cloudinary.config(cloudinaryConfig);
 
 /**
  * DELETE /api/v1/hotels/[hotelId]/tasks/[taskId]/images/[imageId]

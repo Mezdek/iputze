@@ -50,7 +50,7 @@
       }
     }
   },
-  "update_panel": {
+  "update": {
     "header": " Edit room {number}",
     "inputs": {
       "room_number": {
@@ -73,7 +73,7 @@
       "submit": "Update"
     }
   },
-  "deletion_panel": {
+  "deletion": {
     "header": "Room Deletion",
     "buttons": {
       "open": "Delete",
@@ -81,7 +81,7 @@
     },
     "approval_question": "Are you sure you want to delete room {number}?"
   },
-  "creation_panel": {
+  "creation": {
     "buttons": {
       "close": "Cancel",
       "open": "Create Room",

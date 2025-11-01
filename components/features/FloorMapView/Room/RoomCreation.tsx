@@ -17,6 +17,7 @@ import { RoomCleanliness, RoomOccupancy } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
+import { RoomFormModes } from '@/components/features/FloorMapView/Room/types';
 import type { RoomCollectionParams, RoomCreationBody } from '@/types';
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
@@ -57,7 +58,7 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
   return (
     <>
       <Button color="primary" onPress={onOpen}>
-        {t('creation_panel.buttons.open')}
+        {t('creation.buttons.open')}
       </Button>
       <Modal
         disableAnimation
@@ -69,14 +70,18 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1 text-lg font-semibold">
-                {t('creation_panel.header')}
+                {t('creation.header')}
               </ModalHeader>
               <ModalBody>
-                <RoomForm id={FORM} mode="create" onSubmit={handleSubmit} />
+                <RoomForm
+                  id={FORM}
+                  mode={RoomFormModes.CREATION}
+                  onSubmit={handleSubmit}
+                />
               </ModalBody>
               <ModalFooter className="gap-3">
                 <Button color="danger" variant="flat" onPress={onClose}>
-                  {t('creation_panel.buttons.close')}
+                  {t('creation.buttons.close')}
                 </Button>
                 <Button
                   color="primary"
@@ -85,7 +90,7 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
                   isLoading={isSubmitting}
                   type="submit"
                 >
-                  {t('creation_panel.buttons.submit')}
+                  {t('creation.buttons.submit')}
                 </Button>
               </ModalFooter>
             </>

@@ -62,7 +62,7 @@ CREATE TABLE "Task" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "roomId" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
-    "priority" INTEGER NOT NULL DEFAULT 0,
+    "priority" TEXT NOT NULL DEFAULT 'LOW',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "dueAt" DATETIME NOT NULL,
     "startedAt" DATETIME,
@@ -116,13 +116,13 @@ CREATE TABLE "Image" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "taskId" TEXT NOT NULL,
     "url" TEXT NOT NULL,
-    "uploadedBy" TEXT NOT NULL,
+    "uploaderId" TEXT NOT NULL,
     "uploadedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" DATETIME,
     "deletedBy" TEXT,
     "exif" JSONB,
     CONSTRAINT "Image_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "Image_uploadedBy_fkey" FOREIGN KEY ("uploadedBy") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Image_uploaderId_fkey" FOREIGN KEY ("uploaderId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Image_deletedBy_fkey" FOREIGN KEY ("deletedBy") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 

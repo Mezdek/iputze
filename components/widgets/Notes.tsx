@@ -18,7 +18,7 @@ import {
   Textarea,
   useDisclosure,
 } from '@heroui/react';
-import { useNotes, useCreateNote, useDeleteNote } from '@hooks';
+import { useCreateNote, useDeleteNote, useNotes } from '@hooks';
 import { parseFormData } from '@lib/shared';
 import type { Note } from '@prisma/client';
 import type { FormEvent } from 'react';
@@ -33,7 +33,6 @@ const MAX_NOTE_LENGTH = 30;
 export function Notes({
   taskId,
   hotelId,
-  userId,
   isDisabled = false,
 }: NoteCollectionParams & { isDisabled?: boolean } & {
   userId: string;

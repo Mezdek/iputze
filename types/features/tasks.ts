@@ -54,37 +54,6 @@ export interface ImageUploadResult {
   exif?: EXIF | null;
 }
 
-// ==================== Image Storage Abstraction ====================
-
-/**
- * Abstract image storage provider interface
- * Allows easy migration from Cloudinary to other services
- */
-export interface ImageStorageProvider {
-  upload(params: {
-    buffer: Buffer;
-    fileName: string;
-    folder: string;
-    compress?: boolean;
-    generateThumbnail?: boolean;
-  }): Promise<{
-    url: string;
-    thumbnailUrl?: string;
-    publicId: string;
-  }>;
-
-  delete(publicId: string): Promise<void>;
-
-  getUrl(
-    publicId: string,
-    options?: {
-      width?: number;
-      height?: number;
-      quality?: number;
-    }
-  ): string;
-}
-
 // ==================== View Modes ====================
 
 /**

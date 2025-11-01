@@ -13,6 +13,7 @@ import type {
   HotelParams,
   ImageResponse,
   ImageWithUploader,
+  NoteWithAuthor,
 } from '@/types';
 
 export interface TaskAccessContext {
@@ -35,22 +36,25 @@ export interface TaskResponse extends Omit<Task, 'assignedById' | 'roomId'> {
   notes: NoteWithAuthor[];
 }
 
-export interface TaskCreationBody {
+export type TaskCreationBody = {
   roomId: string;
-  dueAt: Date;
+  dueAt: string | Date;
   cleaners: string[];
-}
+  estimatedMinutes?: number | undefined;
+  priority?: TaskPriority | undefined;
+  notes?: string | undefined;
+};
 
-export interface TaskUpdateBody {
-  status?: TaskStatus;
-  priority?: TaskPriority;
-  estimatedMinutes?: number;
-  actualMinutes?: number;
-  completedAt?: Date;
-  startedAt?: Date;
-  cancelledAt?: Date;
-  cancellationNote?: string;
-}
+export type TaskUpdateBody = {
+  status?: TaskStatus | undefined;
+  priority?: TaskPriority | undefined;
+  estimatedMinutes?: number | undefined;
+  actualMinutes?: number | undefined;
+  completedAt?: Date | undefined;
+  startedAt?: Date | undefined;
+  cancelledAt?: Date | undefined;
+  cancellationNote?: string | undefined;
+};
 
 export type TaskCollectionParams = HotelParams;
 export type TaskParams = TaskCollectionParams & {
@@ -67,7 +71,3 @@ export interface TransformTaskProps
 }
 
 export interface Cleaner extends Pick<TaskUser, 'assignedAt'>, BasicUser {}
-
-export interface NoteWithAuthor extends Note {
-  author: BasicUser;
-}

@@ -71,7 +71,7 @@ export function NotesSection({
       setCustomNote('');
       setIsOther(false);
       onNoteAdded?.();
-    } catch (error) {
+    } catch {
       // Error handled by hook
     }
   };
@@ -83,7 +83,7 @@ export function NotesSection({
 
     try {
       await deleteNote({ noteId: note.id });
-    } catch (error) {
+    } catch {
       // Error handled by hook
     }
   };

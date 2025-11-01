@@ -1,16 +1,10 @@
 import {
   APP_ERRORS,
-  AuthErrors,
   GeneralErrors,
   HttpError,
   PrismaErrors,
 } from '@lib/shared';
 import { Prisma } from '@prisma/client';
-import {
-  JsonWebTokenError,
-  NotBeforeError,
-  TokenExpiredError,
-} from 'jsonwebtoken';
 
 /**
  * Centralized error handler for API routes.
@@ -46,14 +40,6 @@ export function handleError(error: unknown) {
   // 4. Custom application errors (already wrapped as HttpError)
   if (error instanceof HttpError) {
     return error.nextResponse();
-  }
-
-  if (error instanceof TokenExpiredError) {
-    return APP_ERRORS.unauthorized(AuthErrors.SESSION_EXPIRED).nextResponse();
-  }
-
-  if (error instanceof JsonWebTokenError || error instanceof NotBeforeError) {
-    return APP_ERRORS.unauthorized().nextResponse();
   }
 
   // 5. Fallback for unhandled/unknown errors

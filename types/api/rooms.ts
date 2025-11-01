@@ -1,4 +1,5 @@
 import type {
+  DefaultCleaners,
   Hotel,
   Room,
   RoomCleanliness,
@@ -11,25 +12,29 @@ export interface RoomWithHotel extends Room {
   hotel: Hotel;
 }
 
-export interface RoomCreationBody {
+export type RoomCreationBody = {
   number: string;
-  occupancy?: RoomOccupancy;
-  cleanliness?: RoomCleanliness;
-  type?: string;
-  capacity?: number;
-  floor?: string;
-  notes?: string;
-}
+  occupancy?: RoomOccupancy | undefined;
+  cleanliness?: RoomCleanliness | undefined;
+  type?: string | undefined;
+  capacity?: number | undefined;
+  floor?: string | undefined;
+  notes?: string | undefined;
+};
 
-export interface RoomUpdateBody {
-  number?: string;
-  occupancy?: RoomOccupancy;
-  cleanliness?: RoomCleanliness;
-  type?: string;
-  capacity?: number;
-  floor?: string;
-  notes?: string;
-}
+export type RoomUpdateBody = {
+  number?: string | undefined;
+  occupancy?: RoomOccupancy | undefined;
+  cleanliness?: RoomCleanliness | undefined;
+  type?: string | undefined;
+  capacity?: number | undefined;
+  floor?: string | undefined;
+  notes?: string | undefined;
+};
 
 export type RoomCollectionParams = HotelParams;
 export type RoomParams = RoomCollectionParams & { roomId: string };
+
+export interface RoomResponse extends Room {
+  defaultCleaners: DefaultCleaners[];
+}

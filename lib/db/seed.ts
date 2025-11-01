@@ -1,18 +1,22 @@
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';
 
+import { tomorrowAt } from '@/lib/shared/utils/date';
+import type { HotelCreationBody } from '@/types';
+
 import {
   hotels,
   roomsKhanAlHarir,
   roomsLaLuna,
   tasksKhanAlHarir,
   tasksLaLuna,
-  type THotel,
-  type TRoom,
-  type TTaskTemplate,
-  type TUser,
   users,
 } from './seeding/data';
+import type {
+  TSEEDING_RoomCreation,
+  TSEEDING_Task,
+  TSEEDING_User,
+} from './seeding/types';
 
 const prisma = new PrismaClient();
 
@@ -38,7 +42,7 @@ const createHotel = async ({
   phone,
   email,
   description,
-}: THotel) => {
+}: HotelCreationBody) => {
   let hotel = await prisma.hotel.findUnique({ where: { name } });
   if (!hotel) {
     hotel = await prisma.hotel.create({
@@ -58,7 +62,8 @@ const createHotel = async ({
 };
 
 // Create or get user with role
-const createUser = async (userData: TUser, hotelId: string) => {
+
+const createUser = async (userData: TSEEDING_User, hotelId: string) => {
   const { email, level, name, password, avatarUrl } = userData;
 
   let user = await prisma.user.findUnique({ where: { email } });
@@ -106,20 +111,16 @@ const createUser = async (userData: TUser, hotelId: string) => {
 };
 
 // Create room with default cleaners
-const createRoom = async (
-  roomData: TRoom,
-  hotelId: string,
-  userEmailMap: Map<string, string>
-) => {
+const createRoom = async (roomData: TSEEDING_RoomCreation, hotelId: string) => {
   const {
     number,
-    defaultCleanerEmails,
     occupancy,
     cleanliness,
     type,
     capacity,
     floor,
     notes,
+    defaultCleanersEmails,
   } = roomData;
 
   const existingRoom = await prisma.room.findUnique({
@@ -150,18 +151,20 @@ const createRoom = async (
   });
 
   // Assign default cleaners
-  if (defaultCleanerEmails && defaultCleanerEmails.length > 0) {
-    for (const email of defaultCleanerEmails) {
-      const userId = userEmailMap.get(email);
-      if (userId) {
-        await prisma.defaultCleaners.create({
-          data: {
-            roomId: room.id,
-            userId,
-          },
-        });
-      }
-    }
+  if (defaultCleanersEmails.length > 0) {
+    const defaultCleaners = await prisma.user.findMany({
+      where: { email: { in: defaultCleanersEmails } },
+      select: { id: true },
+    });
+
+    const data = defaultCleaners.map(({ id }) => ({
+      roomId: room.id,
+      userId: id,
+    }));
+
+    await prisma.defaultCleaners.createMany({
+      data,
+    });
   }
 
   log(`  ✓ Created room: ${number} (${type})`, colors.green);
@@ -170,19 +173,12 @@ const createRoom = async (
 
 // Create task
 const createTask = async (
-  taskData: TTaskTemplate,
+  taskData: TSEEDING_Task,
   hotelId: string,
-  userEmailMap: Map<string, string>,
+  cleanersIds: string[],
   managerUserId: string
 ) => {
-  const {
-    roomNumber,
-    status,
-    priority,
-    dueHoursFromNow,
-    assignedCleanerEmails,
-    notes,
-  } = taskData;
+  const { roomNumber, status, priority, notes } = taskData;
 
   // Find room
   const room = await prisma.room.findUnique({
@@ -199,23 +195,7 @@ const createTask = async (
     return;
   }
 
-  // Check if task already exists
-  const existingTask = await prisma.task.findFirst({
-    where: {
-      roomId: room.id,
-      status: { in: ['PENDING', 'IN_PROGRESS'] },
-    },
-  });
-
-  if (existingTask) {
-    log(`  ↺ Active task exists for room: ${roomNumber}`, colors.yellow);
-    return existingTask;
-  }
-
-  const dueAt = new Date();
-  dueAt.setHours(dueAt.getHours() + dueHoursFromNow);
-
-  const startedAt = status === 'IN_PROGRESS' ? new Date() : null;
+  const dueAt = tomorrowAt('11:00');
 
   const task = await prisma.task.create({
     data: {
@@ -223,15 +203,13 @@ const createTask = async (
       status,
       priority,
       dueAt,
-      startedAt,
       assignedById: managerUserId,
     },
   });
 
   // Assign cleaners
-  for (const email of assignedCleanerEmails) {
-    const userId = userEmailMap.get(email);
-    if (userId) {
+  if (cleanersIds.length > 0) {
+    for (const userId of cleanersIds) {
       await prisma.taskUser.create({
         data: {
           taskId: task.id,
@@ -285,22 +263,19 @@ async function main() {
   // 2. Create Users and Roles
   log('👥 Creating users and roles...', colors.blue);
 
-  const admin1 = await createUser(users['admin1'], zentraleH.id);
-  const admin2 = await createUser(users['admin2'], zentraleH.id);
+  await createUser(users['admin1'], zentraleH.id);
+  await createUser(users['admin2'], zentraleH.id);
 
   const managerLaLuna = await createUser(users['managerLaLuna'], laLunaH.id);
   const cleanerLaLuna1 = await createUser(users['cleanerLaLuna1'], laLunaH.id);
-  const cleanerLaLuna2 = await createUser(users['cleanerLaLuna2'], laLunaH.id);
-  const cleanerLaLuna3 = await createUser(users['cleanerLaLuna3'], laLunaH.id);
+  await createUser(users['cleanerLaLuna2'], laLunaH.id);
+  await createUser(users['cleanerLaLuna3'], laLunaH.id);
 
   const managerKhanAlHarir = await createUser(
     users['managerKhanAlHarir'],
     khanAlHarirH.id
   );
-  const cleanerKhanAlHarir1 = await createUser(
-    users['cleanerKhanAlHarir1'],
-    khanAlHarirH.id
-  );
+  await createUser(users['cleanerKhanAlHarir1'], khanAlHarirH.id);
   const cleanerKhanAlHarir2 = await createUser(
     users['cleanerKhanAlHarir2'],
     khanAlHarirH.id
@@ -311,29 +286,29 @@ async function main() {
   );
   log('');
 
-  // Create email-to-userId map
-  const userEmailMap = new Map<string, string>();
-  const allUsers = await prisma.user.findMany();
-  allUsers.forEach((user) => userEmailMap.set(user.email, user.id));
-
   // 3. Create Rooms for La Luna
   log('🛏️  Creating rooms for La Luna...', colors.blue);
   for (const roomData of roomsLaLuna) {
-    await createRoom(roomData, laLunaH.id, userEmailMap);
+    await createRoom(roomData, laLunaH.id);
   }
   log('');
 
   // 4. Create Rooms for Khan Al Harir
   log('🛏️  Creating rooms for Khan Al Harir...', colors.blue);
   for (const roomData of roomsKhanAlHarir) {
-    await createRoom(roomData, khanAlHarirH.id, userEmailMap);
+    await createRoom(roomData, khanAlHarirH.id);
   }
   log('');
 
   // 5. Create Tasks for La Luna
   log('📋 Creating tasks for La Luna...', colors.blue);
   for (const taskData of tasksLaLuna) {
-    await createTask(taskData, laLunaH.id, userEmailMap, managerLaLuna.id);
+    await createTask(
+      taskData,
+      laLunaH.id,
+      [cleanerLaLuna1.id],
+      managerLaLuna.id
+    );
   }
   log('');
 
@@ -343,7 +318,7 @@ async function main() {
     await createTask(
       taskData,
       khanAlHarirH.id,
-      userEmailMap,
+      [cleanerKhanAlHarir3.id, cleanerKhanAlHarir2.id],
       managerKhanAlHarir.id
     );
   }

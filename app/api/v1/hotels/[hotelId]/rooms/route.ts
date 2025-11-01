@@ -3,6 +3,7 @@ import { canCreateRoom, canListRooms } from '@lib/server';
 import {
   APP_ERRORS,
   HttpStatus,
+  roomCreationSchema,
   RoomErrors,
   withErrorHandling,
 } from '@lib/shared';
@@ -10,7 +11,6 @@ import type { Room } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { roomCreationSchema } from '@/lib/shared/validation/schemas';
 import type { RoomCollectionParams, RoomWithHotel } from '@/types';
 
 export const GET = withErrorHandling(
@@ -44,12 +44,9 @@ export const POST = withErrorHandling(
 
     const data = roomCreationSchema.parse(await req.json());
 
-    const roomNumber = data.number;
-    if (!roomNumber) throw APP_ERRORS.badRequest(RoomErrors.MISSING_NUMBER);
-
     // Ensure room number is unique for this hotel
     const existingRoom = await prisma.room.findUnique({
-      where: { hotelId_number: { hotelId, number: roomNumber } },
+      where: { hotelId_number: { hotelId, number: data.number } },
     });
 
     if (existingRoom) throw APP_ERRORS.badRequest(RoomErrors.DUPLICATED_NUMBER);

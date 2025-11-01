@@ -1,24 +1,10 @@
 'use client';
 
-import {
-  Form,
-  type FormProps,
-  Input,
-  Select,
-  SelectItem,
-  Textarea,
-} from '@heroui/react';
-import { type Room, RoomCleanliness, RoomOccupancy } from '@prisma/client';
+import { Form, Input, Select, SelectItem, Textarea } from '@heroui/react';
+import { RoomCleanliness, RoomOccupancy } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import type { FormEvent } from 'react';
 
-interface RoomFormProps extends Omit<FormProps, 'onSubmit'> {
-  room?: Room;
-  onSubmit: (e: FormEvent<HTMLFormElement>) => void;
-  mode: 'create' | 'update';
-}
-
-const ROOM_TYPES = ['Single', 'Double', 'Suite', 'Standard', 'Deluxe'] as const;
+import { ROOM_TYPES, type RoomFormProps } from './types';
 
 export function RoomForm({
   room,
@@ -27,8 +13,6 @@ export function RoomForm({
   ...formProps
 }: RoomFormProps) {
   const t = useTranslations('room');
-  const isUpdate = mode === 'update';
-  const panelKey = isUpdate ? 'update_panel' : 'creation_panel';
 
   return (
     <Form className="flex flex-col gap-4" onSubmit={onSubmit} {...formProps}>
@@ -36,10 +20,10 @@ export function RoomForm({
       <Input
         required
         defaultValue={room?.number}
-        errorMessage={t(`${panelKey}.inputs.room_number.error_message`)}
-        label={t(`${panelKey}.inputs.room_number.label`)}
+        errorMessage={t(`${mode}.inputs.room_number.error_message`)}
+        label={t(`${mode}.inputs.room_number.label`)}
         name="number"
-        placeholder={t(`${panelKey}.inputs.room_number.placeholder`)}
+        placeholder={t(`${mode}.inputs.room_number.placeholder`)}
         variant="bordered"
       />
 
@@ -90,9 +74,9 @@ export function RoomForm({
         defaultSelectedKeys={
           room ? [room.cleanliness] : [RoomCleanliness.CLEAN]
         }
-        label={t(`${panelKey}.inputs.cleanliness.label`)}
+        label={t(`${mode}.inputs.cleanliness.label`)}
         name="cleanliness"
-        placeholder={t(`${panelKey}.inputs.cleanliness.placeholder`)}
+        placeholder={t(`${mode}.inputs.cleanliness.placeholder`)}
         variant="bordered"
       >
         {Object.values(RoomCleanliness).map((status) => (
@@ -106,9 +90,9 @@ export function RoomForm({
       <Select
         required
         defaultSelectedKeys={room ? [room.occupancy] : [RoomOccupancy.VACANT]}
-        label={t(`${panelKey}.inputs.occupancy.label`)}
+        label={t(`${mode}.inputs.occupancy.label`)}
         name="occupancy"
-        placeholder={t(`${panelKey}.inputs.occupancy.placeholder`)}
+        placeholder={t(`${mode}.inputs.occupancy.placeholder`)}
         variant="bordered"
       >
         {Object.values(RoomOccupancy).map((status) => (

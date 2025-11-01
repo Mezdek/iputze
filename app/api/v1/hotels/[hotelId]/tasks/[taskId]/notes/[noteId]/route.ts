@@ -1,7 +1,7 @@
 import {
+  getHotelOrThrow,
   getNoteOrThrow,
   getTaskOrThrow,
-  getHotelOrThrow,
   getUserOrThrow,
   prisma,
 } from '@lib/db';
@@ -10,7 +10,7 @@ import type { NextRequest } from 'next/server';
 
 import type { NoteParams } from '@/types';
 
-// To-Do Refactor
+// @TODO Refactor
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: NoteParams }) => {
     const { hotelId: hotelIdParam, taskId: taskIdParam, noteId } = await params;

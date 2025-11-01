@@ -1,4 +1,3 @@
-import { APP_ERRORS, AuthErrors } from '@lib/shared';
 import {
   RoomCleanliness,
   RoomOccupancy,
@@ -21,22 +20,6 @@ export const roomCreationSchema = z.object({
   notes: z.string().max(500).optional(),
 });
 
-export const taskCreationSchema = z.object({
-  roomId: z.string().uuid('Invalid room ID'),
-  dueAt: z.string().datetime().or(z.date()),
-  cleaners: z.array(z.string().uuid()).min(1, 'At least one cleaner required'),
-  estimatedMinutes: z.number().int().positive().optional(),
-  priority: z.nativeEnum(TaskPriority).optional(),
-});
-
-export const noteSchema = z.object({
-  content: z
-    .string()
-    .min(1, 'Note cannot be empty')
-    .max(500, 'Note too long')
-    .trim(),
-});
-
 export const roomUpdateSchema = z.object({
   number: z
     .string()
@@ -52,6 +35,15 @@ export const roomUpdateSchema = z.object({
   notes: z.string().max(500).optional(),
 });
 
+export const taskCreationSchema = z.object({
+  roomId: z.string().uuid('Invalid room ID'),
+  dueAt: z.string().datetime().or(z.date()),
+  cleaners: z.array(z.string().uuid()).min(1, 'At least one cleaner required'),
+  estimatedMinutes: z.number().int().positive().optional(),
+  priority: z.nativeEnum(TaskPriority).optional(),
+  notes: z.string().max(500).optional(),
+});
+
 export const taskUpdateSchema = z.object({
   status: z.nativeEnum(TaskStatus).optional(),
   priority: z.nativeEnum(TaskPriority).optional(),
@@ -63,28 +55,16 @@ export const taskUpdateSchema = z.object({
   cancellationNote: z.string().max(500).optional(),
 });
 
-/**
- * Schemas
- */
-export const nameSchema = z.string().min(1).max(255).trim();
-export const emailSchema = z.string().email().max(255);
-export const passwordSchema = z.string().min(8).max(128);
+export const noteSchema = z.object({
+  content: z
+    .string()
+    .min(1, 'Note cannot be empty')
+    .max(500, 'Note too long')
+    .trim(),
+});
 
-/**
- * Generic validator for registration
- */
-export const validateRegistration = (data: unknown) => {
-  const result = z
-    .object({
-      name: nameSchema,
-      email: emailSchema,
-      password: passwordSchema,
-    })
-    .safeParse(data);
-
-  if (!result.success) {
-    throw APP_ERRORS.badRequest(AuthErrors.INVALID_VALUES);
-  }
-
-  return result.data;
-};
+export const userCreationSchema = z.object({
+  name: z.string().min(1).max(255).trim(),
+  email: z.string().email().max(255),
+  password: z.string().min(8).max(128),
+});

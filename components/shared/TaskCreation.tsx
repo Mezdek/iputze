@@ -1,3 +1,4 @@
+// @TODO add possibility to select room number later
 'use client';
 
 import {
@@ -20,19 +21,11 @@ import { useCreateTask, useErrorToast, useRoles, useRoom } from '@hooks';
 import { getLocalTimeZone, now, today } from '@internationalized/date';
 import { getRolesByLevel } from '@lib/server';
 import { parseFormData } from '@lib/shared';
-import { RoleLevel } from '@prisma/client';
+import { RoleLevel, TaskPriority } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
 import type { TaskCreationBody, TRoleWithUser } from '@/types';
-
-const PRIORITY_OPTIONS = [
-  { value: 0, label: 'normal' },
-  { value: 1, label: 'low_priority' },
-  { value: 2, label: 'medium_priority' },
-  { value: 3, label: 'high_priority' },
-  { value: 4, label: 'urgent' },
-] as const;
 
 export function TaskCreation({
   roomId,
@@ -62,11 +55,22 @@ export function TaskCreation({
     setIsSubmitting(true);
 
     try {
-      const data = parseFormData<TaskCreationBody>(e.currentTarget, {
+      const formData = parseFormData<TaskCreationBody>(e.currentTarget, {
         cleaners: [],
         dueAt: new Date(),
         roomId,
+        estimatedMinutes: 0,
+        notes: '',
+        priority: 'LOW',
       });
+      const dueAt = new FormData(e.currentTarget).get('dueAt');
+      const dueTime = new FormData(e.currentTarget).get('dueTime');
+      const data: TaskCreationBody = {
+        ...formData,
+        dueAt: new Date(`${dueAt} ${dueTime}`),
+        estimatedMinutes: Number(formData.estimatedMinutes),
+      };
+
       await createTask(data);
       onClose();
       addToast({
@@ -155,7 +159,7 @@ export function TaskCreation({
                     />
 
                     <TimeInput
-                      defaultValue={now(getLocalTimeZone())}
+                      defaultValue={now(getLocalTimeZone()).set({ hour: 11 })}
                       description={t('inputs.due_time.description', {
                         default: 'Select time',
                       })}
@@ -170,40 +174,32 @@ export function TaskCreation({
 
                   {/* Priority */}
                   <Select
-                    defaultSelectedKeys={['0']}
-                    description={t('inputs.priority.description', {
-                      default: 'Set task priority level',
-                    })}
+                    defaultSelectedKeys={[TaskPriority.MEDIUM]}
+                    description={t('inputs.priority.description')}
                     form={FORM}
-                    label={t('inputs.priority.label', { default: 'Priority' })}
+                    label={t('inputs.priority.label')}
                     name="priority"
-                    placeholder={t('inputs.priority.placeholder', {
-                      default: 'Select priority',
-                    })}
+                    placeholder={t('inputs.priority.placeholder')}
                   >
-                    {PRIORITY_OPTIONS.map(({ value, label }) => (
-                      <SelectItem key={String(value)}>
-                        {t(`inputs.priority.options.${label}`, {
-                          default: label,
-                        })}
+                    {Object.values(TaskPriority).map((priority) => (
+                      <SelectItem key={priority}>
+                        {t(`inputs.priority.options.${priority}`)}
                       </SelectItem>
                     ))}
                   </Select>
 
                   {/* Estimated Minutes */}
                   <Input
-                    description={t('inputs.estimated_minutes.description', {
-                      default: 'Expected time to complete (optional)',
-                    })}
+                    defaultValue="45"
+                    description={t('inputs.estimated_minutes.description')}
                     form={FORM}
-                    label={t('inputs.estimated_minutes.label', {
-                      default: 'Estimated Time (minutes)',
-                    })}
-                    min="1"
+                    inputMode="numeric"
+                    label={t('inputs.estimated_minutes.label')}
+                    max="120"
+                    min="15"
                     name="estimatedMinutes"
-                    placeholder={t('inputs.estimated_minutes.placeholder', {
-                      default: 'e.g., 30',
-                    })}
+                    placeholder={t('inputs.estimated_minutes.placeholder')}
+                    step="5"
                     type="number"
                   />
                 </Form>

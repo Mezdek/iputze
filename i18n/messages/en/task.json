@@ -30,11 +30,9 @@
         "description": "Choose priority",
         "placeholder": "Please choose a priority",
         "options": {
-          "normal": "Normal",
-          "low_priority": "Low Priority",
-          "medium_priority": "Medium Priority",
-          "high_priority": "high_priority",
-          "urgent": "Urgent"
+          "LOW": "low",
+          "MEDIUM": "medium",
+          "HIGH": "high"
         }
       },
       "estimated_minutes": {
@@ -69,6 +67,8 @@
   "priority": "Priority",
   "overdue": "Overdue",
   "due_date_passed": "Due date passed",
+  "count": "{count, plural, =0 {no tasks} =1 {one task} other {# tasks}}",
+  "floor": "Floor {floor}",
   "errors": {
     "unknown": {
       "title": "Something went wrong!",

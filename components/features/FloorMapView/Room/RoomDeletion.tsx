@@ -1,16 +1,13 @@
 'use client';
 
-import { ApprovalRequest, type ApprovalRequestProps } from '@components';
+import { ApprovalRequest } from '@components';
 import { addToast } from '@heroui/react';
 import { useDeleteRoom, useErrorToast } from '@hooks';
+import { filterDefinedProps } from '@lib/shared';
 import { useTranslations } from 'next-intl';
 
-import { filterDefinedProps } from '@/lib/shared';
-import type { RoomParams } from '@/types';
+import type { RoomDeletionProps } from './types';
 
-interface RoomDeletionProps extends ApprovalRequestProps, RoomParams {
-  roomNumber: string;
-}
 export function RoomDeletion({
   hotelId,
   roomId,
@@ -18,7 +15,7 @@ export function RoomDeletion({
   ...props
 }: RoomDeletionProps) {
   const { mutateAsync: deleteRoom } = useDeleteRoom({ hotelId, roomId });
-  const t = useTranslations('room.deletion_panel');
+  const t = useTranslations('room.deletion');
   const { showErrorToast } = useErrorToast();
 
   const handleDelete = async () => {

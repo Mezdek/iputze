@@ -22,7 +22,6 @@ interface TaskItemProps extends Omit<CardProps, 'onClick'> {
 export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
   const t = useTranslations('task');
   const {
-    id,
     status,
     dueAt,
     priority,

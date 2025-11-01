@@ -24,7 +24,6 @@ export const FloorMapSidebar = memo(function FloorMapSidebar({
 }: FloorMapSidebarProps) {
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   const { data: allTasks } = useTasks({ hotelId });
-  console.log({ allTasks });
   // Room selected - show room details
   if (room) {
     return (

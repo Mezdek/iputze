@@ -21,7 +21,7 @@ import { useState } from 'react';
 import {
   ApiError,
   type SignInRequestBody,
-  type SignUpRequestBody,
+  type UserCreationBody,
 } from '@/types';
 
 export function LoginWidget() {
@@ -55,7 +55,7 @@ export function LoginWidget() {
   const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setApiError('');
-    const data = parseFormData<SignUpRequestBody>(e.currentTarget, {
+    const data = parseFormData<UserCreationBody>(e.currentTarget, {
       email: '',
       name: '',
       password: '',

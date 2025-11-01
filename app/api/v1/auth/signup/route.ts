@@ -5,21 +5,19 @@ import {
   AuthErrors,
   HttpStatus,
   RATE_LIMIT_KEYS,
-  validateRegistration,
+  userCreationSchema,
   withErrorHandling,
 } from '@lib/shared';
 import { hash } from 'bcrypt';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import type { SignUpRequestBody, SignUpResponse } from '@/types';
+import type { SignUpResponse } from '@/types';
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   await checkRateLimit(req, RATE_LIMIT_KEYS.REGISTER, 'api');
 
-  const data = (await req.json()) as SignUpRequestBody;
-
-  const { name, email, password } = validateRegistration(data);
+  const { name, email, password } = userCreationSchema.parse(await req.json());
 
   // Check if user already exists
   const existingUser = await prisma.user.findUnique({ where: { email } });
