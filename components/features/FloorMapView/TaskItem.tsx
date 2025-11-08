@@ -8,10 +8,11 @@ import {
   Chip,
   Divider,
 } from '@heroui/react';
-import { capitalize, TASK_STATUS_COLORS } from '@lib/shared';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
+import { TASK_STATUS_COLORS } from '@/lib/shared/constants/features/room';
+import { capitalize } from '@/lib/shared/utils/capitalize';
 import type { TaskResponse } from '@/types';
 
 interface TaskItemProps extends Omit<CardProps, 'onClick'> {

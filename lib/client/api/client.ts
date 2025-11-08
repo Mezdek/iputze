@@ -38,11 +38,13 @@ async function get<T>(url: string, schema?: z.ZodSchema<T>) {
 }
 
 async function post<T>(url: string, data?: unknown, schema?: z.ZodSchema<T>) {
+  const isFormData = data instanceof FormData;
+
   const response = await fetch(route(url), {
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+    body: isFormData ? data : JSON.stringify(data),
   });
   return handleResponse<T>(response, schema);
 }

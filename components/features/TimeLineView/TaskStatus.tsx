@@ -1,9 +1,12 @@
 'use client';
 
-import { Chip, type ChipProps } from '@heroui/react';
-import { capitalize, TASK_STATUS_COLORS } from '@lib/shared';
+import type { ChipProps } from '@heroui/react';
+import { Chip } from '@heroui/react';
 import type { TaskStatus as TTaskStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
+
+import { TASK_STATUS_COLORS } from '@/lib/shared/constants/features/room';
+import { capitalize } from '@/lib/shared/utils/capitalize';
 
 interface TaskStatusProps extends Omit<ChipProps, 'children' | 'color'> {
   status: TTaskStatus;

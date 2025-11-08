@@ -2,7 +2,7 @@
 import { FloorMapView, Nav, WeeklyTimelineView } from '@components';
 import { useState } from 'react';
 
-import type { RoomView } from '@/lib/shared';
+import type { RoomView } from '@/lib/shared/constants/features/room';
 import type { InjectedAuthProps, RoomWithHotel } from '@/types';
 
 export type TViews = 'FLOOR_MAP' | 'TIMELINE';

@@ -1,21 +1,21 @@
-import { prisma } from '@lib/db';
-import { checkRateLimit } from '@lib/server';
-import {
-  APP_ERRORS,
-  AuthErrors,
-  HttpStatus,
-  parseExpiryToMilliSeconds,
-  RATE_LIMIT_KEYS,
-  ResponseCookieOptions,
-  SESSION_COOKIE_EXP,
-  SESSION_COOKIE_KEY,
-  withErrorHandling,
-} from '@lib/shared';
 import type { Prisma } from '@prisma/client';
 import { compare } from 'bcrypt';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import {
+  ResponseCookieOptions,
+  SESSION_COOKIE_EXP,
+  SESSION_COOKIE_KEY,
+} from '@/lib/shared/constants/auth';
+import { AuthErrors } from '@/lib/shared/constants/errors/auth';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { RATE_LIMIT_KEYS } from '@/lib/shared/constants/rateLimitKeys';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { parseExpiryToMilliSeconds } from '@/lib/shared/utils/parseExpiryToSeconds';
 import type { SignInRequestBody, SignInResponse } from '@/types';
 
 const MAX_CONCURRENT_SESSIONS = 5;

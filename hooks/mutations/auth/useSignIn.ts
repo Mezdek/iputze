@@ -1,6 +1,6 @@
-import { api, useMutationWithToast } from '@lib/client';
-import { getPath } from '@lib/shared';
-
+import { api } from '@/lib/client/api/client';
+import { useMutationWithToast } from '@/lib/client/utils/useMutationWithToast';
+import { getPath } from '@/lib/shared/constants/pathes';
 import type { SignInRequestBody, SignInResponse } from '@/types';
 
 export const useSignIn = () => {

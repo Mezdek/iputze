@@ -14,10 +14,11 @@ import {
   NavbarItem,
 } from '@heroui/react';
 import { useMe, useSignOut } from '@hooks';
-import { getPath } from '@lib/shared';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+
+import { getPath } from '@/lib/shared/constants/pathes';
 
 export function NavigationBar() {
   const { data: user } = useMe();

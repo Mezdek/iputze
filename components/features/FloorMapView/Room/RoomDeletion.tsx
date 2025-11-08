@@ -3,8 +3,9 @@
 import { ApprovalRequest } from '@components';
 import { addToast } from '@heroui/react';
 import { useDeleteRoom, useErrorToast } from '@hooks';
-import { filterDefinedProps } from '@lib/shared';
 import { useTranslations } from 'next-intl';
+
+import { filterDefinedProps } from '@/lib/shared/validation/filterDefinedProps';
 
 import type { RoomDeletionProps } from './types';
 

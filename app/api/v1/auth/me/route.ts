@@ -1,10 +1,12 @@
-import { getUserOrThrow, prisma } from '@lib/db';
-import { getAdminRole } from '@lib/server';
-import { HttpStatus, withErrorHandling } from '@lib/shared';
 import type { Hotel, Role } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { getAdminRole } from '@/lib/shared/utils/permissions';
 import type { MeResponse, TRole } from '@/types';
 
 export const GET = withErrorHandling(async (req: NextRequest) => {

@@ -2,10 +2,10 @@
 
 import { TaskItem } from '@components';
 import { Card, CardBody } from '@heroui/react';
-import { sortByPriority } from '@lib/shared/';
 import type { TaskStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
+import { sortByPriority } from '@/lib/shared/utils/sortBy';
 import type { TaskResponse } from '@/types';
 
 interface TaskListProps {

@@ -3,6 +3,7 @@ export * from './ClickableNames';
 export * from './EntityTab';
 export * from './FormError';
 export * from './HotelBanner';
+export * from './Image';
 export * from './ListRenderer';
 export * from './LoadingScreen';
 export * from './PasswordInput';

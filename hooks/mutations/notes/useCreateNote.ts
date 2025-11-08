@@ -1,15 +1,20 @@
-import { api, useMutationWithToast } from '@lib/client';
-import { getPath, queryKeys } from '@lib/shared';
-import type { Note } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 
-import type { NoteCollectionParams, NoteCreationBody } from '@/types';
+import { api } from '@/lib/client/api/client';
+import { useMutationWithToast } from '@/lib/client/utils/useMutationWithToast';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
+import type {
+  NoteCollectionParams,
+  NoteCreationBody,
+  NoteWithAuthor,
+} from '@/types';
 
 export const useCreateNote = ({ hotelId, taskId }: NoteCollectionParams) => {
   const queryClient = useQueryClient();
   return useMutationWithToast({
-    mutationFn: async (data: NoteCreationBody): Promise<Note> => {
-      const res = await api.post<Note>(
+    mutationFn: async (data: NoteCreationBody): Promise<NoteWithAuthor> => {
+      const res = await api.post<NoteWithAuthor>(
         getPath({ hotelId, taskId }).API.NOTES,
         data
       );
@@ -17,7 +22,7 @@ export const useCreateNote = ({ hotelId, taskId }: NoteCollectionParams) => {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.tasks, hotelId],
+        queryKey: queryKeys.taskNotes(hotelId, taskId),
       }),
   });
 };

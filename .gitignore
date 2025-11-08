@@ -41,7 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 # Prisma
-/lib/db/dev.db
+/lib/server/db/dev.db
 
 # local temp
 /temp/*

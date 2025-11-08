@@ -1,20 +1,28 @@
 'use client';
+import { Image } from '@components';
 import {
   addToast,
   Button,
   Card,
   CardBody,
-  Image,
   Modal,
   ModalBody,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   Spinner,
 } from '@heroui/react';
-import { useBatchUploadImage, useDeleteImage, useUploadImage } from '@hooks';
-import { datefy, validateImageFile } from '@lib/shared';
-import { type ChangeEvent, useRef, useState } from 'react';
+import {
+  useBatchUploadImage,
+  useDeleteImage,
+  useImages,
+  useUploadImage,
+} from '@hooks';
+import type { ChangeEvent } from 'react';
+import { useRef, useState } from 'react';
 
+import { datefy } from '@/lib/shared/utils/date';
+import { validateImageFile } from '@/lib/shared/validation/validateImageFile';
 import type { ImageGalleryProps, ImageResponse } from '@/types';
 
 /**
@@ -23,7 +31,6 @@ import type { ImageGalleryProps, ImageResponse } from '@/types';
  * Supports manager upload with EXIF data display
  */
 export function ImageGallery({
-  images,
   viewMode,
   taskId,
   hotelId,
@@ -36,6 +43,7 @@ export function ImageGallery({
   const [uploadingFiles, setUploadingFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { data: images } = useImages({ hotelId, taskId });
   const { mutateAsync: uploadImage, isPending: isUploading } = useUploadImage({
     taskId,
     hotelId,
@@ -179,7 +187,7 @@ export function ImageGallery({
       )}
 
       {/* Images Grid */}
-      {images.length === 0 ? (
+      {images && images.length === 0 ? (
         <Card className="shadow-none bg-default-50">
           <CardBody>
             <p className="text-center text-default-500 py-8">
@@ -189,14 +197,15 @@ export function ImageGallery({
         </Card>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {images.map((image) => (
-            <ImageThumbnail
-              image={image}
-              key={image.id}
-              onClick={() => setSelectedImage(image)}
-              onDelete={canManageImages ? handleDelete : undefined}
-            />
-          ))}
+          {images &&
+            images.map((image) => (
+              <ImageThumbnail
+                image={image}
+                key={image.id}
+                onClick={() => setSelectedImage(image)}
+                onDelete={canManageImages ? handleDelete : undefined}
+              />
+            ))}
         </div>
       )}
 
@@ -225,19 +234,16 @@ function ImageThumbnail({
   onDelete?: (image: ImageResponse) => void;
 }) {
   return (
-    <Card
-      isPressable
-      className="cursor-pointer hover:scale-105 transition-transform group"
-      onPress={onClick}
-    >
-      <CardBody className="p-0 relative">
+    <Card className="cursor-pointer hover:scale-105 transition-transform group aa">
+      <CardBody className="p-0 relative items-center">
         <Image
           alt="Task image"
-          className="w-full h-32 object-cover"
+          className="w-full h-32 k"
           classNames={{
-            wrapper: 'w-full h-32',
+            wrapper: 'w-full h-32 bg-contain bg-no-repeat bg-center',
           }}
           src={image.url}
+          onClick={onClick}
         />
 
         {/* Delete Button Overlay */}
@@ -249,8 +255,7 @@ function ImageThumbnail({
             color="danger"
             size="sm"
             variant="solid"
-            onClick={(e) => {
-              e.stopPropagation();
+            onPress={() => {
               onDelete(image);
             }}
           >
@@ -297,34 +302,8 @@ function ImageLightbox({
     <Modal isOpen={isOpen} scrollBehavior="inside" size="3xl" onClose={onClose}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
-          <div className="flex items-center justify-between w-full">
-            <span>Image Details</span>
-            <div className="flex gap-2">
-              <Button
-                color="primary"
-                size="sm"
-                variant="flat"
-                onClick={() => onDownload(image)}
-              >
-                Download
-              </Button>
-              {onDelete && (
-                <Button
-                  color="danger"
-                  size="sm"
-                  variant="flat"
-                  onClick={() => {
-                    onDelete(image);
-                    onClose();
-                  }}
-                >
-                  Delete
-                </Button>
-              )}
-            </div>
-          </div>
+          <h3 className="flex items-center">Image Details</h3>
         </ModalHeader>
-
         <ModalBody className="p-0">
           {/* Full Size Image */}
           <div className="w-full bg-black/5 flex items-center justify-center min-h-[400px]">
@@ -334,73 +313,88 @@ function ImageLightbox({
               src={image.url}
             />
           </div>
-
           {/* Image Metadata */}
-          <div className="p-4 space-y-4">
-            {/* Uploader Info */}
-            <div className="flex items-center gap-3">
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">
-                  Uploaded by {image.uploader.name}
-                </p>
-                <p className="text-xs text-default-500">
-                  {datefy(image.uploadedAt)}
-                </p>
-              </div>
-            </div>
+          {/* EXIF Data */}
+          {hasExif && (
+            <Card className="shadow-sm bg-default-50">
+              <CardBody>
+                <p className="text-sm font-semibold mb-3">Image Information</p>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  {image.exif?.timestamp && (
+                    <div>
+                      <p className="text-default-600">Captured</p>
+                      <p className="font-medium">{image.exif.timestamp}</p>
+                    </div>
+                  )}
 
-            {/* EXIF Data */}
-            {hasExif && (
-              <Card className="shadow-sm bg-default-50">
-                <CardBody>
-                  <p className="text-sm font-semibold mb-3">
-                    Image Information
-                  </p>
+                  {image.exif?.camera && (
+                    <div>
+                      <p className="text-default-600">Camera</p>
+                      <p className="font-medium">{image.exif.camera}</p>
+                    </div>
+                  )}
 
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    {image.exif?.timestamp && (
-                      <div>
-                        <p className="text-default-600">Captured</p>
-                        <p className="font-medium">{image.exif.timestamp}</p>
-                      </div>
-                    )}
+                  {image.exif?.dimensions && (
+                    <div>
+                      <p className="text-default-600">Dimensions</p>
+                      <p className="font-medium">
+                        {image.exif.dimensions.width} ×{' '}
+                        {image.exif.dimensions.height}
+                      </p>
+                    </div>
+                  )}
 
-                    {image.exif?.camera && (
-                      <div>
-                        <p className="text-default-600">Camera</p>
-                        <p className="font-medium">{image.exif.camera}</p>
-                      </div>
-                    )}
-
-                    {image.exif?.dimensions && (
-                      <div>
-                        <p className="text-default-600">Dimensions</p>
-                        <p className="font-medium">
-                          {image.exif.dimensions.width} ×{' '}
-                          {image.exif.dimensions.height}
-                        </p>
-                      </div>
-                    )}
-
-                    {image.exif?.location && (
-                      <div>
-                        <p className="text-default-600">Location</p>
-                        <a
-                          className="text-primary hover:underline font-medium"
-                          href={`https://www.google.com/maps?q=${image.exif.location.latitude},${image.exif.location.longitude}`}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          View on map →
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </CardBody>
-              </Card>
+                  {image.exif?.location && (
+                    <div>
+                      <p className="text-default-600">Location</p>
+                      <a
+                        className="text-primary hover:underline font-medium"
+                        href={`https://www.google.com/maps?q=${image.exif.location.latitude},${image.exif.location.longitude}`}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        View on map →
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          )}
+        </ModalBody>
+        <ModalFooter className="justify-around">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground">
+              Uploaded by {image.uploader.name}
+            </p>
+            <p className="text-xs text-default-500">
+              {datefy(image.uploadedAt)}
+            </p>
+          </div>
+          <div className="flex gap-2 items-center">
+            <Button
+              color="primary"
+              size="sm"
+              variant="flat"
+              onPress={() => onDownload(image)}
+            >
+              Download
+            </Button>
+            {onDelete && (
+              <Button
+                color="danger"
+                size="sm"
+                variant="flat"
+                onPress={() => {
+                  onDelete(image);
+                  onClose();
+                }}
+              >
+                Delete
+              </Button>
             )}
           </div>
-        </ModalBody>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

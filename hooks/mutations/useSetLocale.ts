@@ -1,8 +1,9 @@
-import { api, useMutationWithToast } from '@lib/client';
-import { getPath } from '@lib/shared';
 import { useRouter } from 'next/navigation';
 
 import type { Locale } from '@/i18n';
+import { api } from '@/lib/client/api/client';
+import { useMutationWithToast } from '@/lib/client/utils/useMutationWithToast';
+import { getPath } from '@/lib/shared/constants/pathes';
 
 export const useSetLocale = () => {
   const router = useRouter();

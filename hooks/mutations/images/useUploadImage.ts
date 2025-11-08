@@ -1,8 +1,9 @@
 import { addToast } from '@heroui/react';
-import { api } from '@lib/client';
-import { getPath, queryKeys } from '@lib/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { api } from '@/lib/client/api/client';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
 import type { ImageResponse } from '@/types';
 
 export function useUploadImage(params: { hotelId: string; taskId: string }) {
@@ -11,20 +12,15 @@ export function useUploadImage(params: { hotelId: string; taskId: string }) {
 
   return useMutation({
     mutationFn: async (file: File): Promise<ImageResponse> => {
+      const formData = new FormData();
+      formData.append('image', file);
       const res = await api.post<ImageResponse>(
         getPath({ hotelId, taskId }).API.IMAGES,
-        file
+        formData
       );
       return res;
     },
-    onSuccess: (newImage) => {
-      // Update the images cache
-      queryClient.setQueryData<ImageResponse[]>(
-        [queryKeys.images, hotelId, taskId],
-        (old) => {
-          return old ? [...old, newImage] : [newImage];
-        }
-      );
+    onSuccess: async () => {
       addToast({
         title: 'Image uploaded!',
         description: 'Image uploaded successfully',
@@ -32,8 +28,8 @@ export function useUploadImage(params: { hotelId: string; taskId: string }) {
       });
 
       // Invalidate tasks list to update image counts
-      return queryClient.invalidateQueries({
-        queryKey: [queryKeys.tasks, hotelId],
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.taskImages(hotelId, taskId),
       });
     },
 

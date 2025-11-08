@@ -2,11 +2,11 @@
 
 import { LoadingScreen } from '@components';
 import { useMe } from '@hooks';
-import { getPath } from '@lib/shared';
 import { useRouter } from 'next/navigation';
 import type { ComponentType } from 'react';
 import { useEffect } from 'react';
 
+import { getPath } from '@/lib/shared/constants/pathes';
 import type { InjectedAuthProps } from '@/types';
 
 export function withAuthGuard<P extends object>(

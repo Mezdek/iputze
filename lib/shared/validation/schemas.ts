@@ -46,9 +46,6 @@ export const taskCreationSchema = z.object({
 export const taskUpdateSchema = z.object({
   status: z.nativeEnum(TaskStatus).optional(),
   priority: z.nativeEnum(TaskPriority).optional(),
-  completedAt: z.date().optional(),
-  startedAt: z.date().optional(),
-  cancelledAt: z.date().optional(),
   cancellationNote: z.string().max(500).optional(),
 });
 

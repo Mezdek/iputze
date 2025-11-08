@@ -1,4 +1,4 @@
-import { handleError } from '@lib/shared';
+import { handleError } from '@/lib/shared/errors/api/handleApiError';
 
 export function withErrorHandling<T extends (...args: any[]) => Promise<any>>(
   fn: T

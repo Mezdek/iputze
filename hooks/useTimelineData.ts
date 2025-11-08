@@ -1,6 +1,11 @@
-import { CLEANER_COLORS, DAY_NAMES, getWeekDays, isSameDay } from '@lib/shared';
+import { isSameDay } from 'date-fns';
 import { useMemo } from 'react';
 
+import {
+  CLEANER_COLORS,
+  DAY_NAMES,
+} from '@/lib/shared/constants/features/timeline';
+import { getWeekDays } from '@/lib/shared/utils/date';
 import type {
   CleanerWithTasks,
   DayData,

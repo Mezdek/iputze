@@ -1,10 +1,10 @@
 'use client';
-//TODO add showErrorToast
 
-import { api } from '@lib/client';
-import { getPath } from '@lib/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+
+import { api } from '@/lib/client/api/client';
+import { getPath } from '@/lib/shared/constants/pathes';
 
 export const useSignOut = () => {
   const queryClient = useQueryClient();

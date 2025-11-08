@@ -1,10 +1,12 @@
-import { api, useMutationWithToast } from '@lib/client';
-import { getPath, queryKeys } from '@lib/shared';
 import { useQueryClient } from '@tanstack/react-query';
 
-import type { NoteParams } from '@/types';
+import { api } from '@/lib/client/api/client';
+import { useMutationWithToast } from '@/lib/client/utils/useMutationWithToast';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
+import type { NoteCollectionParams } from '@/types';
 
-export const useDeleteNote = ({ hotelId, taskId }: Partial<NoteParams>) => {
+export const useDeleteNote = ({ hotelId, taskId }: NoteCollectionParams) => {
   const queryClient = useQueryClient();
   return useMutationWithToast({
     mutationFn: async ({ noteId }: { noteId: string }): Promise<null> => {
@@ -15,7 +17,7 @@ export const useDeleteNote = ({ hotelId, taskId }: Partial<NoteParams>) => {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.tasks, hotelId],
+        queryKey: queryKeys.taskNotes(hotelId, taskId),
       }),
   });
 };

@@ -10,10 +10,10 @@ import {
   SelectItem,
   Textarea,
 } from '@heroui/react';
-import { useCreateNote, useDeleteNote } from '@hooks';
-import { datefy } from '@lib/shared';
+import { useCreateNote, useDeleteNote, useNotes } from '@hooks';
 import { useState } from 'react';
 
+import { datefy } from '@/lib/shared/utils/date';
 import type { NotesSectionProps, NoteWithAuthor } from '@/types';
 
 const PREDEFINED_NOTES = [
@@ -31,7 +31,6 @@ const MAX_NOTE_LENGTH = 30;
  * Supports manager upload with author attribution
  */
 export function NotesSection({
-  notes,
   viewMode,
   taskId,
   hotelId,
@@ -42,6 +41,7 @@ export function NotesSection({
   const [customNote, setCustomNote] = useState('');
   const [isOther, setIsOther] = useState(false);
 
+  const { data: notes } = useNotes({ hotelId, taskId });
   const { mutateAsync: createNote, isPending: isCreating } = useCreateNote({
     taskId,
     hotelId,
@@ -165,24 +165,28 @@ export function NotesSection({
       )}
 
       {/* Notes List */}
-      {notes.length === 0 ? (
-        <Card className="shadow-none bg-default-50">
-          <CardBody>
-            <p className="text-center text-default-500 py-8">
-              No notes have been added to this task yet.
-            </p>
-          </CardBody>
-        </Card>
+      {notes ? (
+        notes.length === 0 ? (
+          <Card className="shadow-none bg-default-50">
+            <CardBody>
+              <p className="text-center text-default-500 py-8">
+                No notes have been added to this task yet.
+              </p>
+            </CardBody>
+          </Card>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {notes.map((note) => (
+              <NoteCard
+                key={note.id}
+                note={note}
+                onDelete={canManageNotes ? handleDelete : undefined}
+              />
+            ))}
+          </div>
+        )
       ) : (
-        <div className="flex flex-col gap-2">
-          {notes.map((note) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              onDelete={canManageNotes ? handleDelete : undefined}
-            />
-          ))}
-        </div>
+        <>Loading</>
       )}
     </div>
   );

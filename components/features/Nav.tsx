@@ -1,7 +1,12 @@
 'use client';
 import { Button } from '@heroui/react';
-import { ROOM_VIEW_LABELS, ROOM_VIEWS, type RoomView } from '@lib/shared';
 import type { HTMLAttributes } from 'react';
+
+import type { RoomView } from '@/lib/shared/constants/features/room';
+import {
+  ROOM_VIEW_LABELS,
+  ROOM_VIEWS,
+} from '@/lib/shared/constants/features/room';
 
 export function Nav({
   navigate,

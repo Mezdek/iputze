@@ -1,18 +1,14 @@
-import { getTaskAccessContext, prisma } from '@lib/db';
-import { APP_ERRORS, HttpStatus, withErrorHandling } from '@lib/shared';
-import type { UploadApiResponse } from 'cloudinary';
-import { v2 as cloudinary } from 'cloudinary';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { transformImage } from '@/lib/server';
+import { prisma } from '@/lib/server/db/prisma';
+import { getTaskAccessContext } from '@/lib/server/db/utils/getTaskAccessContext';
+import { uploadToCloudinary } from '@/lib/server/utils/cloudinary';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { transformImage } from '@/lib/shared/utils/transformTask';
 import type { ImageResponse, TaskParams } from '@/types';
-
-cloudinary.config({
-  cloud_name: process.env['CLOUDINARY_CLOUD_NAME'],
-  api_key: process.env['CLOUDINARY_API_KEY'],
-  api_secret: process.env['CLOUDINARY_API_SECRET'],
-});
 
 /**
  * GET /api/v1/hotels/[hotelId]/tasks/[taskId]/images
@@ -63,32 +59,7 @@ export const POST = withErrorHandling(
 
     if (!image) throw APP_ERRORS.badRequest('No image provided');
 
-    // Validate file type
-    if (!image.type.startsWith('image/')) {
-      throw APP_ERRORS.badRequest('File must be an image');
-    }
-
-    // Validate file size (5MB max)
-    if (image.size > 5 * 1024 * 1024) {
-      throw APP_ERRORS.badRequest('Image must be less than 5MB');
-    }
-
-    // Convert to buffer
-    const buffer = Buffer.from(await image.arrayBuffer());
-
-    // Upload to Cloudinary
-    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          { folder: 'tasks' },
-          (error: Error | undefined, result: UploadApiResponse | undefined) => {
-            if (error) reject(error);
-            else if (result) resolve(result);
-            else reject(new Error('Upload failed without error'));
-          }
-        )
-        .end(buffer);
-    });
+    const result = await uploadToCloudinary(image);
 
     // Save to database
     const taskImage = await prisma.image.create({

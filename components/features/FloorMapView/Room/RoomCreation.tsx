@@ -12,12 +12,12 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { useCreateRoom, useErrorToast } from '@hooks';
-import { parseFormData } from '@lib/shared';
 import { RoomCleanliness, RoomOccupancy } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
 import { RoomFormModes } from '@/components/features/FloorMapView/Room/types';
+import { parseFormData } from '@/lib/client/utils/parseFormData';
 import type { RoomCollectionParams, RoomCreationBody } from '@/types';
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {

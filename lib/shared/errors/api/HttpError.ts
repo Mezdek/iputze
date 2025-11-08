@@ -1,5 +1,6 @@
-import { DefaultMessages, HttpStatus } from '@lib/shared';
 import { NextResponse } from 'next/server';
+
+import { DefaultMessages, HttpStatus } from '@/lib/shared/constants/httpStatus';
 
 export interface IHttpError {
   status: HttpStatus;

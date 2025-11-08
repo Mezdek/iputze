@@ -1,9 +1,10 @@
 'use client';
 import { Chip } from '@heroui/react';
-import { capitalize, ROOM_OCCUPANCY_COLORS } from '@lib/shared';
 import { RoomCleanliness, RoomOccupancy, TaskStatus } from '@prisma/client';
 import type { ReactNode } from 'react';
 
+import { ROOM_OCCUPANCY_COLORS } from '@/lib/shared/constants/features/room';
+import { capitalize } from '@/lib/shared/utils/capitalize';
 import type { RoomWithHotel, TaskResponse } from '@/types';
 
 const RoomOccupancyColors = {

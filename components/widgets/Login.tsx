@@ -12,12 +12,13 @@ import {
   Tabs,
 } from '@heroui/react';
 import { useErrorToast, useSignIn, useSignUp } from '@hooks';
-import { getPath, parseFormData } from '@lib/shared';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
+import { parseFormData } from '@/lib/client/utils/parseFormData';
+import { getPath } from '@/lib/shared/constants/pathes';
 import {
   ApiError,
   type SignInRequestBody,

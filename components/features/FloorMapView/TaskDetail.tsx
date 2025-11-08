@@ -17,11 +17,12 @@ import {
   Tab,
   Tabs,
 } from '@heroui/react';
-import { capitalize, TASK_STATUS_COLORS } from '@lib/shared';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useState } from 'react';
 
+import { TASK_STATUS_COLORS } from '@/lib/shared/constants/features/room';
+import { capitalize } from '@/lib/shared/utils/capitalize';
 import type { TaskResponse } from '@/types';
 
 interface TaskDetailProps {
@@ -55,8 +56,8 @@ export function TaskDetail({
     cancelledAt,
     cancellationNote,
     room,
-    notes,
     images,
+    _count: { notes: notesCount },
   } = task;
 
   const isOverdue = new Date(dueAt) < new Date() && status !== 'COMPLETED';
@@ -217,9 +218,9 @@ export function TaskDetail({
               title={
                 <div className="flex items-center gap-2">
                   <span>Notes</span>
-                  {notes.length > 0 && (
+                  {notesCount > 0 && (
                     <Chip size="sm" variant="flat">
-                      {notes.length}
+                      {notesCount}
                     </Chip>
                   )}
                 </div>
@@ -228,7 +229,6 @@ export function TaskDetail({
               <div className="py-4">
                 <NotesSection
                   hotelId={room.hotelId}
-                  notes={notes}
                   taskId={id}
                   viewMode={viewMode}
                 />

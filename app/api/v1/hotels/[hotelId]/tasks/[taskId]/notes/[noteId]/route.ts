@@ -1,13 +1,12 @@
-import {
-  getHotelOrThrow,
-  getNoteOrThrow,
-  getTaskOrThrow,
-  getUserOrThrow,
-  prisma,
-} from '@lib/db';
-import { HttpStatus, withErrorHandling } from '@lib/shared';
 import type { NextRequest } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
+import { getNoteOrThrow } from '@/lib/server/db/utils/getNoteOrThrow';
+import { getTaskOrThrow } from '@/lib/server/db/utils/getTaskOrThrow';
+import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import type { NoteParams } from '@/types';
 
 // @TODO Refactor

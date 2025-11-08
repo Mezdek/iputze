@@ -1,10 +1,9 @@
-import {
-  APP_ERRORS,
-  GeneralErrors,
-  HttpError,
-  PrismaErrors,
-} from '@lib/shared';
 import { Prisma } from '@prisma/client';
+
+import { GeneralErrors } from '@/lib/shared/constants/errors/general';
+import { PrismaErrors } from '@/lib/shared/constants/errors/prisma';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { HttpError } from '@/lib/shared/errors/api/HttpError';
 
 /**
  * Centralized error handler for API routes.

@@ -1,5 +1,4 @@
-import type { ErrorCodes } from '@lib/shared';
-
+import type { ErrorCodes } from '@/lib/shared/errors/client/errorCodes';
 import type { LeafValues } from '@/types';
 
 export type ErrorCodeMap<T> = {

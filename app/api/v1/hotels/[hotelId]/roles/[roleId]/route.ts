@@ -1,15 +1,15 @@
-import { getRoleOrThrow, getUserOrThrow, prisma } from '@lib/db';
-import { canModifyRole } from '@lib/server';
-import {
-  APP_ERRORS,
-  GeneralErrors,
-  RolesErrors,
-  withErrorHandling,
-} from '@lib/shared';
 import type { Role } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { getRoleOrThrow } from '@/lib/server/db/utils/getRoleOrThrow';
+import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { GeneralErrors } from '@/lib/shared/constants/errors/general';
+import { RolesErrors } from '@/lib/shared/constants/errors/roles';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { canModifyRole } from '@/lib/shared/utils/permissions';
 import type { RoleParams, RoleUpdateBody } from '@/types';
 
 export const PATCH = withErrorHandling(

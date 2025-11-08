@@ -1,4 +1,4 @@
-import type { ImageResponse, NoteWithAuthor, TaskResponse } from '@/types';
+import type { ImageResponse, TaskResponse } from '@/types';
 
 // ==================== Image Management ====================
 
@@ -93,7 +93,6 @@ export interface TaskCardProps {
  * Props for NotesSection component
  */
 export interface NotesSectionProps {
-  notes: NoteWithAuthor[];
   viewMode: ViewMode;
   taskId: string;
   hotelId: string;

@@ -1,9 +1,9 @@
 import { addToast } from '@heroui/react';
-import { api } from '@lib/client';
-import { getPath, queryKeys } from '@lib/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { ImageResponse } from '@/types';
+import { api } from '@/lib/client/api/client';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
 
 export function useDeleteImage(params: { hotelId: string; taskId: string }) {
   const { hotelId, taskId } = params;
@@ -17,13 +17,7 @@ export function useDeleteImage(params: { hotelId: string; taskId: string }) {
       return res;
     },
 
-    onSuccess: (_, deletedImageId) => {
-      // Update the images cache
-      queryClient.setQueryData<ImageResponse[]>(
-        [queryKeys.images, hotelId, taskId],
-        (old) => (old ? old.filter((img) => img.id !== deletedImageId) : [])
-      );
-
+    onSuccess: () => {
       addToast({
         title: 'Image deleted!',
         description: 'Image deleted successfully',
@@ -31,7 +25,7 @@ export function useDeleteImage(params: { hotelId: string; taskId: string }) {
       });
       // Invalidate tasks list to update image counts
       return queryClient.invalidateQueries({
-        queryKey: [queryKeys.tasks, hotelId],
+        queryKey: queryKeys.taskImages(hotelId, taskId),
       });
     },
 

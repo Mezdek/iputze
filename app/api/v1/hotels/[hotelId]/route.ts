@@ -1,21 +1,21 @@
-import { getHotelOrThrow, getUserOrThrow, prisma } from '@lib/db';
-import {
-  canCreateTask,
-  hasManagerPermission,
-  isHotelCleaner,
-  transformTask,
-} from '@lib/server';
-import {
-  APP_ERRORS,
-  GeneralErrors,
-  HttpStatus,
-  taskCreationSchema,
-  withErrorHandling,
-} from '@lib/shared';
 import type { Task } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
+import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { GeneralErrors } from '@/lib/shared/constants/errors/general';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import {
+  canCreateTask,
+  hasManagerPermission,
+  isHotelCleaner,
+} from '@/lib/shared/utils/permissions';
+import { transformTask } from '@/lib/shared/utils/transformTask';
+import { taskCreationSchema } from '@/lib/shared/validation/schemas';
 import type { TaskCollectionParams, TaskResponse } from '@/types';
 
 export const GET = withErrorHandling(
@@ -63,6 +63,15 @@ export const GET = withErrorHandling(
         cancelledAt: true,
         createdAt: true,
         cancellationNote: true,
+        deletedAt: true,
+        deletedBy: true,
+        _count: {
+          select: {
+            cleaners: true,
+            images: true,
+            notes: true,
+          },
+        },
 
         room: true,
 

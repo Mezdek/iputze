@@ -1,4 +1,5 @@
-import { APP_ERRORS, AuthErrors } from '@lib/shared';
+import { AuthErrors } from '@/lib/shared/constants/errors/auth';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 
 /**
  * Parses a string ID into a number.

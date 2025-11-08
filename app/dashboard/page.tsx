@@ -2,9 +2,9 @@
 
 import { JoinHotel, withAuthGuard } from '@components';
 import { Button, Card } from '@heroui/react';
-import { getPath } from '@lib/shared';
 import { useRouter } from 'next/navigation';
 
+import { getPath } from '@/lib/shared/constants/pathes';
 import type { InjectedAuthProps } from '@/types';
 
 function Dashboard({ user }: InjectedAuthProps) {

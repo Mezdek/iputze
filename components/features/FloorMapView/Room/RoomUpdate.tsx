@@ -13,7 +13,6 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { useErrorToast, useUpdateRoom } from '@hooks';
-import { parseFormData } from '@lib/shared';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
@@ -21,6 +20,7 @@ import {
   RoomFormModes,
   type RoomUpdateProps,
 } from '@/components/features/FloorMapView/Room/types';
+import { parseFormData } from '@/lib/client/utils/parseFormData';
 import type { RoomUpdateBody } from '@/types';
 
 export function RoomUpdate({

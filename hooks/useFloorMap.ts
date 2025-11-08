@@ -1,8 +1,8 @@
 import { useRooms, useTasks } from '@hooks';
-import { calculateRoomStatus } from '@lib/client';
-import { groupByKey } from '@lib/shared';
 import { useMemo } from 'react';
 
+import { calculateRoomStatus } from '@/lib/client/features/roomStatus';
+import { groupByKey } from '@/lib/shared/utils/groupByKey';
 import type { FloorMapData, RoomWithStatus, TaskResponse } from '@/types';
 
 interface UseFloorMapDataParams {
@@ -66,10 +66,9 @@ export function useFloorMapData({
   }, [rooms, tasksByRoomId]);
 
   // Get tasks for selected room (memoized for performance)
-  const selectedRoomTasks = useMemo(() => {
-    if (!selectedRoomId) return [];
-    return tasksByRoomId.get(selectedRoomId) ?? [];
-  }, [selectedRoomId, tasksByRoomId]);
+  const selectedRoomTasks = selectedRoomId
+    ? (tasksByRoomId.get(selectedRoomId) ?? [])
+    : [];
 
   // Aggregate loading and error states
   const isLoading = roomsLoading || tasksLoading;

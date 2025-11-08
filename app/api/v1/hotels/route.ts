@@ -1,15 +1,14 @@
-import { getUserOrThrow, prisma } from '@lib/db';
-import { canCreateHotel } from '@lib/server';
-import {
-  APP_ERRORS,
-  HotelErrors,
-  HttpStatus,
-  withErrorHandling,
-} from '@lib/shared';
 import type { Hotel } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { HotelErrors } from '@/lib/shared/constants/errors/hotels';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { canCreateHotel } from '@/lib/shared/utils/permissions';
 import type { HotelCreationBody, PublicHotel } from '@/types';
 
 export const GET = withErrorHandling(async () => {

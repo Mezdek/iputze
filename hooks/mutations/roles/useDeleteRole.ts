@@ -1,7 +1,9 @@
-import { api, useMutationWithToast } from '@lib/client';
-import { getPath, queryKeys } from '@lib/shared';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { api } from '@/lib/client/api/client';
+import { useMutationWithToast } from '@/lib/client/utils/useMutationWithToast';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
 import type { RoleParams } from '@/types';
 
 export const useDeleteRole = ({ hotelId, roleId }: RoleParams) => {

@@ -1,7 +1,10 @@
-import { api } from '@lib/client';
-import { ClientError, ErrorCodes, getPath, queryKeys } from '@lib/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { api } from '@/lib/client/api/client';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
+import { ClientError } from '@/lib/shared/errors/client/ClientError';
+import { ErrorCodes } from '@/lib/shared/errors/client/errorCodes';
 import { ApiError, type RoomParams } from '@/types';
 
 export const useDeleteRoom = ({ hotelId, roomId }: RoomParams) => {
@@ -21,6 +24,6 @@ export const useDeleteRoom = ({ hotelId, roomId }: RoomParams) => {
       }
     },
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [queryKeys.rooms, hotelId] }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.rooms(hotelId) }),
   });
 };

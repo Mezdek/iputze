@@ -2,11 +2,11 @@
 
 import { addToast, Button } from '@heroui/react';
 import { useErrorToast, useUpdateTask } from '@hooks';
-import { isTaskCleaner } from '@lib/server';
-import { capitalize } from '@lib/shared';
 import { TaskStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
+import { capitalize } from '@/lib/shared/utils/capitalize';
+import { isTaskCleaner } from '@/lib/shared/utils/permissions';
 import type { InjectedAuthProps, TaskResponse } from '@/types';
 
 const NEXT_STATUS = {

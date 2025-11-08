@@ -18,12 +18,13 @@ import {
 } from '@heroui/react';
 import { useCreateTask, useErrorToast, useRoles, useRoom } from '@hooks';
 import { getLocalTimeZone, now, today } from '@internationalized/date';
-import { getRolesByLevel } from '@lib/server';
-import { parseFormData } from '@lib/shared';
 import { RoleLevel, TaskPriority } from '@prisma/client';
 import { useTranslations } from 'next-intl';
-import { type FormEvent, useState } from 'react';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
 
+import { parseFormData } from '@/lib/client/utils/parseFormData';
+import { getRolesByLevel } from '@/lib/shared/utils/permissions';
 import type { TaskCreationBody, TRoleWithUser } from '@/types';
 
 export function TaskCreation({

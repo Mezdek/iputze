@@ -1,16 +1,16 @@
-import { getHotelOrThrow, getUserOrThrow, prisma } from '@lib/db';
-import { canCreateRole, canViewRoles } from '@lib/server';
-import {
-  APP_ERRORS,
-  GeneralErrors,
-  HttpStatus,
-  RolesErrors,
-  withErrorHandling,
-} from '@lib/shared';
 import type { Role } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
+import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { GeneralErrors } from '@/lib/shared/constants/errors/general';
+import { RolesErrors } from '@/lib/shared/constants/errors/roles';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { canCreateRole, canViewRoles } from '@/lib/shared/utils/permissions';
 import type { RoleCollectionParams, TRoleWithUser } from '@/types';
 
 export const GET = withErrorHandling(

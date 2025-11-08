@@ -1,12 +1,13 @@
-import { prisma } from '@lib/db';
-import {
-  HttpStatus,
-  ResponseCookieOptions,
-  SESSION_COOKIE_KEY,
-  withErrorHandling,
-} from '@lib/shared';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+
+import { prisma } from '@/lib/server/db/prisma';
+import {
+  ResponseCookieOptions,
+  SESSION_COOKIE_KEY,
+} from '@/lib/shared/constants/auth';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const sessionId = req.cookies.get(SESSION_COOKIE_KEY)?.value;

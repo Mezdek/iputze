@@ -1,10 +1,11 @@
 'use client';
 
 import { Card, CardBody, Chip, cn } from '@heroui/react';
-import { getStatusColorClass } from '@lib/client';
 import { TaskPriority } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { memo } from 'react';
+
+import { getStatusColorClass } from '@/lib/client/features/roomStatus';
 
 import type { RoomCardProps } from './types';
 

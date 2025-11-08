@@ -19,11 +19,11 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { useCreateNote, useDeleteNote, useNotes } from '@hooks';
-import { parseFormData } from '@lib/shared';
 import type { Note } from '@prisma/client';
 import type { FormEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 
+import { parseFormData } from '@/lib/client/utils/parseFormData';
 import type { NoteCollectionParams, NoteCreationBody } from '@/types';
 
 const PREDEFINED_NOTES = ['needs blankets', 'broken lamp', 'broken bed'];

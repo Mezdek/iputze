@@ -4,7 +4,7 @@ import { defineConfig } from 'prisma/config';
 
 export default defineConfig({
   migrations: {
-    seed: `tsx ./lib/db/seed.ts`,
+    seed: `tsx ./lib/server/db/seed.ts`,
   },
-  schema: './lib/db/schema.prisma',
+  schema: './lib/server/db/schema.prisma',
 });

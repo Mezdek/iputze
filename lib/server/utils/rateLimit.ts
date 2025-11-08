@@ -1,5 +1,7 @@
-import { APP_ERRORS, AuthErrors } from '@lib/shared';
 import { Redis } from '@upstash/redis';
+
+import { AuthErrors } from '@/lib/shared/constants/errors/auth';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 
 const redis = new Redis({
   url: process.env['UPSTASH_REDIS_REST_URL']!,

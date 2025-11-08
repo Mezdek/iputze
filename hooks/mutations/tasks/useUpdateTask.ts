@@ -1,8 +1,10 @@
-import { api, useMutationWithToast } from '@lib/client';
-import { getPath, queryKeys } from '@lib/shared';
 import type { Task } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 
+import { api } from '@/lib/client/api/client';
+import { useMutationWithToast } from '@/lib/client/utils/useMutationWithToast';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
 import type { TaskParams, TaskUpdateBody } from '@/types';
 
 export const useUpdateTask = ({ hotelId, taskId }: TaskParams) => {
@@ -17,7 +19,7 @@ export const useUpdateTask = ({ hotelId, taskId }: TaskParams) => {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.tasks, hotelId],
+        queryKey: queryKeys.tasks(hotelId),
       }),
   });
 };

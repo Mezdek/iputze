@@ -1,14 +1,13 @@
-import { getTaskAccessContext, prisma } from '@lib/db';
-import { hasManagerPermission } from '@lib/server';
-import { APP_ERRORS, HttpStatus, withErrorHandling } from '@lib/shared';
-import { v2 as cloudinary } from 'cloudinary';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { cloudinaryConfig } from '@/lib/services/imageStorage/config';
+import { prisma } from '@/lib/server/db/prisma';
+import { getTaskAccessContext } from '@/lib/server/db/utils/getTaskAccessContext';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { hasManagerPermission } from '@/lib/shared/utils/permissions';
 import type { ImageParams } from '@/types';
-
-cloudinary.config(cloudinaryConfig);
 
 /**
  * DELETE /api/v1/hotels/[hotelId]/tasks/[taskId]/images/[imageId]
@@ -38,7 +37,6 @@ export const DELETE = withErrorHandling(
         deletedAt: null, // Only show non-deleted images
       },
     });
-
     if (!image) {
       throw APP_ERRORS.notFound('Image not found or already deleted');
     }
@@ -51,9 +49,6 @@ export const DELETE = withErrorHandling(
         deletedBy: userId,
       },
     });
-
-    // Note: We don't delete from Cloudinary immediately for recovery purposes
-    // A background job could clean up soft-deleted images after 30 days
 
     return NextResponse.json(
       { message: 'Image deleted successfully', imageId: deletedImage.id },

@@ -1,13 +1,14 @@
-import { api, useMutationWithToast } from '@lib/client';
-import { ClientError, ErrorCodes, getPath, queryKeys } from '@lib/shared';
 import type { Room } from '@prisma/client';
 import { useQueryClient } from '@tanstack/react-query';
 
-import {
-  ApiError,
-  type RoomCollectionParams,
-  type RoomCreationBody,
-} from '@/types';
+import { api } from '@/lib/client/api/client';
+import { useMutationWithToast } from '@/lib/client/utils/useMutationWithToast';
+import { getPath } from '@/lib/shared/constants/pathes';
+import { queryKeys } from '@/lib/shared/constants/querries';
+import { ClientError } from '@/lib/shared/errors/client/ClientError';
+import { ErrorCodes } from '@/lib/shared/errors/client/errorCodes';
+import type { RoomCollectionParams, RoomCreationBody } from '@/types';
+import { ApiError } from '@/types';
 
 export const useCreateRoom = ({ hotelId }: RoomCollectionParams) => {
   const queryClient = useQueryClient();
@@ -24,6 +25,6 @@ export const useCreateRoom = ({ hotelId }: RoomCollectionParams) => {
       }
     },
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [queryKeys.rooms, hotelId] }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.rooms(hotelId) }),
   });
 };

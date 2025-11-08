@@ -1,16 +1,16 @@
-import { getHotelOrThrow, getUserOrThrow, prisma } from '@lib/db';
-import { canCreateRoom, canListRooms } from '@lib/server';
-import {
-  APP_ERRORS,
-  HttpStatus,
-  roomCreationSchema,
-  RoomErrors,
-  withErrorHandling,
-} from '@lib/shared';
 import type { Room } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+import { prisma } from '@/lib/server/db/prisma';
+import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
+import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { RoomErrors } from '@/lib/shared/constants/errors/rooms';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
+import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { canCreateRoom, canListRooms } from '@/lib/shared/utils/permissions';
+import { roomCreationSchema } from '@/lib/shared/validation/schemas';
 import type { RoomCollectionParams, RoomWithHotel } from '@/types';
 
 export const GET = withErrorHandling(

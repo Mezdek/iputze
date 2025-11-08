@@ -15,10 +15,10 @@ import {
   type CardProps,
   Divider,
 } from '@heroui/react';
-import { hasManagerPermission } from '@lib/server';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
+import { hasManagerPermission } from '@/lib/shared/utils/permissions';
 import type { InjectedAuthProps, TaskResponse, ViewMode } from '@/types';
 
 interface TaskCardProps extends InjectedAuthProps, Omit<CardProps, 'children'> {
@@ -45,7 +45,6 @@ export function TaskCard({
     assignedBy,
     cleaners,
     room: { hotelId },
-    notes,
     images,
   } = task;
   const viewMode: ViewMode = hasManagerPermission({
@@ -142,7 +141,6 @@ export function TaskCard({
           <CardFooter className="flex flex-col">
             <NotesSection
               hotelId={hotelId}
-              notes={notes}
               taskId={taskId}
               viewMode={viewMode}
             />

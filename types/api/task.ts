@@ -22,13 +22,16 @@ export interface TaskAccessContext {
   userId: string;
   task: Task;
   roles: Role[];
-  isAdmin: boolean;
-  isHotelManager: boolean;
-  isTaskCleaner: boolean;
+  cleaners: Cleaner[];
 }
 
 // Tasks
 export interface TaskResponse extends Omit<Task, 'assignedById' | 'roomId'> {
+  _count: {
+    notes: number;
+    images: number;
+    cleaners: number;
+  };
   room: Room;
   images: ImageResponse[];
   cleaners: TransformedCleaner[];
@@ -60,6 +63,11 @@ export type TaskParams = TaskCollectionParams & {
 
 export interface TransformTaskProps
   extends Omit<Task, 'assignedById' | 'roomId'> {
+  _count: {
+    notes: number;
+    images: number;
+    cleaners: number;
+  };
   room: Room;
   notes: (Note & { author: BasicUser })[];
   images: ImageWithUploader[];
@@ -67,6 +75,4 @@ export interface TransformTaskProps
   cleaners: (Pick<Cleaner, 'assignedAt'> & { user: BasicUser })[];
 }
 
-export interface TransformedCleaner
-  extends Pick<Cleaner, 'assignedAt'>,
-    BasicUser {}
+export type TransformedCleaner = Pick<Cleaner, 'assignedAt'> & BasicUser;

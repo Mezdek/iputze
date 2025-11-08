@@ -1,4 +1,5 @@
-import { DefaultMessages, HttpError, HttpStatus } from '@lib/shared';
+import { DefaultMessages, HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { HttpError } from '@/lib/shared/errors/api/HttpError';
 
 function createErrorFactory(status: HttpStatus, code?: string) {
   return (message = DefaultMessages[status]) =>

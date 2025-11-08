@@ -8,10 +8,11 @@ import {
 } from '@components';
 import { Button, Card } from '@heroui/react';
 import { useTasks, useTimelineData } from '@hooks';
-import { addWeeks, formatDateRange, getWeekStart } from '@lib/shared';
+import { addWeeks } from 'date-fns';
 import { useParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 
+import { formatDateRange, getWeekStart } from '@/lib/shared/utils/date';
 import type { InjectedAuthProps, StatusFilterType } from '@/types';
 
 export function WeeklyTimelineView(props: InjectedAuthProps) {

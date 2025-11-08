@@ -1,8 +1,8 @@
-import { HttpStatus } from '@lib/shared';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import type { Locale } from '@/i18n';
+import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 
 export async function POST(req: Request) {
   const { locale } = (await req.json()) as { locale: Locale };
