@@ -26,7 +26,8 @@ export interface TaskAccessContext {
 }
 
 // Tasks
-export interface TaskResponse extends Omit<Task, 'assignedById' | 'roomId'> {
+export interface TaskResponse
+  extends Omit<Task, 'creatorId' | 'roomId' | 'deletorId'> {
   _count: {
     notes: number;
     images: number;
@@ -35,7 +36,8 @@ export interface TaskResponse extends Omit<Task, 'assignedById' | 'roomId'> {
   room: Room;
   images: ImageResponse[];
   cleaners: TransformedCleaner[];
-  assignedBy: BasicUser | null;
+  creator: BasicUser | null;
+  deletor: BasicUser | null;
   notes: NoteWithAuthor[];
 }
 
@@ -62,7 +64,7 @@ export type TaskParams = TaskCollectionParams & {
 };
 
 export interface TransformTaskProps
-  extends Omit<Task, 'assignedById' | 'roomId'> {
+  extends Omit<Task, 'creatorId' | 'roomId' | 'deletorId'> {
   _count: {
     notes: number;
     images: number;
@@ -71,7 +73,8 @@ export interface TransformTaskProps
   room: Room;
   notes: (Note & { author: BasicUser })[];
   images: ImageWithUploader[];
-  assignedBy: BasicUser | null;
+  creator: BasicUser | null;
+  deletor: BasicUser | null;
   cleaners: (Pick<Cleaner, 'assignedAt'> & { user: BasicUser })[];
 }
 

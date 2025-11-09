@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardBody,
-  Chip,
   Select,
   SelectItem,
   Textarea,
@@ -202,9 +201,6 @@ function NoteCard({
   note: NoteWithAuthor;
   onDelete?: (note: NoteWithAuthor) => void;
 }) {
-  const isEdited =
-    new Date(note.updatedAt).getTime() !== new Date(note.createdAt).getTime();
-
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <CardBody className="gap-3">
@@ -235,7 +231,7 @@ function NoteCard({
               color="danger"
               size="sm"
               variant="light"
-              onClick={() => onDelete(note)}
+              onPress={() => onDelete(note)}
             >
               ×
             </Button>
@@ -246,15 +242,6 @@ function NoteCard({
         <p className="text-sm text-foreground pl-11 whitespace-pre-wrap">
           {note.content}
         </p>
-
-        {/* Edit Indicator */}
-        {isEdited && (
-          <div className="pl-11">
-            <Chip color="default" size="sm" variant="flat">
-              Edited • {datefy(note.updatedAt)}
-            </Chip>
-          </div>
-        )}
       </CardBody>
     </Card>
   );

@@ -45,19 +45,6 @@ enum TaskPriority {
   LOW
 }
 
-enum AuditAction {
-  CREATE
-  UPDATE
-  DELETE
-  RESTORE
-  LOGIN
-  LOGOUT
-  ROLE_CHANGE
-  TASK_START
-  TASK_COMPLETE
-  TASK_CANCEL
-}
-
 // ---------- Domain models ----------
 
 model Hotel {
@@ -71,37 +58,33 @@ model Hotel {
   updatedAt   DateTime  @updatedAt
   deletedAt   DateTime?
 
+  //Relations
   rooms Room[]
   roles Role[]
-
-  @@index([deletedAt])
 }
 
 model Room {
-  id             String          @id @default(uuid())
-  number         String
-  occupancy      RoomOccupancy   @default(VACANT)
-  cleanliness    RoomCleanliness @default(CLEAN)
-  notes          String?
-  type           String?
-  capacity       Int?
-  floor          String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  deletedAt      DateTime?
-  lastModifiedBy String?
+  id          String          @id @default(uuid())
+  number      String
+  occupancy   RoomOccupancy   @default(VACANT)
+  cleanliness RoomCleanliness @default(CLEAN)
+  notes       String?
+  type        String?
+  capacity    Int?
+  floor       String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deletedAt   DateTime?
 
+  //Relations
   hotelId         String
   hotel           Hotel             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
   tasks           Task[]
   defaultCleaners DefaultCleaners[]
-  modifier        User?             @relation("RoomModifier", fields: [lastModifiedBy], references: [id], onDelete: SetNull)
 
   @@unique([hotelId, number])
-  @@index([hotelId])
   @@index([hotelId, occupancy])
-  @@index([deletedAt])
-  @@index([lastModifiedBy])
+  @@index([hotelId, cleanliness])
 }
 
 model User {
@@ -116,77 +99,63 @@ model User {
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
 
+  // Relations
   roles           Role[]
-  cleaners        Cleaner[]
   notes           Note[]
-  refreshTokens   RefreshToken[]
   sessions        Session[]
-  defaultCleaners DefaultCleaners[]
-  Image           Image[]
-  UserStats       UserStats?
-  Achievement     Achievement[]
-  WeeklyActivity  WeeklyActivity[]
-  Task            Task[]
-  assignedTasks   Task[]            @relation("AssignedBy")
-  modifiedRooms   Room[]            @relation("RoomModifier")
+  images          Image[]
   deletedImages   Image[]           @relation("ImageDeletor")
+  createdTasks    Task[]            @relation("Creator")
   deletedTasks    Task[]            @relation("TaskDeletor")
-
-  @@index([email])
-  @@index([deletedAt])
+  cleaners        Cleaner[]
+  defaultCleaners DefaultCleaners[]
 }
 
 model Role {
   id        String     @id @default(uuid())
-  userId    String
-  hotelId   String
   level     RoleLevel  @default(PENDING)
   status    RoleStatus @default(ACTIVE)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
 
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  hotel Hotel @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  //Relations
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hotelId String
+  hotel   Hotel  @relation(fields: [hotelId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, hotelId, level])
-  @@index([hotelId, level])
+  @@unique([userId, hotelId])
+  @@index([hotelId, level, status])
   @@index([userId, status])
 }
 
 model Task {
-  id       String       @id @default(uuid())
-  roomId   String
-  status   TaskStatus   @default(PENDING)
-  priority TaskPriority @default(LOW)
-
-  // Timestamps
-  createdAt        DateTime  @default(now())
+  id               String       @id @default(uuid())
+  status           TaskStatus   @default(PENDING)
+  priority         TaskPriority @default(LOW)
+  cancellationNote String?
+  createdAt        DateTime     @default(now())
   dueAt            DateTime
   startedAt        DateTime?
   completedAt      DateTime?
   cancelledAt      DateTime?
-  cancellationNote String?
+  deletedAt        DateTime?
 
-  assignedById String?
-  assignedBy   User?   @relation("AssignedBy", fields: [assignedById], references: [id], onDelete: SetNull)
+  //Relations
+  creatorId String?
+  creator   User?     @relation("Creator", fields: [creatorId], references: [id], onDelete: SetNull)
+  deletorId String?
+  deletor   User?     @relation("TaskDeletor", fields: [deletorId], references: [id], onDelete: SetNull)
+  roomId    String
+  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  notes     Note[]
+  images    Image[]
+  cleaners  Cleaner[]
 
-  // Soft delete fields
-  deletedAt DateTime?
-  deletedBy String?
-  deletor   User?     @relation("TaskDeletor", fields: [deletedBy], references: [id], onDelete: SetNull)
-
-  room     Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  cleaners Cleaner[]
-  notes    Note[]
-  images   Image[]
-  User     User[]
-
-  @@index([roomId, status, dueAt])
-  @@index([assignedById, status])
-  @@index([dueAt, priority])
-  @@index([status, createdAt])
-  @@index([dueAt, status])
-  @@index([roomId, dueAt])
+  @@index([roomId, status])
+  @@index([status, priority, dueAt])
+  @@index([dueAt])
 }
 
 model Cleaner {
@@ -194,11 +163,12 @@ model Cleaner {
   userId     String
   assignedAt DateTime @default(now())
 
+  //Relations
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([taskId, userId])
-  @@index([userId])
+  @@index([userId, assignedAt])
 }
 
 model DefaultCleaners {
@@ -206,6 +176,7 @@ model DefaultCleaners {
   userId     String
   assignedAt DateTime @default(now())
 
+  //Relations
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -215,146 +186,49 @@ model DefaultCleaners {
 
 model Note {
   id        String    @id @default(uuid())
-  taskId    String
-  authorId  String
   content   String
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  @@index([taskId, createdAt])
-  @@index([deletedAt])
+  //Relations
+  taskId   String
+  task     Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
 model Image {
-  id     String @id @default(uuid())
-  taskId String
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
+  id         String    @id @default(uuid())
   url        String // Cloudinary/S3 URL
+  uploadedAt DateTime  @default(now())
+  deletedAt  DateTime?
+  exif       Json?
+
+  //Relations
+  taskId     String
+  task       Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
   uploaderId String
-  uploader   User   @relation(fields: [uploaderId], references: [id])
-
-  uploadedAt DateTime @default(now())
-
-  // Soft delete fields
-  deletedAt DateTime?
-  deletedBy String?
-  deletor   User?     @relation("ImageDeletor", fields: [deletedBy], references: [id])
-
-  // EXIF metadata (JSON)
-  exif Json?
-
-  @@index([taskId])
-  @@index([deletedAt])
-}
-
-model UserStats {
-  id     String @id @default(uuid())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  totalXP        Int    @default(0)
-  tasksCompleted Int    @default(0)
-  averageTime    Float? // Average completion time in minutes
-  qualityScore   Float? // Based on feedback/ratings
-
-  lastUpdated DateTime @updatedAt
-
-  @@index([totalXP])
-}
-
-model WeeklyActivity {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  weekStart DateTime // Start of week (Monday)
-  weekEnd   DateTime // End of week (Sunday)
-  xpEarned  Int      @default(0)
-  hotelId   String // Track which hotel they were active in
-  createdAt DateTime @default(now())
-
-  @@unique([userId, weekStart, hotelId])
-  @@index([userId, weekStart])
-}
-
-model Achievement {
-  id     String @id @default(uuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  type       String // "SPEED_DEMON", "PERFECTIONIST", "STREAK_KEEPER"
-  unlockedAt DateTime @default(now())
-
-  @@index([userId])
-}
-
-// ---------- Audit Log (Centralized) ----------
-model AuditLog {
-  id String @id @default(uuid())
-
-  // What was changed
-  tableName String
-  recordId  String // UUID of affected record
-  action    AuditAction
-
-  // Who changed it
-  userId   String?
-  userName String? // Denormalized for history
-
-  // What changed - using Json for PostgreSQL, String for SQLite
-  changes Json // For PostgreSQL: Json type, For SQLite: use String
-
-  // When
-  timestamp DateTime @default(now())
-
-  // Context
-  ipAddress String?
-  userAgent String?
-
-  @@index([tableName, recordId, timestamp])
-  @@index([userId, timestamp])
-  @@index([timestamp])
-  @@index([action])
-  @@index([tableName, action])
+  uploader   User    @relation(fields: [uploaderId], references: [id])
+  deletedBy  String?
+  deletor    User?   @relation("ImageDeletor", fields: [deletedBy], references: [id])
 }
 
 // ---------- Auth models ----------
 
-model RefreshToken {
-  id        String    @id @default(uuid())
-  token     String    @unique
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt DateTime
-  createdAt DateTime  @default(now())
-  revokedAt DateTime?
-
-  @@index([token])
-  @@index([expiresAt])
-  @@index([userId])
-}
-
 model Session {
-  id     String @id @default(uuid())
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now())
+  expiresAt      DateTime
+  revokedAt      DateTime?
+  ipAddress      String?
+  userAgent      String?
+  lastActivityAt DateTime  @default(now())
+  deviceInfo     String?
+
+  //Relations
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime  @default(now())
-  expiresAt DateTime
-  revokedAt DateTime?
-
-  ipAddress String?
-  userAgent String?
-
-  lastActivityAt DateTime @default(now())
-  deviceInfo     String?
-
   @@index([userId, expiresAt])
-  @@index([lastActivityAt])
-  @@index([userId])
   @@index([expiresAt])
 }

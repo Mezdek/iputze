@@ -20,9 +20,12 @@ export const getTaskOrThrow = async (taskId: string) => {
           hotelId: true,
         },
       },
-      assignedBy: {
-        omit: {
-          passwordHash: true,
+      creator: {
+        select: {
+          id: true,
+          avatarUrl: true,
+          name: true,
+          email: true,
         },
       },
     },

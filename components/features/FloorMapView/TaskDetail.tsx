@@ -49,7 +49,6 @@ export function TaskDetail({
     dueAt,
     priority,
     cleaners,
-    assignedBy,
     createdAt,
     startedAt,
     completedAt,
@@ -57,6 +56,7 @@ export function TaskDetail({
     cancellationNote,
     room,
     images,
+    creator,
     _count: { notes: notesCount },
   } = task;
 
@@ -132,7 +132,7 @@ export function TaskDetail({
                       {(tags) =>
                         t.rich('assigned_by', {
                           ...tags,
-                          name: assignedBy?.name ?? t('deleted'),
+                          name: creator?.name ?? t('deleted'),
                         })
                       }
                     </RichText>

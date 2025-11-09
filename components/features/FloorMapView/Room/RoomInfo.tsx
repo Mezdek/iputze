@@ -11,10 +11,6 @@ export function RoomInfo({ room }: { room: RoomWithHotel }) {
         <p className="font-semibold">Capacity</p>
         <p>{room.capacity ?? 'N/A'} people</p>
       </div>
-      <div className="col-span-2">
-        <p className="font-semibold">Last Modified By</p>
-        <p>{room.lastModifiedBy ?? 'N/A'}</p>
-      </div>
       <p className="text-default-600">{room.notes || 'No notes available'}</p>
     </div>
   );

@@ -14,3 +14,26 @@ export type NoteParams = NoteCollectionParams & {
 export interface NoteWithAuthor extends Note {
   author: BasicUser;
 }
+
+export interface RawNoteWithContext extends Omit<Note, 'taskId' | 'authorId'> {
+  task: {
+    id: string;
+    room: {
+      id: string;
+      hotelId: string;
+    };
+  };
+  author: BasicUser;
+}
+
+export interface NoteWithContext extends Omit<Note, 'taskId' | 'authorId'> {
+  author: BasicUser;
+  taskId: string;
+  hotelId: string;
+  roomId: string;
+}
+
+export interface NoteManagement {
+  authorId: string;
+  userId: string;
+}

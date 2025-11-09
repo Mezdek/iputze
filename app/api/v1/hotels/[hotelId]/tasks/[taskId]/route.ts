@@ -62,12 +62,12 @@ export const PATCH = withErrorHandling(
  */
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
-    const { taskId, roles } = await getTaskAccessContext({
+    const { taskId, roles, hotelId } = await getTaskAccessContext({
       params,
       req,
     });
 
-    if (!canDeleteTask({ roles })) throw APP_ERRORS.forbidden();
+    if (!canDeleteTask({ roles, hotelId })) throw APP_ERRORS.forbidden();
 
     await prisma.task.delete({ where: { id: taskId } });
 

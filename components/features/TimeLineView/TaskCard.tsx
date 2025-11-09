@@ -42,7 +42,7 @@ export function TaskCard({
     id: taskId,
     dueAt,
     createdAt,
-    assignedBy,
+    creator,
     cleaners,
     room: { hotelId },
     images,
@@ -100,7 +100,7 @@ export function TaskCard({
             {(tags) =>
               t.rich('assigned_by', {
                 ...tags,
-                name: assignedBy?.name ?? t('deleted'),
+                name: creator?.name ?? t('deleted'),
               })
             }
           </RichText>

@@ -3,7 +3,7 @@ import {
   isHotelManager,
   isTaskCleaner,
 } from '@/lib/shared/utils/permissions/utilityPermissions';
-import type { TaskManagement, TaskUpdateBody } from '@/types';
+import type { NoteManagement, TaskManagement, TaskUpdateBody } from '@/types';
 
 /**
  * Determines whether the actor can create an task.
@@ -71,4 +71,11 @@ export const canUpdateTask = ({
     return updateFields.every((field) => allowedFieldsForCleaners.has(field));
 
   return false;
+};
+
+export const canDeleteNote = ({
+  authorId,
+  userId,
+}: NoteManagement): boolean => {
+  return authorId === userId;
 };

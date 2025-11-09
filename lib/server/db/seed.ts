@@ -87,10 +87,9 @@ const createUser = async (userData: TSEEDING_User, hotelId: string) => {
   // Check if role exists
   const existingRole = await prisma.role.findUnique({
     where: {
-      userId_hotelId_level: {
+      userId_hotelId: {
         userId: user.id,
         hotelId,
-        level,
       },
     },
   });
@@ -203,7 +202,7 @@ const createTask = async (
       status,
       priority,
       dueAt,
-      assignedById: managerUserId,
+      creatorId: managerUserId,
     },
   });
 
@@ -247,10 +246,8 @@ async function main() {
   await prisma.room.deleteMany();
   await prisma.role.deleteMany();
   await prisma.session.deleteMany();
-  await prisma.refreshToken.deleteMany();
   await prisma.user.deleteMany();
   await prisma.hotel.deleteMany();
-  await prisma.auditLog.deleteMany();
   log('✓ Cleared all data\n', colors.green);
 
   // 1. Create Hotels

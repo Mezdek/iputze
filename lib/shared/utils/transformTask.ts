@@ -5,6 +5,8 @@ import type {
   EXIF,
   ImageResponse,
   ImageWithUploader,
+  NoteWithContext,
+  RawNoteWithContext,
   TaskResponse,
   TransformedCleaner,
   TransformTaskProps,
@@ -30,4 +32,15 @@ function transformCleaner(
 export function transformImage(image: ImageWithUploader): ImageResponse {
   const { exif, ...rest } = image;
   return { ...rest, exif: exif as EXIF | null };
+}
+
+export function transformNote(note: RawNoteWithContext): NoteWithContext {
+  const {
+    task: {
+      id: taskId,
+      room: { hotelId, id: roomId },
+    },
+    ...rest
+  } = note;
+  return { taskId, hotelId, roomId, ...rest };
 }

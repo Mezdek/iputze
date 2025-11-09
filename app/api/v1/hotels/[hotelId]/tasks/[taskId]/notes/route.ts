@@ -25,7 +25,7 @@ export const GET = withErrorHandling(
           },
         },
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
 
     return NextResponse.json<NoteWithAuthor[]>(notes);

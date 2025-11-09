@@ -64,7 +64,7 @@ export const GET = withErrorHandling(
         createdAt: true,
         cancellationNote: true,
         deletedAt: true,
-        deletedBy: true,
+
         _count: {
           select: {
             cleaners: true,
@@ -103,7 +103,16 @@ export const GET = withErrorHandling(
           orderBy: { uploadedAt: 'desc' },
         },
 
-        assignedBy: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+
+        deletor: {
           select: {
             id: true,
             name: true,
@@ -149,7 +158,7 @@ export const POST = withErrorHandling(
       data: {
         roomId,
         dueAt,
-        assignedById: userId,
+        creatorId: userId,
         cleaners: {
           create: cleaners.map((cleanerId: string) => ({ userId: cleanerId })),
         },
