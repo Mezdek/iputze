@@ -3,12 +3,12 @@ import { FloorMapView, Nav, WeeklyTimelineView } from '@components';
 import { useState } from 'react';
 
 import type { RoomView } from '@/lib/shared/constants/features/room';
-import type { InjectedAuthProps, RoomWithHotel } from '@/types';
+import type { InjectedAuthProps, RoomWithContext } from '@/types';
 
 export type TViews = 'FLOOR_MAP' | 'TIMELINE';
 
 export function ManagerView({ user }: InjectedAuthProps) {
-  const [room, setRoom] = useState<RoomWithHotel>();
+  const [room, setRoom] = useState<RoomWithContext>();
 
   const [view, setView] = useState<TViews>('TIMELINE');
   const handleNavigate = (view: RoomView | undefined) => {

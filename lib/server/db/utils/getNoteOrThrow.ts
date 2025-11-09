@@ -2,7 +2,7 @@ import { prisma } from '@/lib/server/db/prisma';
 import { NotesErrors } from '@/lib/shared/constants/errors/notes';
 import { TaskErrors } from '@/lib/shared/constants/errors/tasks';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
-import { transformNote } from '@/lib/shared/utils/transformTask';
+import { transformNote } from '@/lib/shared/utils/transformers/transformTask';
 import type { NoteWithContext } from '@/types';
 
 /**

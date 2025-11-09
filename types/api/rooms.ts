@@ -1,16 +1,11 @@
 import type {
-  DefaultCleaners,
   Hotel,
   Room,
   RoomCleanliness,
   RoomOccupancy,
 } from '@prisma/client';
 
-import type { HotelParams } from '@/types';
-
-export interface RoomWithHotel extends Room {
-  hotel: Hotel;
-}
+import type { BasicUser, HotelParams } from '@/types';
 
 export type RoomCreationBody = {
   number: string;
@@ -35,6 +30,18 @@ export type RoomUpdateBody = {
 export type RoomCollectionParams = HotelParams;
 export type RoomParams = RoomCollectionParams & { roomId: string };
 
-export interface RoomResponse extends Room {
-  defaultCleaners: DefaultCleaners[];
+export interface RoomWithContextRaw extends Omit<Room, 'hotelId'> {
+  defaultCleaners: { assignedAt: Date; user: BasicUser }[];
+  hotel: Hotel & { _count: { rooms: number } };
+  _count: { tasks: number; defaultCleaners: number };
+}
+
+export interface RoomWithContext extends Omit<Room, 'hotelId'> {
+  defaultCleaners: ({ assignedAt: Date } & BasicUser)[];
+  hotel: Hotel;
+  counts: {
+    roomsInHotel: number;
+    tasksInRoom: number;
+    defaultCleaners: number;
+  };
 }

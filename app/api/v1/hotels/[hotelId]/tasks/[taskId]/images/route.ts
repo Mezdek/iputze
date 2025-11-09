@@ -7,7 +7,7 @@ import { uploadToCloudinary } from '@/lib/server/utils/cloudinary';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { transformImage } from '@/lib/shared/utils/transformTask';
+import { transformImage } from '@/lib/shared/utils/transformers/transformTask';
 import type { ImageResponse, TaskParams } from '@/types';
 
 /**

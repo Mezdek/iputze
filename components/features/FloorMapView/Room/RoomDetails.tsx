@@ -67,7 +67,7 @@ export function RoomDetails({
 
         <CardFooter className="flex flex-col gap-2">
           {roomIsDirty && (
-            <TaskCreation hotelId={room.hotelId} roomId={room.id} />
+            <TaskCreation hotelId={room.hotel.id} roomId={room.id} />
           )}
         </CardFooter>
       </Card>

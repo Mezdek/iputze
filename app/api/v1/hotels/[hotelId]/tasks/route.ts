@@ -10,7 +10,7 @@ import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission, checkRoles } from '@/lib/shared/utils/permissions';
-import { transformTask } from '@/lib/shared/utils/transformTask';
+import { transformTask } from '@/lib/shared/utils/transformers/transformTask';
 import { taskCreationSchema } from '@/lib/shared/validation/schemas';
 import type { TaskCollectionParams, TaskResponse } from '@/types';
 

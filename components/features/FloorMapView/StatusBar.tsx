@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 
 import { ROOM_OCCUPANCY_COLORS } from '@/lib/shared/constants/features/room';
 import { capitalize } from '@/lib/shared/utils/capitalize';
-import type { RoomWithHotel, TaskResponse } from '@/types';
+import type { RoomWithContext, TaskResponse } from '@/types';
 
 const RoomOccupancyColors = {
   [RoomOccupancy.VACANT]: ROOM_OCCUPANCY_COLORS.VACANT,
@@ -15,7 +15,7 @@ const RoomOccupancyColors = {
 } as const;
 
 interface StatusBarProps {
-  room: RoomWithHotel;
+  room: RoomWithContext;
   tasks: TaskResponse[];
   actions?: ReactNode;
 }
@@ -74,7 +74,7 @@ export const roomStatus = ({
   room,
   tasks,
 }: {
-  room: RoomWithHotel;
+  room: RoomWithContext;
   tasks: TaskResponse[] | null | undefined;
 }) => {
   const taskInProgress = tasks?.some(

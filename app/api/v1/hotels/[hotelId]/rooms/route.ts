@@ -10,8 +10,12 @@ import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission } from '@/lib/shared/utils/permissions';
+import {
+  roomSelect,
+  transformRoom,
+} from '@/lib/shared/utils/transformers/transformRoom';
 import { roomCreationSchema } from '@/lib/shared/validation/schemas';
-import type { RoomCollectionParams, RoomWithHotel } from '@/types';
+import type { RoomCollectionParams, RoomWithContext } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomCollectionParams }) => {
@@ -26,10 +30,11 @@ export const GET = withErrorHandling(
 
     const rooms = await prisma.room.findMany({
       where: { hotelId },
-      include: { hotel: true },
+      select: roomSelect,
     });
 
-    return NextResponse.json<RoomWithHotel[]>(rooms);
+    const transformedRoom = rooms.map(transformRoom);
+    return NextResponse.json<RoomWithContext[]>(transformedRoom);
   }
 );
 

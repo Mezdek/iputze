@@ -1,6 +1,6 @@
-import type { RoomWithHotel } from '@/types';
+import type { RoomWithContext } from '@/types';
 
-export function RoomInfo({ room }: { room: RoomWithHotel }) {
+export function RoomInfo({ room }: { room: RoomWithContext }) {
   return (
     <div className="grid grid-cols-2 gap-4 text-sm">
       <div>

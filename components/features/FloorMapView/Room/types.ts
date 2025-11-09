@@ -1,11 +1,11 @@
 import type { ButtonProps, CardProps, FormProps } from '@heroui/react';
-import type { Room, User } from '@prisma/client';
+import type { User } from '@prisma/client';
 import type { FormEvent } from 'react';
 
 import type { ApprovalRequestProps } from '@/components';
 import type {
   RoomParams,
-  RoomWithHotel,
+  RoomWithContext,
   RoomWithStatus,
   TaskResponse,
 } from '@/types';
@@ -21,7 +21,7 @@ export interface RoomDeletionProps extends ApprovalRequestProps, RoomParams {
 }
 
 export interface RoomDetailsCardProps extends CardProps {
-  room: RoomWithHotel;
+  room: RoomWithContext;
   tasks: TaskResponse[];
   defaultCleaners: {
     user: User;
@@ -34,7 +34,7 @@ export enum RoomFormModes {
 }
 
 export interface RoomFormProps extends Omit<FormProps, 'onSubmit'> {
-  room?: Room;
+  room?: RoomWithContext;
   onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   mode: RoomFormModes;
 }
@@ -48,6 +48,6 @@ export const ROOM_TYPES = [
 ] as const;
 
 export interface RoomUpdateProps extends ButtonProps {
-  room: Room;
+  room: RoomWithContext;
   isIconOnly?: boolean;
 }

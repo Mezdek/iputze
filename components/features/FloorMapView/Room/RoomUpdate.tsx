@@ -30,7 +30,7 @@ export function RoomUpdate({
 }: RoomUpdateProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { mutateAsync: updateRoom } = useUpdateRoom({
-    hotelId: room.hotelId,
+    hotelId: room.hotel.id,
     roomId: room.id,
   });
   const t = useTranslations('room');

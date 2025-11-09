@@ -1,21 +1,23 @@
 import { prisma } from '@/lib/server/db/prisma';
 import { RoomErrors } from '@/lib/shared/constants/errors/rooms';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
-import type { RoomResponse } from '@/types';
+import {
+  roomSelect,
+  transformRoom,
+} from '@/lib/shared/utils/transformers/transformRoom';
+import type { RoomWithContext } from '@/types';
 
 export const getRoomOrThrow = async (
-  roomId: string,
-  expectedHotelId?: string
-): Promise<RoomResponse> => {
+  roomId: string
+): Promise<RoomWithContext> => {
   const room = await prisma.room.findUnique({
     where: { id: roomId },
-    include: { defaultCleaners: true },
+    select: roomSelect,
   });
 
   if (!room) throw APP_ERRORS.notFound(RoomErrors.NOT_FOUND);
 
-  if (expectedHotelId && room.hotelId !== expectedHotelId)
-    throw APP_ERRORS.badRequest(RoomErrors.NOT_IN_HOTEL);
+  const transformedRoom = transformRoom(room);
 
-  return room;
+  return transformedRoom;
 };

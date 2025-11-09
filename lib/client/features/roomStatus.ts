@@ -3,7 +3,7 @@ import { RoomCleanliness, RoomOccupancy, TaskStatus } from '@prisma/client';
 import type {
   RoomStatus,
   RoomStatusInfo,
-  RoomWithHotel,
+  RoomWithContext,
   TaskResponse,
 } from '@/types';
 
@@ -18,7 +18,7 @@ import type {
  * 4. Needs cleaning (default) → danger
  */
 export function calculateRoomStatus(
-  room: RoomWithHotel,
+  room: RoomWithContext,
   tasks: TaskResponse[]
 ): RoomStatusInfo {
   // Check for active tasks (not cancelled or completed)

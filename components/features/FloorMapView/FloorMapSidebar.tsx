@@ -5,10 +5,10 @@ import { Button, Card, cn } from '@heroui/react';
 import { memo, useState } from 'react';
 
 import { useTasks } from '@/hooks';
-import type { RoomWithHotel, TaskResponse } from '@/types';
+import type { RoomWithContext, TaskResponse } from '@/types';
 
 interface FloorMapSidebarProps {
-  room: RoomWithHotel | undefined;
+  room: RoomWithContext | undefined;
   tasks: TaskResponse[];
   hotelId: string;
   onClose?: () => void;
