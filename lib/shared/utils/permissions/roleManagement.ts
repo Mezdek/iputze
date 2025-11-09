@@ -1,10 +1,9 @@
 import { RoleLevel, RoleStatus } from '@prisma/client';
 
-import {
-  isAdmin,
-  isHotelManager,
-} from '@/lib/shared/utils/permissions/utilityPermissions';
+import { checkRoles } from '@/lib/shared/utils/permissions';
 import type { RoleManagement, RoleManagementModification } from '@/types';
+
+const { isAdmin, isHotelManager } = checkRoles;
 
 /**
  * Determines whether the actor can modify a specific role.

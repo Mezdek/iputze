@@ -1,9 +1,7 @@
-import {
-  isAdmin,
-  isHotelCleaner,
-  isHotelManager,
-} from '@/lib/shared/utils/permissions/utilityPermissions';
+import { checkRoles } from '@/lib/shared/utils/permissions';
 import type { RoomManagement } from '@/types';
+
+const { isAdmin, isHotelManager, isHotelCleaner } = checkRoles;
 
 /**
  * Check if the actor can create a room in a specific hotel.
@@ -22,7 +20,7 @@ export const canCreateRoom = ({ roles, hotelId }: RoomManagement): boolean =>
  * @param {RoomManagement} params - Roles of the actor and target hotel ID.
  * @returns {boolean} True if update is allowed, false otherwise.
  */
-export const canUpdateRoom = ({ roles, hotelId }: RoomManagement): boolean =>
+export const canModifyRoom = ({ roles, hotelId }: RoomManagement): boolean =>
   isAdmin({ roles }) || isHotelManager({ roles, hotelId });
 
 /**

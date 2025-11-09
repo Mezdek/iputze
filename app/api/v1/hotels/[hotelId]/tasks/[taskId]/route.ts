@@ -8,7 +8,7 @@ import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { canDeleteTask, canUpdateTask } from '@/lib/shared/utils/permissions';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import { taskUpdateSchema } from '@/lib/shared/validation/schemas';
 import { appendDates } from '@/lib/shared/validation/task/appendDates';
 import type { TaskParams } from '@/types';
@@ -41,7 +41,14 @@ export const PATCH = withErrorHandling(
 
     const data = taskUpdateSchema.parse(await req.json());
 
-    if (!canUpdateTask({ roles, cleaners, hotelId, updateData: data })) {
+    if (
+      !checkPermission.modification.task({
+        roles,
+        cleaners,
+        hotelId,
+        updateData: data,
+      })
+    ) {
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
     }
 
@@ -67,7 +74,8 @@ export const DELETE = withErrorHandling(
       req,
     });
 
-    if (!canDeleteTask({ roles, hotelId })) throw APP_ERRORS.forbidden();
+    if (!checkPermission.deleion.task({ roles, hotelId }))
+      throw APP_ERRORS.forbidden();
 
     await prisma.task.delete({ where: { id: taskId } });
 

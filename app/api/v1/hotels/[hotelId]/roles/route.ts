@@ -10,7 +10,7 @@ import { RolesErrors } from '@/lib/shared/constants/errors/roles';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { canCreateRole, canViewRoles } from '@/lib/shared/utils/permissions';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import type { RoleCollectionParams, TRoleWithUser } from '@/types';
 
 export const GET = withErrorHandling(
@@ -21,7 +21,7 @@ export const GET = withErrorHandling(
 
     const { roles } = await getUserOrThrow(req);
 
-    if (!canViewRoles({ roles, hotelId }))
+    if (!checkPermission.view.role({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
 
     const rolesWithUser = await prisma.role.findMany({
@@ -48,7 +48,7 @@ export const POST = withErrorHandling(
 
     const { roles, id } = await getUserOrThrow(req);
 
-    if (!canCreateRole({ roles, hotelId }))
+    if (!checkPermission.creation.role({ roles, hotelId }))
       throw APP_ERRORS.forbidden(RolesErrors.DUPLICATED);
 
     const role = await prisma.role.create({ data: { hotelId, userId: id } });

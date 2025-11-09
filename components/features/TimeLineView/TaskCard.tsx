@@ -18,7 +18,7 @@ import {
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
-import { hasManagerPermission } from '@/lib/shared/utils/permissions';
+import { checkRoles } from '@/lib/shared/utils/permissions';
 import type { InjectedAuthProps, TaskResponse, ViewMode } from '@/types';
 
 interface TaskCardProps extends InjectedAuthProps, Omit<CardProps, 'children'> {
@@ -47,7 +47,7 @@ export function TaskCard({
     room: { hotelId },
     images,
   } = task;
-  const viewMode: ViewMode = hasManagerPermission({
+  const viewMode: ViewMode = checkRoles.hasManagerPermission({
     hotelId,
     roles: user.roles,
   })

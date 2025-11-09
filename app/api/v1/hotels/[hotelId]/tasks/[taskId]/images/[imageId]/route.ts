@@ -6,7 +6,7 @@ import { getTaskAccessContext } from '@/lib/server/db/utils/getTaskAccessContext
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { hasManagerPermission } from '@/lib/shared/utils/permissions';
+import { checkRoles } from '@/lib/shared/utils/permissions';
 import type { ImageParams } from '@/types';
 
 /**
@@ -25,7 +25,7 @@ export const DELETE = withErrorHandling(
 
     // Verify user is a manager
 
-    if (!hasManagerPermission({ hotelId, roles })) {
+    if (!checkRoles.hasManagerPermission({ hotelId, roles })) {
       throw APP_ERRORS.forbidden('Only managers can delete images');
     }
 

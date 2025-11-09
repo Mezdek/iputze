@@ -10,11 +10,7 @@ import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import {
-  canDeleteRoom,
-  canUpdateRoom,
-  canViewRoom,
-} from '@/lib/shared/utils/permissions';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import { roomUpdateSchema } from '@/lib/shared/validation/schemas';
 import type { RoomParams } from '@/types';
 
@@ -26,7 +22,8 @@ export const GET = withErrorHandling(
     const room = await getRoomOrThrow(roomId, hotelId);
     const { roles } = await getUserOrThrow(req);
 
-    if (!canViewRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
+    if (!checkPermission.view.room({ roles, hotelId }))
+      throw APP_ERRORS.forbidden();
     return NextResponse.json<Room>(room);
   }
 );
@@ -38,7 +35,8 @@ export const PATCH = withErrorHandling(
     const room = await getRoomOrThrow(roomId, hotelId);
     const { roles } = await getUserOrThrow(req);
 
-    if (!canUpdateRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
+    if (!checkPermission.modification.room({ roles, hotelId }))
+      throw APP_ERRORS.forbidden();
 
     const data = roomUpdateSchema.parse(await req.json());
     const updatedRoom = await prisma.room.update({
@@ -56,7 +54,7 @@ export const DELETE = withErrorHandling(
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
     const room = await getRoomOrThrow(roomId, hotelId);
     const { roles } = await getUserOrThrow(req);
-    if (!canDeleteRoom({ roles, hotelId }))
+    if (!checkPermission.deleion.room({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
     await prisma.room.delete({ where: { id: room.id, hotelId } });
     return new Response(null, { status: HttpStatus.NO_CONTENT });

@@ -24,7 +24,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 
 import { parseFormData } from '@/lib/client/utils/parseFormData';
-import { getRolesByLevel } from '@/lib/shared/utils/permissions';
+import { getRoles } from '@/lib/shared/utils/permissions';
 import type { TaskCreationBody, TRoleWithUser } from '@/types';
 
 export function TaskCreation({
@@ -43,7 +43,7 @@ export function TaskCreation({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const FORM = 'task_creation_form';
 
-  const allCleaners = getRolesByLevel<TRoleWithUser>({
+  const allCleaners = getRoles.byLevel<TRoleWithUser>({
     roles: roles ?? [],
     level: RoleLevel.CLEANER,
     activeOnly: true,

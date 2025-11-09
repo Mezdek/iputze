@@ -9,7 +9,7 @@ import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { RolesErrors } from '@/lib/shared/constants/errors/roles';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { canModifyRole } from '@/lib/shared/utils/permissions';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import type { RoleParams, RoleUpdateBody } from '@/types';
 
 export const PATCH = withErrorHandling(
@@ -30,7 +30,14 @@ export const PATCH = withErrorHandling(
 
     const { roles } = await getUserOrThrow(req);
 
-    if (!canModifyRole({ roles, targetRole, newLevel, newStatus }))
+    if (
+      !checkPermission.modification.role({
+        roles,
+        targetRole,
+        newLevel,
+        newStatus,
+      })
+    )
       throw APP_ERRORS.forbidden(RolesErrors.EDITING_DENIED);
 
     // Perform update

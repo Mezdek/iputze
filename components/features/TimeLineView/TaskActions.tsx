@@ -6,7 +6,7 @@ import { TaskStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
 import { capitalize } from '@/lib/shared/utils/capitalize';
-import { isTaskCleaner } from '@/lib/shared/utils/permissions';
+import { checkRoles } from '@/lib/shared/utils/permissions';
 import type { InjectedAuthProps, TaskResponse } from '@/types';
 
 const NEXT_STATUS = {
@@ -35,7 +35,10 @@ export function TaskActions({ task, user, compact = false }: TaskActionsProps) {
     hotelId,
   });
 
-  const isTaskCleanerFlag = isTaskCleaner({ cleaners, userId: user.id });
+  const isTaskCleanerFlag = checkRoles.isTaskCleaner({
+    cleaners,
+    userId: user.id,
+  });
 
   // Only show actions for assigned cleaners and non-completed tasks
   if (!isTaskCleanerFlag || status === TaskStatus.COMPLETED) {

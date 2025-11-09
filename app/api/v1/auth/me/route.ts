@@ -6,12 +6,12 @@ import { prisma } from '@/lib/server/db/prisma';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { getAdminRole } from '@/lib/shared/utils/permissions';
+import { getRoles } from '@/lib/shared/utils/permissions';
 import type { MeResponse, TRole } from '@/types';
 
 export const GET = withErrorHandling(async (req: NextRequest) => {
   const { roles, ...user } = await getUserOrThrow(req);
-  const adminRole = getAdminRole<Role>({ roles });
+  const adminRole = getRoles.adminRole<Role>({ roles });
   let hotels: Hotel[], rolesWithHotels: TRole[];
 
   if (adminRole !== undefined) {

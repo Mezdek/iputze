@@ -7,7 +7,7 @@ import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { canDeleteNote } from '@/lib/shared/utils/permissions';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import type { NoteParams } from '@/types';
 
 export const DELETE = withErrorHandling(
@@ -21,7 +21,7 @@ export const DELETE = withErrorHandling(
       author: { id: authorId },
     } = await getNoteOrThrow({ noteId });
 
-    if (!canDeleteNote({ authorId, userId }))
+    if (!checkPermission.deleion.note({ authorId, userId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
 
     await prisma.note.delete({ where: { id } });

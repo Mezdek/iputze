@@ -8,7 +8,7 @@ import { HotelErrors } from '@/lib/shared/constants/errors/hotels';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { canCreateHotel } from '@/lib/shared/utils/permissions';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import type { HotelCreationBody, PublicHotel } from '@/types';
 
 export const GET = withErrorHandling(async () => {
@@ -23,7 +23,7 @@ export const GET = withErrorHandling(async () => {
 
 export const POST = withErrorHandling(async (req: NextRequest) => {
   const { roles } = await getUserOrThrow(req);
-  if (!canCreateHotel({ roles })) throw APP_ERRORS.forbidden();
+  if (!checkPermission.creation.hotel({ roles })) throw APP_ERRORS.forbidden();
   const data = (await req.json()) as HotelCreationBody;
   const hotelName = data.name;
   if (!hotelName) throw APP_ERRORS.badRequest(HotelErrors.MISSING_NAME);

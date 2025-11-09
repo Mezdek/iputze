@@ -1,9 +1,7 @@
-import {
-  isAdmin,
-  isHotelManager,
-  isTaskCleaner,
-} from '@/lib/shared/utils/permissions/utilityPermissions';
+import { checkRoles } from '@/lib/shared/utils/permissions';
 import type { NoteManagement, TaskManagement, TaskUpdateBody } from '@/types';
+
+const { isAdmin, isHotelManager, isTaskCleaner } = checkRoles;
 
 /**
  * Determines whether the actor can create an task.
@@ -19,7 +17,7 @@ export const canCreateTask = ({ roles, hotelId }: TaskManagement): boolean => {
  * Determines whether the actor can view/list tasks.
  * Admins, hotel managers, or assigned cleaners.
  */
-export const canListTasks = ({
+export const canViewTasks = ({
   roles,
   hotelId,
   cleaners,
@@ -40,7 +38,7 @@ export const canListTasks = ({
 export const canDeleteTask = ({ roles, hotelId }: TaskManagement): boolean =>
   isAdmin({ roles }) || (!!hotelId && isHotelManager({ roles, hotelId }));
 
-export const canUpdateTask = ({
+export const canModifyTask = ({
   roles,
   hotelId,
   cleaners,

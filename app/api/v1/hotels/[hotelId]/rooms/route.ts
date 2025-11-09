@@ -9,7 +9,7 @@ import { RoomErrors } from '@/lib/shared/constants/errors/rooms';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import { canCreateRoom, canListRooms } from '@/lib/shared/utils/permissions';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import { roomCreationSchema } from '@/lib/shared/validation/schemas';
 import type { RoomCollectionParams, RoomWithHotel } from '@/types';
 
@@ -21,7 +21,8 @@ export const GET = withErrorHandling(
 
     const { roles } = await getUserOrThrow(req);
 
-    if (!canListRooms({ roles, hotelId })) throw APP_ERRORS.forbidden();
+    if (!checkPermission.view.hotel({ roles, hotelId }))
+      throw APP_ERRORS.forbidden();
 
     const rooms = await prisma.room.findMany({
       where: { hotelId },
@@ -40,7 +41,8 @@ export const POST = withErrorHandling(
 
     const { roles } = await getUserOrThrow(req);
 
-    if (!canCreateRoom({ roles, hotelId })) throw APP_ERRORS.forbidden();
+    if (!checkPermission.creation.room({ roles, hotelId }))
+      throw APP_ERRORS.forbidden();
 
     const data = roomCreationSchema.parse(await req.json());
 

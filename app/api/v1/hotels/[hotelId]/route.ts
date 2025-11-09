@@ -9,11 +9,7 @@ import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
-import {
-  canCreateTask,
-  hasManagerPermission,
-  isHotelCleaner,
-} from '@/lib/shared/utils/permissions';
+import { checkPermission, checkRoles } from '@/lib/shared/utils/permissions';
 import { transformTask } from '@/lib/shared/utils/transformTask';
 import { taskCreationSchema } from '@/lib/shared/validation/schemas';
 import type { TaskCollectionParams, TaskResponse } from '@/types';
@@ -33,9 +29,9 @@ export const GET = withErrorHandling(
 
     const isRanged = !!startDate && !!endDate;
 
-    if (hasManagerPermission({ hotelId, roles })) {
+    if (checkRoles.hasManagerPermission({ hotelId, roles })) {
       baseWhere = { room: { hotelId } };
-    } else if (isHotelCleaner({ hotelId, roles })) {
+    } else if (checkRoles.isHotelCleaner({ hotelId, roles })) {
       baseWhere = { assignedUsers: { some: { userId } } };
     } else {
       throw APP_ERRORS.forbidden();
@@ -150,7 +146,7 @@ export const POST = withErrorHandling(
 
     const { roles, id: userId } = await getUserOrThrow(req);
 
-    if (!canCreateTask({ roles, hotelId }))
+    if (!checkPermission.creation.task({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
     const validated = taskCreationSchema.parse(await req.json());
     const { roomId, dueAt, cleaners, priority } = validated;
