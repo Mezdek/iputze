@@ -5,16 +5,16 @@ import { prisma } from '@/lib/server/db/prisma';
 import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
 import { getRoomOrThrow } from '@/lib/server/db/utils/getRoomOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
-import { GeneralErrors } from '@/lib/shared/constants/errors/general';
-import { RoomErrors } from '@/lib/shared/constants/errors/rooms';
-import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import {
+  GeneralErrors,
+  HttpStatus,
+  RoomErrors,
+  roomSelect,
+} from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission } from '@/lib/shared/utils/permissions';
-import {
-  roomSelect,
-  transformRoom,
-} from '@/lib/shared/utils/transformers/transformRoom';
+import { transformRoom } from '@/lib/shared/utils/transformers/transformRoom';
 import { roomUpdateSchema } from '@/lib/shared/validation/schemas';
 import type { RoomParams, RoomWithContext } from '@/types';
 
@@ -75,7 +75,7 @@ export const DELETE = withErrorHandling(
 
     const { roles } = await getUserOrThrow(req);
 
-    if (!checkPermission.deleion.room({ roles, hotelId }))
+    if (!checkPermission.deletion.room({ roles, hotelId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
     await prisma.room.delete({ where: { id: room.id, hotelId } });
     return new Response(null, { status: HttpStatus.NO_CONTENT });

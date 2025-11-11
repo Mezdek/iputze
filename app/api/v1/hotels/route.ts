@@ -4,8 +4,7 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/server/db/prisma';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
-import { HotelErrors } from '@/lib/shared/constants/errors/hotels';
-import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { HotelErrors, HttpStatus } from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission } from '@/lib/shared/utils/permissions';

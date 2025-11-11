@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
 
-import { prisma } from '@/lib/server/db/prisma';
 import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
 import { getTaskOrThrow } from '@/lib/server/db/utils/getTaskOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
@@ -28,9 +27,5 @@ export const getTaskAccessContext = async ({
 
   const { roles, id: userId } = await getUserOrThrow(req);
 
-  const cleaners = await prisma.cleaner.findMany({
-    where: { taskId },
-  });
-
-  return { hotelId, taskId, userId, task, roles, cleaners };
+  return { hotelId, taskId, userId, task, roles };
 };

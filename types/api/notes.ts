@@ -1,4 +1,4 @@
-import type { Note } from '@prisma/client';
+import type { Note, Role } from '@prisma/client';
 
 import type { BasicUser, TaskParams } from '@/types';
 
@@ -36,4 +36,5 @@ export interface NoteWithContext extends Omit<Note, 'taskId' | 'authorId'> {
 export interface NoteManagement {
   authorId: string;
   userId: string;
+  roles?: Role[];
 }

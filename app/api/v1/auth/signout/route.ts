@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/server/db/prisma';
 import {
+  HttpStatus,
   ResponseCookieOptions,
   SESSION_COOKIE_KEY,
-} from '@/lib/shared/constants/auth';
-import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+} from '@/lib/shared/constants';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 
 export const POST = withErrorHandling(async (req: NextRequest) => {

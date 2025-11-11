@@ -74,6 +74,7 @@ export const canModifyTask = ({
 export const canDeleteNote = ({
   authorId,
   userId,
+  roles,
 }: NoteManagement): boolean => {
-  return authorId === userId;
+  return authorId === userId || (!!roles && checkRoles.isAdmin({ roles }));
 };

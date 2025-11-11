@@ -7,13 +7,11 @@ import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
 import { RoomErrors } from '@/lib/shared/constants/errors/rooms';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { roomSelect } from '@/lib/shared/constants/selects/room';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission } from '@/lib/shared/utils/permissions';
-import {
-  roomSelect,
-  transformRoom,
-} from '@/lib/shared/utils/transformers/transformRoom';
+import { transformRoom } from '@/lib/shared/utils/transformers/transformRoom';
 import { roomCreationSchema } from '@/lib/shared/validation/schemas';
 import type { RoomCollectionParams, RoomWithContext } from '@/types';
 

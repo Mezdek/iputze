@@ -1,10 +1,10 @@
-import type { Cleaner, Role } from '@prisma/client';
+import type { Role } from '@prisma/client';
 
-import type { TaskUpdateBody } from '@/types/api';
+import type { TaskUpdateBody, TransformedCleaner } from '@/types/api';
 
 export interface TaskManagement {
   roles: Role[];
   hotelId?: string;
-  cleaners?: Cleaner[];
+  cleaners?: TransformedCleaner[];
   updateData?: TaskUpdateBody;
 }

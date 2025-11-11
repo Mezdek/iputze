@@ -21,7 +21,7 @@ export const DELETE = withErrorHandling(
       author: { id: authorId },
     } = await getNoteOrThrow({ noteId });
 
-    if (!checkPermission.deleion.note({ authorId, userId }))
+    if (!checkPermission.deletion.note({ authorId, userId }))
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
 
     await prisma.note.delete({ where: { id } });

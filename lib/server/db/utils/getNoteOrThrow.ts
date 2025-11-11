@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/server/db/prisma';
+import { noteSelect } from '@/lib/shared/constants';
 import { NotesErrors } from '@/lib/shared/constants/errors/notes';
-import { TaskErrors } from '@/lib/shared/constants/errors/tasks';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { transformNote } from '@/lib/shared/utils/transformers/transformTask';
 import type { NoteWithContext } from '@/types';
@@ -26,28 +26,10 @@ export const getNoteOrThrow = async ({
 }): Promise<NoteWithContext> => {
   const note = await prisma.note.findUnique({
     where: { id: noteId },
-    select: {
-      content: true,
-      createdAt: true,
-      deletedAt: true,
-      id: true,
-      taskId: true,
-      author: {
-        select: { id: true, name: true, email: true, avatarUrl: true },
-      },
-      task: {
-        select: {
-          id: true,
-          room: { select: { hotelId: true, id: true } },
-        },
-      },
-    },
+    select: noteSelect,
   });
 
   if (!note) throw APP_ERRORS.badRequest(NotesErrors.NOT_FOUND);
-
-  // Ensure task is not floating (must be tied to a room)
-  if (!note.task.room) throw APP_ERRORS.badRequest(TaskErrors.FLOATING);
 
   const transformedNote = transformNote(note);
 

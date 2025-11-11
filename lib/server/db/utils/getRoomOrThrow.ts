@@ -1,10 +1,7 @@
 import { prisma } from '@/lib/server/db/prisma';
-import { RoomErrors } from '@/lib/shared/constants/errors/rooms';
+import { RoomErrors, roomSelect } from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
-import {
-  roomSelect,
-  transformRoom,
-} from '@/lib/shared/utils/transformers/transformRoom';
+import { transformRoom } from '@/lib/shared/utils/transformers/transformRoom';
 import type { RoomWithContext } from '@/types';
 
 export const getRoomOrThrow = async (

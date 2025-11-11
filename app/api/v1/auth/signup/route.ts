@@ -4,9 +4,11 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/server/db/prisma';
 import { checkRateLimit } from '@/lib/server/utils/rateLimit';
-import { AuthErrors } from '@/lib/shared/constants/errors/auth';
-import { HttpStatus } from '@/lib/shared/constants/httpStatus';
-import { RATE_LIMIT_KEYS } from '@/lib/shared/constants/rateLimitKeys';
+import {
+  AuthErrors,
+  HttpStatus,
+  RATE_LIMIT_KEYS,
+} from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { userCreationSchema } from '@/lib/shared/validation/schemas';

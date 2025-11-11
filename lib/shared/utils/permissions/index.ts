@@ -17,7 +17,7 @@ export const checkPermission = {
     role: role.canModifyRole,
     task: task.canModifyTask,
   },
-  deleion: {
+  deletion: {
     hotel: hotel.canDeleteHotel,
     room: room.canDeleteRoom,
     task: task.canDeleteTask,

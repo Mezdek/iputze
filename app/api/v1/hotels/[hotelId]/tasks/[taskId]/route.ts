@@ -11,7 +11,7 @@ import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission } from '@/lib/shared/utils/permissions';
 import { taskUpdateSchema } from '@/lib/shared/validation/schemas';
 import { appendDates } from '@/lib/shared/validation/task/appendDates';
-import type { TaskParams } from '@/types';
+import type { TaskParams, TaskResponse } from '@/types';
 //TODO this needs a rework
 
 /**
@@ -21,7 +21,7 @@ import type { TaskParams } from '@/types';
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
     const { task } = await getTaskAccessContext({ params, req });
-    return NextResponse.json<Task>(task);
+    return NextResponse.json<TaskResponse>(task);
   }
 );
 
@@ -34,7 +34,7 @@ export const GET = withErrorHandling(
  */
 export const PATCH = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
-    const { taskId, roles, hotelId, cleaners } = await getTaskAccessContext({
+    const { taskId, roles, hotelId, task } = await getTaskAccessContext({
       params,
       req,
     });
@@ -44,7 +44,7 @@ export const PATCH = withErrorHandling(
     if (
       !checkPermission.modification.task({
         roles,
-        cleaners,
+        cleaners: task.cleaners,
         hotelId,
         updateData: data,
       })
@@ -74,7 +74,7 @@ export const DELETE = withErrorHandling(
       req,
     });
 
-    if (!checkPermission.deleion.task({ roles, hotelId }))
+    if (!checkPermission.deletion.task({ roles, hotelId }))
       throw APP_ERRORS.forbidden();
 
     await prisma.task.delete({ where: { id: taskId } });

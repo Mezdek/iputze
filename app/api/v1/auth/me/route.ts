@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/server/db/prisma';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
-import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { HttpStatus } from '@/lib/shared/constants';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { getRoles } from '@/lib/shared/utils/permissions';
 import type { MeResponse, TRole } from '@/types';

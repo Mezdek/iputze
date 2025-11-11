@@ -20,9 +20,8 @@ export interface TaskAccessContext {
   hotelId: string;
   taskId: string;
   userId: string;
-  task: Task;
+  task: TaskResponse;
   roles: Role[];
-  cleaners: Cleaner[];
 }
 
 // Tasks

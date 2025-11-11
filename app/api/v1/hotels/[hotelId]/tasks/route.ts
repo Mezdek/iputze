@@ -5,8 +5,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/server/db/prisma';
 import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
-import { GeneralErrors } from '@/lib/shared/constants/errors/general';
-import { HttpStatus } from '@/lib/shared/constants/httpStatus';
+import { GeneralErrors, HttpStatus, taskSelect } from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission, checkRoles } from '@/lib/shared/utils/permissions';
@@ -46,85 +45,8 @@ export const GET = withErrorHandling(
       : baseWhere;
     const tasks = await prisma.task.findMany({
       where,
+      select: taskSelect,
       orderBy: { dueAt: 'asc' },
-      select: {
-        id: true,
-        status: true,
-        priority: true,
-        dueAt: true,
-        startedAt: true,
-        completedAt: true,
-        cancelledAt: true,
-        createdAt: true,
-        cancellationNote: true,
-        deletedAt: true,
-        _count: {
-          select: { cleaners: true, notes: true, images: true },
-        },
-
-        room: true,
-        notes: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                avatarUrl: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-        },
-
-        images: {
-          where: { deletedAt: null },
-          include: {
-            uploader: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                avatarUrl: true,
-              },
-            },
-          },
-          orderBy: { uploadedAt: 'desc' },
-        },
-
-        creator: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            avatarUrl: true,
-          },
-        },
-
-        deletor: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            avatarUrl: true,
-          },
-        },
-        cleaners: {
-          select: {
-            assignedAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                avatarUrl: true,
-              },
-            },
-          },
-        },
-      },
     });
 
     const transformedTasks = tasks.map(transformTask);

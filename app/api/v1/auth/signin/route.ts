@@ -6,13 +6,13 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/server/db/prisma';
 import { checkRateLimit } from '@/lib/server/utils/rateLimit';
 import {
+  AuthErrors,
+  HttpStatus,
+  RATE_LIMIT_KEYS,
   ResponseCookieOptions,
   SESSION_COOKIE_EXP,
   SESSION_COOKIE_KEY,
-} from '@/lib/shared/constants/auth';
-import { AuthErrors } from '@/lib/shared/constants/errors/auth';
-import { HttpStatus } from '@/lib/shared/constants/httpStatus';
-import { RATE_LIMIT_KEYS } from '@/lib/shared/constants/rateLimitKeys';
+} from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { parseExpiryToMilliSeconds } from '@/lib/shared/utils/parseExpiryToSeconds';
