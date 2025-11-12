@@ -21,17 +21,20 @@ export function RoomInfo({ room }: { room: RoomWithContext }) {
       <p className="text-default-600 col-span-2">
         {notes || 'No notes available'}
       </p>
-      <div className="col-span-2 flex gap-1">
-        {defaultCleaners.map(({ id, name, avatarUrl }) => (
-          <Tooltip content={name} key={id}>
-            <Avatar
-              className="flex-shrink-0"
-              name={name}
-              size="sm"
-              src={avatarUrl ?? undefined}
-            />
-          </Tooltip>
-        ))}
+      <div className="col-span-2 flex flex-col gap-1">
+        <p className="font-semibold">Default Cleaners</p>
+        <div className="flex gap-1">
+          {defaultCleaners.map(({ id, name, avatarUrl }) => (
+            <Tooltip content={name} key={id}>
+              <Avatar
+                className="flex-shrink-0"
+                name={name}
+                size="sm"
+                src={avatarUrl ?? undefined}
+              />
+            </Tooltip>
+          ))}
+        </div>
       </div>
     </div>
   );
