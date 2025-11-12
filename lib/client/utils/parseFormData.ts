@@ -20,3 +20,22 @@ export function parseFormData<T extends object>(
   }
   return result;
 }
+
+export function parseFormData_alt<T extends Record<string, unknown>>(
+  form: HTMLFormElement
+): T {
+  const formData = new FormData(form);
+  const result = {} as Record<string, unknown>;
+
+  for (const [key, value] of formData.entries()) {
+    if (result[key] !== undefined) {
+      result[key] = Array.isArray(result[key])
+        ? [...(result[key] as unknown[]), value]
+        : [result[key], value];
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result as T;
+}

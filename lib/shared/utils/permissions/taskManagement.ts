@@ -1,7 +1,9 @@
-import { checkRoles } from '@/lib/shared/utils/permissions';
+import {
+  isAdmin,
+  isHotelManager,
+  isTaskCleaner,
+} from '@/lib/shared/utils/permissions/utilityPermissions';
 import type { NoteManagement, TaskManagement, TaskUpdateBody } from '@/types';
-
-const { isAdmin, isHotelManager, isTaskCleaner } = checkRoles;
 
 /**
  * Determines whether the actor can create an task.
@@ -76,5 +78,5 @@ export const canDeleteNote = ({
   userId,
   roles,
 }: NoteManagement): boolean => {
-  return authorId === userId || (!!roles && checkRoles.isAdmin({ roles }));
+  return authorId === userId || (!!roles && isAdmin({ roles }));
 };

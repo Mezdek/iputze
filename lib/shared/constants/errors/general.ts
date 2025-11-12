@@ -4,4 +4,5 @@ export enum GeneralErrors {
   ACTION_DENIED = 'You do not have authority to execute current task',
   UNEXPECTED_SERVER_ERROR = 'Unexpected Server Error',
   UNHANDLED_ERROR = 'Unhandled Error: ',
+  NO_SUBMIT_FUNCTION = 'No submit function has been passed to approval request component',
 }

@@ -11,18 +11,29 @@ import {
   ModalHeader,
   useDisclosure,
 } from '@heroui/react';
-import { useCreateRoom, useErrorToast } from '@hooks';
-import { RoomCleanliness, RoomOccupancy } from '@prisma/client';
+import { useCreateRoom, useErrorToast, useRoles } from '@hooks';
+import { RoleLevel } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
-import { RoomFormModes } from '@/components/features/FloorMapView/Room/types';
 import { parseFormData } from '@/lib/client/utils/parseFormData';
-import type { RoomCollectionParams, RoomCreationBody } from '@/types';
+import { getRoles } from '@/lib/shared/utils/permissions';
+import type {
+  RoomCollectionParams,
+  RoomCreationBody,
+  TRoleWithUser,
+} from '@/types';
+import { RoomFormModes } from '@/types';
 
 export function RoomCreation({ hotelId }: RoomCollectionParams) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { mutateAsync: createRoom } = useCreateRoom({ hotelId });
+  const { data: roles } = useRoles({ hotelId });
+  const cleaners = getRoles.byLevel<TRoleWithUser>({
+    roles: roles ?? [],
+    level: RoleLevel.CLEANER,
+    activeOnly: true,
+  });
   const t = useTranslations('room');
   const { showErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,9 +46,14 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
 
     setIsSubmitting(true);
     const data = parseFormData<RoomCreationBody>(e.currentTarget, {
-      number: '',
-      cleanliness: RoomCleanliness.CLEAN,
-      occupancy: RoomOccupancy.VACANT,
+      number: '1',
+      capacity: '1',
+      cleanliness: 'CLEAN',
+      floor: '1',
+      notes: '',
+      occupancy: 'OCCUPIED',
+      type: '',
+      defaultCleaners: [],
     });
 
     try {
@@ -74,6 +90,7 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
               </ModalHeader>
               <ModalBody>
                 <RoomForm
+                  cleaners={cleaners}
                   id={FORM}
                   mode={RoomFormModes.CREATION}
                   onSubmit={handleSubmit}

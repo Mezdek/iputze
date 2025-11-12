@@ -1,31 +1,15 @@
-import type {
-  Hotel,
-  Room,
-  RoomCleanliness,
-  RoomOccupancy,
-} from '@prisma/client';
+import type { Hotel, Room } from '@prisma/client';
+import type z from 'zod';
 
+import type {
+  roomCreationSchema,
+  roomUpdateSchema,
+} from '@/lib/shared/validation/schemas';
 import type { BasicUser, HotelParams } from '@/types';
 
-export type RoomCreationBody = {
-  number: string;
-  occupancy?: RoomOccupancy | undefined;
-  cleanliness?: RoomCleanliness | undefined;
-  type?: string | undefined;
-  capacity?: number | undefined;
-  floor?: string | undefined;
-  notes?: string | undefined;
-};
+export type RoomCreationBody = z.infer<typeof roomCreationSchema>;
 
-export type RoomUpdateBody = {
-  number?: string | undefined;
-  occupancy?: RoomOccupancy | undefined;
-  cleanliness?: RoomCleanliness | undefined;
-  type?: string | undefined;
-  capacity?: number | undefined;
-  floor?: string | undefined;
-  notes?: string | undefined;
-};
+export type RoomUpdateBody = z.infer<typeof roomUpdateSchema>;
 
 export type RoomCollectionParams = HotelParams;
 export type RoomParams = RoomCollectionParams & { roomId: string };

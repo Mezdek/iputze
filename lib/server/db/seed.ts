@@ -143,7 +143,7 @@ const createRoom = async (roomData: TSEEDING_RoomCreation, hotelId: string) => {
       occupancy,
       cleanliness,
       type,
-      capacity,
+      capacity: Number(capacity),
       floor,
       notes: notes ?? null,
     },

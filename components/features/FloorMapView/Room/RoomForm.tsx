@@ -4,15 +4,16 @@ import { Form, Input, Select, SelectItem, Textarea } from '@heroui/react';
 import { RoomCleanliness, RoomOccupancy } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 
-import { ROOM_TYPES, type RoomFormProps } from './types';
+import { ROOM_TYPES, type RoomFormProps } from '@/types';
 
 export function RoomForm({
   room,
   onSubmit,
   mode,
+  cleaners,
   ...formProps
 }: RoomFormProps) {
-  const t = useTranslations('room');
+  const t = useTranslations(`room`);
 
   return (
     <Form className="flex flex-col gap-4" onSubmit={onSubmit} {...formProps}>
@@ -30,37 +31,31 @@ export function RoomForm({
       {/* Floor */}
       <Input
         defaultValue={room?.floor ?? undefined}
-        errorMessage={t('form.inputs.floor.error_message')}
-        label={t('form.inputs.floor.label', { default: 'Floor' })}
+        errorMessage={t(`${mode}.inputs.floor.error_message`)}
+        label={t(`${mode}.inputs.floor.label`)}
         name="floor"
-        placeholder={t('form.inputs.floor.placeholder', {
-          default: 'e.g., 1, 2, G',
-        })}
+        placeholder={t(`${mode}.inputs.floor.placeholder`)}
         variant="bordered"
       />
 
       {/* Capacity */}
       <Input
         defaultValue={room?.capacity ? String(room.capacity) : undefined}
-        errorMessage={t('form.inputs.capacity.error_message')}
-        label={t('form.inputs.capacity.label', { default: 'Capacity' })}
+        errorMessage={t(`${mode}.inputs.capacity.error_message`)}
+        label={t(`${mode}.inputs.capacity.label`)}
         min="1"
         name="capacity"
-        placeholder={t('form.inputs.capacity.placeholder', {
-          default: 'Number of guests',
-        })}
+        placeholder={t(`${mode}.inputs.capacity.placeholder`)}
         type="number"
         variant="bordered"
       />
 
       {/* Room Type */}
       <Select
-        defaultSelectedKeys={room?.type ? [room.type] : ['Standard']}
-        label={t('form.inputs.type.label', { default: 'Room Type' })}
+        defaultSelectedKeys={room?.type ? [room.type] : [`Standard`]}
+        label={t(`${mode}.inputs.type.label`)}
         name="type"
-        placeholder={t('form.inputs.type.placeholder', {
-          default: 'Select room type',
-        })}
+        placeholder={t(`${mode}.inputs.type.placeholder`)}
         variant="bordered"
       >
         {ROOM_TYPES.map((type) => (
@@ -102,16 +97,29 @@ export function RoomForm({
         ))}
       </Select>
 
+      {/* Default Cleaners Selection */}
+      <Select
+        fullWidth
+        defaultSelectedKeys={room?.defaultCleaners.map(({ id }) => id) ?? []}
+        errorMessage={t(`${mode}.inputs.default_cleaners.error_message`)}
+        label={t(`${mode}.inputs.default_cleaners.label`)}
+        name="defaultCleaners"
+        placeholder={t(`${mode}.inputs.default_cleaners.placeholder`)}
+        selectionMode="multiple"
+      >
+        {cleaners.map((cleaner) => (
+          <SelectItem key={cleaner.user.id}>{cleaner.user.name}</SelectItem>
+        ))}
+      </Select>
+
       {/* Notes */}
       <Textarea
         defaultValue={room?.notes ?? undefined}
-        label={t('form.inputs.notes.label', { default: 'Notes' })}
+        label={t(`${mode}.inputs.notes.label`)}
         maxRows={4}
         minRows={2}
         name="notes"
-        placeholder={t('form.inputs.notes.placeholder', {
-          default: 'Additional information about the room',
-        })}
+        placeholder={t(`${mode}.inputs.notes.placeholder`)}
         variant="bordered"
       />
     </Form>

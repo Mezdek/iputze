@@ -1,7 +1,8 @@
-import { checkRoles } from '@/lib/shared/utils/permissions';
+import {
+  isAdmin,
+  isHotelManager,
+} from '@/lib/shared/utils/permissions/utilityPermissions';
 import type { AdminRights, HotelManagement } from '@/types';
-
-const { isAdmin, isHotelManager } = checkRoles;
 
 /**
  * Determines whether the actor can create a hotel.

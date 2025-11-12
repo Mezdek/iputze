@@ -14,42 +14,7 @@
   },
   "notes": "<strong>Notes: </strong> {notes}",
   "no_notes": "No Notes",
-  "form": {
-    "inputs": {
-      "room_number": {
-        "error_message": "Please provide room number",
-        "label": "Room Number",
-        "placeholder": "Enter new room number"
-      },
-      "cleanliness": {
-        "label": "Cleanliness Status",
-        "placeholder": "Select cleanliness status"
-      },
-      "occupancy": {
-        "label": "Occupancy Status",
-        "placeholder": "Select occupancy status"
-      },
-      "floor": {
-        "label": "Floor number",
-        "placeholder": "Select floor number",
-        "error_message": "Please provide floor number"
-      },
-      "capacity": {
-        "label": "Floor number",
-        "placeholder": "Select floor number",
-        "error_message": "Please provide floor number"
-      },
-      "type": {
-        "label": "Floor number",
-        "placeholder": "Select floor number",
-        "error_message": "Please provide floor number"
-      },
-      "notes": {
-        "label": "Floor number",
-        "placeholder": "Select floor number"
-      }
-    }
-  },
+
   "update": {
     "header": " Edit room {number}",
     "inputs": {
@@ -65,6 +30,30 @@
       "occupancy": {
         "label": "Occupancy Status",
         "placeholder": "Select occupancy status"
+      },
+      "floor": {
+        "label": "Floor number",
+        "placeholder": "Select floor number",
+        "error_message": "Please provide floor number"
+      },
+      "capacity": {
+        "label": "Capacity",
+        "placeholder": "Determine capacity",
+        "error_message": "Please provide capacity"
+      },
+      "type": {
+        "label": "Type",
+        "placeholder": "Select room type",
+        "error_message": "Please provide a room type"
+      },
+      "default_cleaners": {
+        "label": "Default Cleaners",
+        "placeholder": "Select cleaners",
+        "error_message": "Please provide a room type"
+      },
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Add note"
       }
     },
     "buttons": {
@@ -104,8 +93,27 @@
       },
       "floor": {
         "label": "Floor number",
-        "placeholder": "Select floor number",
+        "placeholder": "Select new floor number",
         "error_message": "Please provide floor number"
+      },
+      "capacity": {
+        "label": "Capacity",
+        "placeholder": "Determine capacity",
+        "error_message": "Please provide capacity"
+      },
+      "type": {
+        "label": "Type",
+        "placeholder": "Select room type",
+        "error_message": "Please provide a room type"
+      },
+      "default_cleaners": {
+        "label": "Default Cleaners",
+        "placeholder": "Select cleaners",
+        "error_message": "Please provide a room type"
+      },
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Add note"
       }
     }
   },

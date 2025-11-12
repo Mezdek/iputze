@@ -49,14 +49,22 @@ export const PATCH = withErrorHandling(
     if (!checkPermission.modification.room({ roles, hotelId }))
       throw APP_ERRORS.forbidden();
 
-    const data = roomUpdateSchema.parse(await req.json());
+    const { defaultCleaners: defaultCleanersIds, ...data } =
+      roomUpdateSchema.parse(await req.json());
+
+    const defaultCleaners = defaultCleanersIds && {
+      deleteMany: {},
+      createMany: { data: defaultCleanersIds.map((userId) => ({ userId })) },
+    };
 
     const updatedRoom = await prisma.room.update({
       where: { id: room.id, hotelId },
-      data,
+      data: {
+        ...data,
+        defaultCleaners,
+      },
       select: roomSelect,
     });
-
     const transformedRoom = transformRoom(updatedRoom);
 
     return NextResponse.json<RoomWithContext>(transformedRoom);

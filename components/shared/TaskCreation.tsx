@@ -4,25 +4,20 @@
 import {
   addToast,
   Button,
-  DatePicker,
-  Form,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Select,
-  SelectItem,
-  TimeInput,
   useDisclosure,
 } from '@heroui/react';
 import { useCreateTask, useErrorToast, useRoles, useRoom } from '@hooks';
-import { getLocalTimeZone, now, today } from '@internationalized/date';
-import { RoleLevel, TaskPriority } from '@prisma/client';
+import { RoleLevel } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
+import TaskForm from '@/components/shared/TaskForm';
 import { parseFormData } from '@/lib/client/utils/parseFormData';
 import { getRoles } from '@/lib/shared/utils/permissions';
 import type { TaskCreationBody, TRoleWithUser } from '@/types';
@@ -110,82 +105,12 @@ export function TaskCreation({
               </ModalHeader>
 
               <ModalBody>
-                <Form
-                  className="flex flex-col gap-4"
-                  id={FORM}
-                  onSubmit={handleCreate}
-                >
-                  {/* Cleaners Selection */}
-                  <Select
-                    fullWidth
-                    isRequired
-                    errorMessage={t('inputs.cleaners.error_message')}
-                    form={FORM}
-                    isDisabled={allCleaners.length === 0}
-                    label={t('inputs.cleaners.label')}
-                    name="cleaners"
-                    placeholder={t('inputs.cleaners.placeholder')}
-                    selectionMode="multiple"
-                  >
-                    {allCleaners.map(({ user }) => (
-                      <SelectItem key={user.id}>{user.name}</SelectItem>
-                    ))}
-                  </Select>
-
-                  {allCleaners.length === 0 && (
-                    <p className="text-sm text-danger">
-                      {t('no_cleaners', {
-                        default:
-                          'No cleaners available. Please add cleaners first.',
-                      })}
-                    </p>
-                  )}
-
-                  {/* Date and Time */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <DatePicker
-                      isRequired
-                      defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
-                      description={t('inputs.due_date.description')}
-                      errorMessage={t('inputs.due_date.error_message')}
-                      form={FORM}
-                      label={t('inputs.due_date.label', {
-                        default: 'Due Date',
-                      })}
-                      minValue={today(getLocalTimeZone())}
-                      name="dueAt"
-                    />
-
-                    <TimeInput
-                      defaultValue={now(getLocalTimeZone()).set({ hour: 11 })}
-                      description={t('inputs.due_time.description', {
-                        default: 'Select time',
-                      })}
-                      form={FORM}
-                      hourCycle={24}
-                      label={t('inputs.due_time.label', {
-                        default: 'Due Time',
-                      })}
-                      name="dueTime"
-                    />
-                  </div>
-
-                  {/* Priority */}
-                  <Select
-                    defaultSelectedKeys={[TaskPriority.MEDIUM]}
-                    description={t('inputs.priority.description')}
-                    form={FORM}
-                    label={t('inputs.priority.label')}
-                    name="priority"
-                    placeholder={t('inputs.priority.placeholder')}
-                  >
-                    {Object.values(TaskPriority).map((priority) => (
-                      <SelectItem key={priority}>
-                        {t(`inputs.priority.options.${priority}`)}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </Form>
+                <TaskForm
+                  cleaners={allCleaners}
+                  form={FORM}
+                  roomNumber={room?.number}
+                  submitHandler={handleCreate}
+                />
               </ModalBody>
 
               <ModalFooter>

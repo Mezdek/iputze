@@ -1,7 +1,7 @@
 // @TODO create a constant default form object, for all similar cases as well
 'use client';
 
-import { Icons, RoomForm } from '@components';
+import { Icons, RoomDeletion, RoomForm } from '@components';
 import {
   addToast,
   Button,
@@ -12,16 +12,15 @@ import {
   ModalHeader,
   useDisclosure,
 } from '@heroui/react';
-import { useErrorToast, useUpdateRoom } from '@hooks';
+import { useErrorToast, useRoles, useUpdateRoom } from '@hooks';
+import { RoleLevel } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 
-import {
-  RoomFormModes,
-  type RoomUpdateProps,
-} from '@/components/features/FloorMapView/Room/types';
 import { parseFormData } from '@/lib/client/utils/parseFormData';
-import type { RoomUpdateBody } from '@/types';
+import { getRoles } from '@/lib/shared/utils/permissions';
+import type { RoomUpdateBody, RoomUpdateProps, TRoleWithUser } from '@/types';
+import { RoomFormModes } from '@/types';
 
 export function RoomUpdate({
   room,
@@ -36,6 +35,13 @@ export function RoomUpdate({
   const t = useTranslations('room');
   const { showErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: roles } = useRoles({ hotelId: room.hotel.id });
+  const cleaners = getRoles.byLevel<TRoleWithUser>({
+    level: RoleLevel.CLEANER,
+    roles: roles ?? [],
+    activeOnly: true,
+  });
+
   const FORM = `room_update_form_${room.id}`;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -51,6 +57,7 @@ export function RoomUpdate({
       number: '1',
       occupancy: 'VACANT',
       type: '',
+      defaultCleaners: [],
     });
 
     const data: RoomUpdateBody = {
@@ -103,6 +110,7 @@ export function RoomUpdate({
               </ModalHeader>
               <ModalBody>
                 <RoomForm
+                  cleaners={cleaners}
                   id={FORM}
                   mode={RoomFormModes.UPDATE}
                   room={room}
@@ -110,7 +118,15 @@ export function RoomUpdate({
                 />
               </ModalBody>
               <ModalFooter className="gap-3">
-                <Button color="danger" variant="flat" onPress={onCloseModal}>
+                <RoomDeletion
+                  room={room}
+                  submitButtonProps={{ color: 'danger' }}
+                />
+                <Button
+                  color="secondary"
+                  variant="shadow"
+                  onPress={onCloseModal}
+                >
                   {t('update.buttons.close')}
                 </Button>
                 <Button

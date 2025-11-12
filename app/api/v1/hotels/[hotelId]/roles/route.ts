@@ -16,7 +16,6 @@ import type { RoleCollectionParams, TRoleWithUser } from '@/types';
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoleCollectionParams }) => {
     const { hotelId: hotelIdParam } = await params;
-
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
 
     const { roles } = await getUserOrThrow(req);

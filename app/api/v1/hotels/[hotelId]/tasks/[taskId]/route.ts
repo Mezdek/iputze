@@ -12,7 +12,6 @@ import { checkPermission } from '@/lib/shared/utils/permissions';
 import { taskUpdateSchema } from '@/lib/shared/validation/schemas';
 import { appendDates } from '@/lib/shared/validation/task/appendDates';
 import type { TaskParams, TaskResponse } from '@/types';
-//TODO this needs a rework
 
 /**
  * GET /api/hotels/[hotelId]/tasks/[taskId]

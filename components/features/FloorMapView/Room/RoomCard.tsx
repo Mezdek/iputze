@@ -6,8 +6,7 @@ import { useTranslations } from 'next-intl';
 import { memo } from 'react';
 
 import { getStatusColorClass } from '@/lib/client/features/roomStatus';
-
-import type { RoomCardProps } from './types';
+import type { RoomCardProps } from '@/types';
 
 export const RoomCard = memo(function RoomCard({
   room,

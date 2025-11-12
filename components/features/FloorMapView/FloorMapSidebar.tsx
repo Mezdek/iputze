@@ -39,12 +39,7 @@ export const FloorMapSidebar = memo(function FloorMapSidebar({
             ← Back to Map
           </Button>
         )}
-        <RoomDetails
-          className="flex-1"
-          defaultCleaners={[]}
-          room={room}
-          tasks={tasks}
-        />
+        <RoomDetails className="flex-1" room={room} tasks={tasks} />
       </div>
     );
   }

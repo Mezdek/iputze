@@ -2,7 +2,6 @@
 
 import {
   Button,
-  type ButtonProps,
   Modal,
   ModalBody,
   ModalContent,
@@ -13,21 +12,8 @@ import {
 import { useTranslations } from 'next-intl';
 
 import { useErrorToast } from '@/hooks';
-
-type TCancelButtonProps = { text?: string } & ButtonProps;
-type TModalButtonProps = { text?: string } & ButtonProps;
-type TSubmitButtonProps = {
-  text?: string;
-  submitHandler: () => Promise<void>;
-} & ButtonProps;
-
-export type ApprovalRequestProps = {
-  header?: string;
-  question?: string;
-  cancelButtonProps?: TCancelButtonProps;
-  modalButtonProps?: TModalButtonProps;
-  submitButtonProps?: TSubmitButtonProps;
-};
+import { GeneralErrors } from '@/lib/shared/constants';
+import type { ApprovalRequestProps } from '@/types';
 
 export function ApprovalRequest({
   submitButtonProps,
@@ -48,6 +34,7 @@ export function ApprovalRequest({
   const cancelText = cancelButtonProps?.text;
   const handleSubmit = async () => {
     try {
+      if (!submitHandler) throw new Error(GeneralErrors.NO_SUBMIT_FUNCTION);
       await submitHandler();
     } catch (e) {
       showErrorToast(e);
@@ -75,16 +62,11 @@ export function ApprovalRequest({
             <p className="text-base">{question}</p>
           </ModalBody>
           <ModalFooter className="flex justify-end gap-3">
-            <Button
-              color="default"
-              variant="flat"
-              onPress={onClose}
-              {...cancelButtonProps}
-            >
+            <Button color="success" onPress={onClose} {...cancelButtonProps}>
               {cancelText ?? t('closeButton')}
             </Button>
             <Button
-              color="primary"
+              color="warning"
               onPress={handleSubmit}
               {...submitButtonRestProps}
             >
