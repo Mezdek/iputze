@@ -32,7 +32,7 @@ export const GET = withErrorHandling(
     if (checkRoles.hasManagerPermission({ hotelId, roles })) {
       baseWhere = { room: { hotelId } };
     } else if (checkRoles.isHotelCleaner({ hotelId, roles })) {
-      baseWhere = { assignedUsers: { some: { userId } } };
+      baseWhere = { cleaners: { some: { userId } } };
     } else {
       throw APP_ERRORS.forbidden();
     }

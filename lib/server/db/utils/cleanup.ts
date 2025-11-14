@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { prisma } from '@/lib/server/db/prisma';
 
 export async function cleanupExpiredSessions() {

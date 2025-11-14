@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { tomorrowAt } from '@lib/shared/utils/date';
 import { PrismaClient } from '@prisma/client';
 import { hash } from 'bcrypt';

@@ -56,14 +56,11 @@ export const POST = withErrorHandling(
     const defaultCleaners =
       defaultCleanersIds && defaultCleanersIds.map((userId) => ({ userId }));
 
-    console.log({ defaultCleaners });
-
     // Ensure room number is unique for this hotel
     const existingRoom = await prisma.room.findUnique({
       where: { hotelId_number: { hotelId, number: data.number } },
     });
 
-    console.log({ existingRoom });
     if (existingRoom) throw APP_ERRORS.badRequest(RoomErrors.DUPLICATED_NUMBER);
 
     const newRoom = await prisma.room.create({

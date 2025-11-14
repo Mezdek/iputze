@@ -36,8 +36,8 @@ export const GET = withErrorHandling(
     }
     const where = isRanged
       ? {
+          ...baseWhere,
           dueAt: {
-            ...baseWhere,
             gte: new Date(startDate),
             lte: new Date(endDate),
           },

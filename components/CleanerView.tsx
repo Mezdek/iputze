@@ -6,7 +6,7 @@ import { useTasks } from '@hooks';
 import type { HotelViewProps } from '@/app/hotels/[hotelId]/page';
 
 export function CleanerView({ user, hotelId }: HotelViewProps) {
-  const { data: tasks, isLoading } = useTasks({ hotelId });
+  const { data: tasks } = useTasks({ hotelId });
   const role = user.roles.find((r) => r.hotel.id === hotelId);
   if (!role) return null;
   return (
