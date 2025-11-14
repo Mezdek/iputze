@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/server/db/prisma';
 import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import { RATE_LIMIT_KEYS, taskSelect } from '@/lib/shared/constants';
 import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
@@ -16,6 +18,8 @@ import type { TaskCollectionParams, TaskResponse } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskCollectionParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { hotelId: hotelIdParam } = await params;
 
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
@@ -27,12 +31,17 @@ export const GET = withErrorHandling(
 
     let baseWhere;
 
-    const isRanged = !!startDate && !!endDate;
+    const isRanged =
+      !!startDate &&
+      !!endDate &&
+      !isNaN(new Date(startDate).getTime()) &&
+      !isNaN(new Date(endDate).getTime()) &&
+      new Date(endDate) < new Date(startDate);
 
     if (checkRoles.hasManagerPermission({ hotelId, roles })) {
-      baseWhere = { room: { hotelId } };
+      baseWhere = { room: { hotelId }, deletedAt: null };
     } else if (checkRoles.isHotelCleaner({ hotelId, roles })) {
-      baseWhere = { cleaners: { some: { userId } } };
+      baseWhere = { cleaners: { some: { userId }, deletedAt: null } };
     } else {
       throw APP_ERRORS.forbidden();
     }
@@ -49,88 +58,7 @@ export const GET = withErrorHandling(
     const tasks = await prisma.task.findMany({
       where,
       orderBy: { dueAt: 'asc' },
-      select: {
-        id: true,
-        status: true,
-        priority: true,
-        dueAt: true,
-        startedAt: true,
-        completedAt: true,
-        cancelledAt: true,
-        createdAt: true,
-        cancellationNote: true,
-        deletedAt: true,
-
-        _count: {
-          select: {
-            cleaners: true,
-            images: true,
-            notes: true,
-          },
-        },
-
-        room: true,
-
-        notes: {
-          include: {
-            author: {
-              select: {
-                avatarUrl: true,
-                email: true,
-                id: true,
-                name: true,
-              },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
-        },
-
-        images: {
-          include: {
-            uploader: {
-              select: {
-                avatarUrl: true,
-                email: true,
-                id: true,
-                name: true,
-              },
-            },
-          },
-          orderBy: { uploadedAt: 'desc' },
-        },
-
-        creator: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            avatarUrl: true,
-          },
-        },
-
-        deletor: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            avatarUrl: true,
-          },
-        },
-
-        cleaners: {
-          select: {
-            assignedAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-                avatarUrl: true,
-              },
-            },
-          },
-        },
-      },
+      select: taskSelect,
     });
 
     const transformedTask = tasks.map(transformTask);
@@ -141,6 +69,7 @@ export const GET = withErrorHandling(
 
 export const POST = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskCollectionParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
     const { hotelId: paramsHotelId } = await params;
     const { id: hotelId } = await getHotelOrThrow(paramsHotelId);
 

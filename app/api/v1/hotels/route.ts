@@ -4,13 +4,20 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/server/db/prisma';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
-import { HotelErrors, HttpStatus } from '@/lib/shared/constants';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import {
+  HotelErrors,
+  HttpStatus,
+  RATE_LIMIT_KEYS,
+} from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission } from '@/lib/shared/utils/permissions';
 import type { HotelCreationBody, PublicHotel } from '@/types';
 
-export const GET = withErrorHandling(async () => {
+export const GET = withErrorHandling(async (req: NextRequest) => {
+  await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
   const PublicHotelList = await prisma.hotel.findMany({
     omit: { updatedAt: true, createdAt: true, deletedAt: true },
   });

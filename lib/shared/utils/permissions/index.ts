@@ -10,6 +10,7 @@ export const checkPermission = {
     room: room.canCreateRoom,
     role: role.canCreateRole,
     task: task.canCreateTask,
+    artifact: task.canAddArtifact,
   },
   modification: {
     hotel: hotel.canModifyHotel,
@@ -21,7 +22,7 @@ export const checkPermission = {
     hotel: hotel.canDeleteHotel,
     room: room.canDeleteRoom,
     task: task.canDeleteTask,
-    note: task.canDeleteNote,
+    artifact: task.canDeleteArtifact,
   },
   view: {
     hotel: hotel.canViewHotel,

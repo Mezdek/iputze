@@ -4,6 +4,8 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/server/db/prisma';
 import { getTaskAccessContext } from '@/lib/server/db/utils/getTaskAccessContext';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import { RATE_LIMIT_KEYS } from '@/lib/shared/constants';
 import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
@@ -19,6 +21,7 @@ import type { TaskParams, TaskResponse } from '@/types';
  */
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
     const { task } = await getTaskAccessContext({ params, req });
     return NextResponse.json<TaskResponse>(task);
   }
@@ -33,6 +36,8 @@ export const GET = withErrorHandling(
  */
 export const PATCH = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { taskId, roles, hotelId, task } = await getTaskAccessContext({
       params,
       req,
@@ -68,6 +73,8 @@ export const PATCH = withErrorHandling(
  */
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { taskId, roles, hotelId } = await getTaskAccessContext({
       params,
       req,

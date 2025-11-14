@@ -4,9 +4,12 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/server/db/prisma';
 import { getTaskAccessContext } from '@/lib/server/db/utils/getTaskAccessContext';
 import { uploadToCloudinary } from '@/lib/server/utils/cloudinary';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import { GeneralErrors, RATE_LIMIT_KEYS } from '@/lib/shared/constants';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
+import { checkPermission } from '@/lib/shared/utils/permissions';
 import { transformImage } from '@/lib/shared/utils/transformers/transformTask';
 import type { ImageResponse, TaskParams } from '@/types';
 
@@ -16,6 +19,8 @@ import type { ImageResponse, TaskParams } from '@/types';
  */
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { taskId } = await getTaskAccessContext({
       params,
       req,
@@ -49,13 +54,24 @@ export const GET = withErrorHandling(
 
 export const POST = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
-    const { taskId, userId } = await getTaskAccessContext({
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
+    const {
+      taskId,
+      userId,
+      hotelId,
+      roles,
+      task: { cleaners },
+    } = await getTaskAccessContext({
       params,
       req,
     });
 
     const formData = await req.formData();
     const image = formData.get('image') as File;
+
+    if (!checkPermission.creation.artifact({ roles, cleaners, hotelId }))
+      throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
 
     if (!image) throw APP_ERRORS.badRequest('No image provided');
 

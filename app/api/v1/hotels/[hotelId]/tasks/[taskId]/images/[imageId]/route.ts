@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/server/db/prisma';
 import { getTaskAccessContext } from '@/lib/server/db/utils/getTaskAccessContext';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import { RATE_LIMIT_KEYS } from '@/lib/shared/constants';
 import { HttpStatus } from '@/lib/shared/constants/httpStatus';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
@@ -16,6 +18,8 @@ import type { ImageParams } from '@/types';
  */
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: ImageParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { taskId, userId, roles, hotelId } = await getTaskAccessContext({
       params,
       req,

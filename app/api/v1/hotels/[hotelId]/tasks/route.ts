@@ -5,7 +5,13 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/server/db/prisma';
 import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
-import { GeneralErrors, HttpStatus, taskSelect } from '@/lib/shared/constants';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import {
+  GeneralErrors,
+  HttpStatus,
+  RATE_LIMIT_KEYS,
+  taskSelect,
+} from '@/lib/shared/constants';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 import { withErrorHandling } from '@/lib/shared/errors/api/withErrorHandling';
 import { checkPermission, checkRoles } from '@/lib/shared/utils/permissions';
@@ -15,6 +21,8 @@ import type { TaskCollectionParams, TaskResponse } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskCollectionParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { hotelId: hotelIdParam } = await params;
 
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
@@ -57,6 +65,7 @@ export const GET = withErrorHandling(
 
 export const POST = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskCollectionParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
     const { hotelId: paramsHotelId } = await params;
     const { id: hotelId } = await getHotelOrThrow(paramsHotelId);
 

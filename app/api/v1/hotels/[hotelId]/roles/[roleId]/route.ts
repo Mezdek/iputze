@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/server/db/prisma';
 import { getRoleOrThrow } from '@/lib/server/db/utils/getRoleOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
+import { RATE_LIMIT_KEYS } from '@/lib/shared/constants';
 import { GeneralErrors } from '@/lib/shared/constants/errors/general';
 import { RolesErrors } from '@/lib/shared/constants/errors/roles';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
@@ -14,6 +16,8 @@ import type { RoleParams, RoleUpdateBody } from '@/types';
 
 export const PATCH = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoleParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const data = (await req.json()) as RoleUpdateBody;
     if (!data.level && !data.status)
       throw APP_ERRORS.badRequest(GeneralErrors.MISSING_PARAMS);

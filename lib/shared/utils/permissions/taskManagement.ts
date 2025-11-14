@@ -73,10 +73,29 @@ export const canModifyTask = ({
   return false;
 };
 
-export const canDeleteNote = ({
+export const canDeleteArtifact = ({
   authorId,
   userId,
   roles,
 }: NoteManagement): boolean => {
   return authorId === userId || (!!roles && isAdmin({ roles }));
+};
+
+export const canAddArtifact = ({
+  roles,
+  hotelId,
+  cleaners,
+}: TaskManagement): boolean => {
+  if (isAdmin({ roles })) return true;
+  if (!hotelId) return false;
+
+  if (isHotelManager({ roles, hotelId })) return true;
+
+  if (!cleaners || !roles[0]) return false;
+
+  const { userId } = roles[0];
+
+  if (isTaskCleaner({ cleaners, userId })) return true;
+
+  return false;
 };

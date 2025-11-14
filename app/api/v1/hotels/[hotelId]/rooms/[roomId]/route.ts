@@ -5,9 +5,11 @@ import { prisma } from '@/lib/server/db/prisma';
 import { getHotelOrThrow } from '@/lib/server/db/utils/getHotelOrThrow';
 import { getRoomOrThrow } from '@/lib/server/db/utils/getRoomOrThrow';
 import { getUserOrThrow } from '@/lib/server/db/utils/getUserOrThrow';
+import { checkRateLimit } from '@/lib/server/utils/rateLimit';
 import {
   GeneralErrors,
   HttpStatus,
+  RATE_LIMIT_KEYS,
   RoomErrors,
   roomSelect,
 } from '@/lib/shared/constants';
@@ -20,6 +22,8 @@ import type { RoomParams, RoomWithContext } from '@/types';
 
 export const GET = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { hotelId: hotelIdParam, roomId } = await params;
 
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
@@ -37,6 +41,7 @@ export const GET = withErrorHandling(
 
 export const PATCH = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
     const { hotelId: hotelIdParam, roomId } = await params;
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);
     const room = await getRoomOrThrow(roomId);
@@ -73,6 +78,8 @@ export const PATCH = withErrorHandling(
 
 export const DELETE = withErrorHandling(
   async (req: NextRequest, { params }: { params: RoomParams }) => {
+    await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
+
     const { hotelId: hotelIdParam, roomId } = await params;
 
     const { id: hotelId } = await getHotelOrThrow(hotelIdParam);

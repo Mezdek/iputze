@@ -74,7 +74,6 @@ model Room {
   floor       String?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-  deletedAt   DateTime?
 
   //Relations
   hotelId         String
@@ -156,6 +155,9 @@ model Task {
   @@index([roomId, status])
   @@index([status, priority, dueAt])
   @@index([dueAt])
+  @@index([creatorId])
+  @@index([status, dueAt])
+  @@index([roomId, status, dueAt])
 }
 
 model Cleaner {
