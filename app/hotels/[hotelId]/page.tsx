@@ -14,17 +14,18 @@ import type { FC } from 'react';
 
 import type { InjectedAuthProps, MeResponse } from '@/types';
 
-const ViewSelector: Record<RoleLevel, FC<InjectedAuthProps>> = {
+export interface HotelViewProps extends InjectedAuthProps {
+  hotelId: string;
+}
+
+const ViewSelector: Record<RoleLevel, FC<HotelViewProps>> = {
   [RoleLevel.ADMIN]: ManagerView,
   [RoleLevel.MANAGER]: ManagerView,
   [RoleLevel.CLEANER]: CleanerView,
   [RoleLevel.PENDING]: PendingView,
 };
 
-function getViewForRole(
-  user: MeResponse,
-  hotelId: string
-): FC<InjectedAuthProps> {
+function getViewForRole(user: MeResponse, hotelId: string): FC<HotelViewProps> {
   const role = user.roles.find((r) => r.hotel.id === hotelId);
 
   if (!role) return DeniedAccessView;
@@ -37,11 +38,7 @@ function Hotel({ user }: InjectedAuthProps) {
   const { hotelId } = useParams<{ hotelId: string }>();
   const Component = getViewForRole(user, hotelId);
 
-  return (
-    <>
-      <Component user={user} />
-    </>
-  );
+  return <Component hotelId={hotelId} user={user} />;
 }
 
 export default withAuthGuard(Hotel);

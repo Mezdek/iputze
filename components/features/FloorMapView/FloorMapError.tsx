@@ -20,7 +20,7 @@ export const FloorMapError = memo(function FloorMapError({
           <h3 className="text-xl font-bold text-foreground">
             Failed to Load Floor Map
           </h3>
-          <p className="text-default-500 text-sm">
+          <p className="text-sm">
             {error.message || 'An unexpected error occurred'}
           </p>
           {onRetry && (

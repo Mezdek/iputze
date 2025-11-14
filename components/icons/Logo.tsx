@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-export const Logo = () => {
+export function Logo() {
   const t = useTranslations();
   return (
     <div className="flex">
@@ -12,4 +12,4 @@ export const Logo = () => {
       </p>
     </div>
   );
-};
+}

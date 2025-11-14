@@ -171,15 +171,13 @@ export function ImageGallery({
                 {uploadingFiles.map((file, index) => (
                   <div className="flex items-center gap-2" key={index}>
                     <Spinner size="sm" />
-                    <span className="text-xs text-default-600 flex-1 truncate">
-                      {file.name}
-                    </span>
+                    <span className="text-xs flex-1 truncate">{file.name}</span>
                   </div>
                 ))}
               </div>
             )}
 
-            <p className="text-xs text-default-500">
+            <p className="text-xs">
               Supported formats: JPEG, PNG, WebP • Max size: 5MB
             </p>
           </CardBody>
@@ -190,7 +188,7 @@ export function ImageGallery({
       {images && images.length === 0 ? (
         <Card className="shadow-none bg-default-50">
           <CardBody>
-            <p className="text-center text-default-500 py-8">
+            <p className="text-center py-8">
               No images have been uploaded to this task yet.
             </p>
           </CardBody>
@@ -271,7 +269,7 @@ function ImageThumbnail({
           >
             {image.uploader.name}
           </p>
-          <p className="text-xs text-default-500">{datefy(image.uploadedAt)}</p>
+          <p className="text-xs  ">{datefy(image.uploadedAt)}</p>
         </div>
       </CardBody>
     </Card>
@@ -322,21 +320,21 @@ function ImageLightbox({
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   {image.exif?.timestamp && (
                     <div>
-                      <p className="text-default-600">Captured</p>
+                      <p>Captured</p>
                       <p className="font-medium">{image.exif.timestamp}</p>
                     </div>
                   )}
 
                   {image.exif?.camera && (
                     <div>
-                      <p className="text-default-600">Camera</p>
+                      <p>Camera</p>
                       <p className="font-medium">{image.exif.camera}</p>
                     </div>
                   )}
 
                   {image.exif?.dimensions && (
                     <div>
-                      <p className="text-default-600">Dimensions</p>
+                      <p>Dimensions</p>
                       <p className="font-medium">
                         {image.exif.dimensions.width} ×{' '}
                         {image.exif.dimensions.height}
@@ -346,7 +344,7 @@ function ImageLightbox({
 
                   {image.exif?.location && (
                     <div>
-                      <p className="text-default-600">Location</p>
+                      <p>Location</p>
                       <a
                         className="text-primary hover:underline font-medium"
                         href={`https://www.google.com/maps?q=${image.exif.location.latitude},${image.exif.location.longitude}`}
@@ -367,9 +365,7 @@ function ImageLightbox({
             <p className="text-sm font-semibold text-foreground">
               Uploaded by {image.uploader.name}
             </p>
-            <p className="text-xs text-default-500">
-              {datefy(image.uploadedAt)}
-            </p>
+            <p className="text-xs  ">{datefy(image.uploadedAt)}</p>
           </div>
           <div className="flex gap-2 items-center">
             <Button
@@ -411,7 +407,7 @@ export function ImageGalleryCompact({
   onImageClick?: (image: ImageResponse) => void;
 }) {
   if (images.length === 0) {
-    return <p className="text-sm text-default-500 italic">No images</p>;
+    return <p className="text-sm   italic">No images</p>;
   }
 
   return (
@@ -438,8 +434,8 @@ export function ImageGalleryCompact({
         </div>
       ))}
       {images.length > 3 && (
-        <div className="flex-shrink-0 w-16 h-16 bg-default-100 rounded-md flex items-center justify-center">
-          <span className="text-xs text-default-600">+{images.length - 3}</span>
+        <div className="flex-shrink-0 w-16 h-16 rounded-md flex items-center justify-center">
+          <span className="text-xs">+{images.length - 3}</span>
         </div>
       )}
     </div>

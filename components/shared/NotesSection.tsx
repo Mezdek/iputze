@@ -168,7 +168,7 @@ export function NotesSection({
         notes.length === 0 ? (
           <Card className="shadow-none bg-default-50">
             <CardBody>
-              <p className="text-center text-default-500 py-8">
+              <p className="text-center py-8">
                 No notes have been added to this task yet.
               </p>
             </CardBody>
@@ -217,9 +217,7 @@ function NoteCard({
               <p className="text-sm font-semibold text-foreground">
                 {note.author.name}
               </p>
-              <p className="text-xs text-default-500">
-                {datefy(note.createdAt)}
-              </p>
+              <p className="text-xs  ">{datefy(note.createdAt)}</p>
             </div>
           </div>
 
@@ -252,7 +250,7 @@ function NoteCard({
  */
 export function NotesCompact({ notes }: { notes: NoteWithAuthor[] }) {
   if (notes.length === 0) {
-    return <p className="text-sm text-default-500 italic">No notes</p>;
+    return <p className="text-sm   italic">No notes</p>;
   }
 
   return (
@@ -266,9 +264,7 @@ export function NotesCompact({ notes }: { notes: NoteWithAuthor[] }) {
             src={note.author.avatarUrl ?? undefined}
           />
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-xs text-default-600">
-              {note.author.name}
-            </p>
+            <p className="font-semibold text-xs">{note.author.name}</p>
             <p className="text-sm text-foreground truncate">{note.content}</p>
           </div>
         </div>

@@ -1,16 +1,20 @@
+import { Cog } from './Cog';
 import { EyeFilledIcon, EyeSlashFilledIcon } from './Eyes';
 import { Info } from './Info';
-import { LockIcon } from './Lock';
+import { Lock } from './Lock';
 import { Logo } from './Logo';
-import { MailIcon } from './Mail';
+import { Mail } from './Mail';
 import { Pencil } from './Pencil';
+import { Plus } from './Plus';
 
 export const Icons = {
   EyeFilledIcon,
   EyeSlashFilledIcon,
   Info,
-  LockIcon,
+  Lock,
   Logo,
-  MailIcon,
+  Mail,
   Pencil,
+  Cog,
+  Plus,
 };

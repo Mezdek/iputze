@@ -19,13 +19,14 @@ import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
 import { checkRoles } from '@/lib/shared/utils/permissions';
-import type { InjectedAuthProps, TaskResponse, ViewMode } from '@/types';
+import type { MeResponse, TaskResponse, ViewMode } from '@/types';
 
-interface TaskCardProps extends InjectedAuthProps, Omit<CardProps, 'children'> {
+interface TaskCardProps extends Omit<CardProps, 'children'> {
   task: TaskResponse;
   showNotes?: boolean;
   showImages?: boolean;
   showActions?: boolean;
+  user: MeResponse;
 }
 
 export function TaskCard({
@@ -65,9 +66,7 @@ export function TaskCard({
       <CardBody className="gap-4">
         {/* Due Date */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-default-600 font-medium">
-            {t('due_at.label')}:
-          </span>
+          <span className="font-medium">{t('due_at.label')}:</span>
           <RichText>
             {(tags) =>
               t.rich('due_at.date', {
@@ -84,7 +83,7 @@ export function TaskCard({
         <div className="flex flex-col gap-2">
           <RichText>
             {(tags) => (
-              <span className="text-sm text-default-600 font-medium">
+              <span className="text-sm font-medium">
                 {t.rich('cleaners', { ...tags })}:
               </span>
             )}
@@ -109,7 +108,7 @@ export function TaskCard({
         <Divider />
 
         {/* Created At */}
-        <div className="text-sm text-default-500">
+        <div className="text-sm">
           <RichText>
             {(tags) =>
               t.rich('created_at', {

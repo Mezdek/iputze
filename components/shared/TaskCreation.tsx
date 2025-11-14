@@ -107,6 +107,7 @@ export function TaskCreation({
               <ModalBody>
                 <TaskForm
                   cleaners={allCleaners}
+                  defaultCleaners={room?.defaultCleaners}
                   form={FORM}
                   roomNumber={room?.number}
                   submitHandler={handleCreate}

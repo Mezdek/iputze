@@ -7,16 +7,17 @@ import { useTranslations } from 'next-intl';
 
 import { capitalize } from '@/lib/shared/utils/capitalize';
 import { checkRoles } from '@/lib/shared/utils/permissions';
-import type { InjectedAuthProps, TaskResponse } from '@/types';
+import type { MeResponse, TaskResponse } from '@/types';
 
 const NEXT_STATUS = {
   [TaskStatus.PENDING]: TaskStatus.IN_PROGRESS,
   [TaskStatus.IN_PROGRESS]: TaskStatus.COMPLETED,
 } as const;
 
-interface TaskActionsProps extends InjectedAuthProps {
+interface TaskActionsProps {
   task: TaskResponse;
   compact?: boolean;
+  user: MeResponse;
 }
 
 export function TaskActions({ task, user, compact = false }: TaskActionsProps) {

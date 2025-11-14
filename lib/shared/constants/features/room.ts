@@ -4,16 +4,18 @@
 
 export const ROOM_VIEWS = {
   FLOOR_MAP: 'FLOOR_MAP',
-  OVERVIEW: 'OVERVIEW',
   TIMELINE: 'TIMELINE',
+  TASKS: 'TASKS',
+  CLEANERS: 'CLEANERS',
 } as const;
 
-export type RoomView = (typeof ROOM_VIEWS)[keyof typeof ROOM_VIEWS];
+export type TRoomView = (typeof ROOM_VIEWS)[keyof typeof ROOM_VIEWS];
 
-export const ROOM_VIEW_LABELS: Record<RoomView, string> = {
+export const ROOM_VIEW_LABELS: Record<TRoomView, string> = {
   [ROOM_VIEWS.FLOOR_MAP]: 'Floor Map',
-  [ROOM_VIEWS.OVERVIEW]: 'Overview',
   [ROOM_VIEWS.TIMELINE]: 'Timeline',
+  [ROOM_VIEWS.TASKS]: 'Tasks',
+  [ROOM_VIEWS.CLEANERS]: 'Cleaners',
 };
 
 /**

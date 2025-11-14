@@ -20,8 +20,12 @@ export interface RoomWithContextRaw extends Omit<Room, 'hotelId'> {
   _count: { tasks: number; defaultCleaners: number };
 }
 
+export interface DefaultCleaner extends BasicUser {
+  assignedAt: Date;
+}
+
 export interface RoomWithContext extends Omit<Room, 'hotelId'> {
-  defaultCleaners: ({ assignedAt: Date } & BasicUser)[];
+  defaultCleaners: DefaultCleaner[];
   hotel: Hotel;
   counts: {
     roomsInHotel: number;

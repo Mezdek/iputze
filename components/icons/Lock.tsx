@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 
-export const LockIcon = (props: SVGProps<SVGSVGElement>) => {
+export function Lock(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       aria-hidden="true"
@@ -22,4 +22,4 @@ export const LockIcon = (props: SVGProps<SVGSVGElement>) => {
       />
     </svg>
   );
-};
+}

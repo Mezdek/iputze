@@ -30,7 +30,7 @@ export const FloorMapGrid = memo(function FloorMapGrid({
   });
 
   return (
-    <div className={cn('space-y-4 overflow-y-auto', className)}>
+    <div className={cn('space-y-4 overflow-y-auto h-full', className)}>
       {sortedFloors.map((floor, index) => {
         const floorNumber = Number(floor[0]?.floor ?? index);
         return (

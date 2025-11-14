@@ -1,4 +1,3 @@
-// @TODO Map and show defaultCleaners
 'use client';
 import {
   RoomInfo,
@@ -8,7 +7,7 @@ import {
   TaskDetail,
   TaskList,
 } from '@components';
-import { Card, CardBody, CardFooter, CardHeader, Divider } from '@heroui/react';
+import { Card, CardBody, CardHeader, cn, Divider } from '@heroui/react';
 import { RoomCleanliness, TaskStatus } from '@prisma/client';
 import { useState } from 'react';
 
@@ -26,44 +25,38 @@ export function RoomDetails({ room, tasks, ...props }: RoomDetailsCardProps) {
   const { className, ...rest } = props;
 
   return (
-    <>
-      <Card className={`w-full ${className}`} {...rest}>
-        <CardHeader className="flex flex-col items-start gap-2">
-          <h2 className="text-xl font-bold">Room {room.number}</h2>
-        </CardHeader>
+    <Card className={cn('w-full', className)} {...rest}>
+      <CardHeader className="flex flex-col items-start gap-2">
+        <h2 className="text-xl font-bold">Room {room.number}</h2>
+      </CardHeader>
 
-        <StatusBar
-          actions={<RoomUpdate isIconOnly room={room} />}
-          room={room}
-          tasks={tasks}
-        />
+      <StatusBar
+        actions={<RoomUpdate isIconOnly room={room} />}
+        room={room}
+        tasks={tasks}
+      />
+
+      <Divider />
+
+      <CardBody className="gap-4">
+        <RoomInfo room={room} />
 
         <Divider />
-
-        <CardBody className="gap-4">
-          <RoomInfo room={room} />
-
-          <Divider />
-
-          {/* Active Tasks */}
-          {activeTasks.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-semibold">Active Tasks</h3>
-              <TaskList
-                emptyMessage="No active tasks"
-                tasks={activeTasks}
-                onTaskClick={setSelectedTask}
-              />
-            </div>
-          )}
-        </CardBody>
-
-        <CardFooter className="flex flex-col gap-2">
-          {roomIsDirty && (
-            <TaskCreation hotelId={room.hotel.id} roomId={room.id} />
-          )}
-        </CardFooter>
-      </Card>
+        {roomIsDirty && (
+          <TaskCreation hotelId={room.hotel.id} roomId={room.id} />
+        )}
+        {/* Active Tasks */}
+        {activeTasks.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold">Active Tasks</h3>
+            <TaskList
+              emptyMessage="No active tasks"
+              tasks={activeTasks}
+              onTaskClick={setSelectedTask}
+            />
+          </div>
+        )}
+      </CardBody>
 
       {/* Task Detail Modal */}
       <TaskDetail
@@ -72,6 +65,6 @@ export function RoomDetails({ room, tasks, ...props }: RoomDetailsCardProps) {
         viewMode="manager"
         onClose={() => setSelectedTask(null)}
       />
-    </>
+    </Card>
   );
 }

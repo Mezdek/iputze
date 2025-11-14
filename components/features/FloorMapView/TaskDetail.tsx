@@ -142,35 +142,37 @@ export function TaskDetail({
                 <Divider />
 
                 {/* Timestamps */}
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex flex-col md:grid md:grid-cols-2 gap-4 text-sm">
                   <DetailRow
                     label="Created"
                     value={format(new Date(createdAt), 'MMM dd, yyyy HH:mm')}
                   />
-                  {startedAt && (
-                    <DetailRow
-                      label="Started"
-                      value={format(new Date(startedAt), 'MMM dd, yyyy HH:mm')}
-                    />
-                  )}
-                  {completedAt && (
-                    <DetailRow
-                      label="Completed"
-                      value={format(
-                        new Date(completedAt),
-                        'MMM dd, yyyy HH:mm'
-                      )}
-                    />
-                  )}
-                  {cancelledAt && (
-                    <DetailRow
-                      label="Cancelled"
-                      value={format(
-                        new Date(cancelledAt),
-                        'MMM dd, yyyy HH:mm'
-                      )}
-                    />
-                  )}
+                  <DetailRow
+                    label="Started"
+                    value={
+                      startedAt
+                        ? format(new Date(startedAt), 'MMM dd, yyyy HH:mm')
+                        : 'N/A'
+                    }
+                  />
+
+                  <DetailRow
+                    label="Completed"
+                    value={
+                      completedAt
+                        ? format(new Date(completedAt), 'MMM dd, yyyy HH:mm')
+                        : 'N/A'
+                    }
+                  />
+
+                  <DetailRow
+                    label="Cancelled"
+                    value={
+                      cancelledAt
+                        ? format(new Date(cancelledAt), 'MMM dd, yyyy HH:mm')
+                        : 'N/A'
+                    }
+                  />
                 </div>
 
                 {/* Cancellation Note */}
@@ -247,9 +249,7 @@ export function TaskDetail({
 function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex justify-between items-start gap-4">
-      <span className="text-sm font-semibold text-default-600 min-w-[120px]">
-        {label}:
-      </span>
+      <span className="text-sm font-semibold min-w-[120px]">{label}:</span>
       <div className="flex-1 text-sm text-right">{value}</div>
     </div>
   );

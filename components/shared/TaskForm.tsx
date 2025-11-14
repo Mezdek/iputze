@@ -12,16 +12,18 @@ import { TaskPriority } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent } from 'react';
 
-import type { TRoleWithUser } from '@/types';
+import type { DefaultCleaner, TRoleWithUser } from '@/types';
 
 export default function TaskForm({
   form,
   cleaners,
   submitHandler,
   roomNumber,
+  defaultCleaners,
 }: {
   form: string;
   cleaners: TRoleWithUser[];
+  defaultCleaners?: DefaultCleaner[];
   submitHandler: (event: FormEvent<HTMLFormElement>) => void;
   roomNumber?: string;
 }) {
@@ -43,6 +45,9 @@ export default function TaskForm({
       <Select
         fullWidth
         isRequired
+        defaultSelectedKeys={
+          defaultCleaners ? defaultCleaners.map(({ id }) => id) : []
+        }
         errorMessage={t('inputs.cleaners.error_message')}
         form={form}
         isDisabled={cleaners.length === 0}

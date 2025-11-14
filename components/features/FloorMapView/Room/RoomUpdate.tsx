@@ -83,18 +83,13 @@ export function RoomUpdate({
     <>
       <Button
         aria-label={`Edit room ${room.number}`}
-        color="secondary"
+        color="default"
         isIconOnly={isIconOnly}
         onPress={onOpen}
         {...buttonProps}
-        className="py-1 px-2"
-        size="lg"
+        size="sm"
       >
-        {isIconOnly ? (
-          <Icons.Pencil className="size-9" />
-        ) : (
-          t('update.buttons.open')
-        )}
+        {isIconOnly ? <Icons.Cog /> : t('update.buttons.open')}
       </Button>
       <Modal
         disableAnimation

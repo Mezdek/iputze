@@ -1,12 +1,13 @@
 import { CleanerChip, EmptyDayState, TaskCard } from '@components';
 import { memo } from 'react';
 
-import type { DayData, InjectedAuthProps, TimeLineViewMode } from '@/types';
+import type { DayData, MeResponse, TimeLineViewMode } from '@/types';
 
-interface DayColumnProps extends InjectedAuthProps {
+interface DayColumnProps {
   day: DayData;
   viewMode: TimeLineViewMode;
   onChipClick: (cleanerId: string) => void;
+  user: MeResponse;
 }
 
 export const DayColumn = memo(function DayColumn({

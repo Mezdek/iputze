@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 
-export const MailIcon = (props: SVGProps<SVGSVGElement>) => {
+export function Mail(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       aria-hidden="true"
@@ -18,4 +18,4 @@ export const MailIcon = (props: SVGProps<SVGSVGElement>) => {
       />
     </svg>
   );
-};
+}

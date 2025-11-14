@@ -1,24 +1,39 @@
 'use client';
-import { FloorMapView, Nav, WeeklyTimelineView } from '@components';
+import {
+  FloorMapView,
+  TasksView,
+  ViewSwitcher,
+  WeeklyTimelineView,
+} from '@components';
 import { useState } from 'react';
 
-import type { RoomView } from '@/lib/shared/constants/features/room';
-import type { InjectedAuthProps, RoomWithContext } from '@/types';
+import type { HotelViewProps } from '@/app/hotels/[hotelId]/page';
+import { useTasks } from '@/hooks';
+import type { TRoomView } from '@/lib/shared/constants/features/room';
+import { ROOM_VIEWS } from '@/lib/shared/constants/features/room';
+import type { RoomWithContext } from '@/types';
 
-export type TViews = 'FLOOR_MAP' | 'TIMELINE';
+const DEFAULT_VIEW: TRoomView = ROOM_VIEWS.FLOOR_MAP;
 
-export function ManagerView({ user }: InjectedAuthProps) {
+export function ManagerView({ user, hotelId }: HotelViewProps) {
   const [room, setRoom] = useState<RoomWithContext>();
+  const [view, setView] = useState<TRoomView>(DEFAULT_VIEW);
+  const { data: tasks } = useTasks({ hotelId });
 
-  const [view, setView] = useState<TViews>('TIMELINE');
-  const handleNavigate = (view: RoomView | undefined) => {
+  const handleViewSetting = (view: TRoomView | undefined) => {
     switch (view) {
-      case 'FLOOR_MAP':
+      case ROOM_VIEWS.FLOOR_MAP:
         setRoom(undefined);
-        setView('FLOOR_MAP');
+        setView(ROOM_VIEWS.FLOOR_MAP);
         break;
-      case 'TIMELINE':
-        setView('TIMELINE');
+      case ROOM_VIEWS.TIMELINE:
+        setView(ROOM_VIEWS.TIMELINE);
+        break;
+      case ROOM_VIEWS.TASKS:
+        setView(ROOM_VIEWS.TASKS);
+        break;
+      case ROOM_VIEWS.CLEANERS:
+        setView(ROOM_VIEWS.CLEANERS);
         break;
       default:
         return;
@@ -26,12 +41,26 @@ export function ManagerView({ user }: InjectedAuthProps) {
   };
   return (
     <div className="flex flex-col gap-2 p-2 h-full">
-      <Nav navigate={handleNavigate} />
-      {view === 'FLOOR_MAP' ? (
-        <FloorMapView room={room} setRoom={setRoom} />
-      ) : (
-        <WeeklyTimelineView user={user} />
+      <ViewSwitcher setView={handleViewSetting} view={view} />
+      {view === ROOM_VIEWS.FLOOR_MAP && (
+        <FloorMapView
+          hotelId={hotelId}
+          room={room}
+          setRoom={setRoom}
+          tasks={tasks}
+        />
       )}
+      {view === ROOM_VIEWS.TASKS && (
+        <TasksView taskListClassName="md:grid md:grid-cols-3" tasks={tasks} />
+      )}
+      {view === ROOM_VIEWS.TIMELINE && (
+        <WeeklyTimelineView hotelId={hotelId} user={user} />
+      )}
+      {view === ROOM_VIEWS.CLEANERS && <ComingSoon str={user.name} />}
     </div>
   );
+}
+
+function ComingSoon({ str }: { str?: string }) {
+  return <p>ComingSoon {str}</p>;
 }

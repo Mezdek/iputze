@@ -5,11 +5,12 @@ import { Chip } from '@heroui/react';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 
-import type { InjectedAuthProps, TaskResponse } from '@/types';
+import type { MeResponse, TaskResponse } from '@/types';
 
-interface TaskHeaderProps extends InjectedAuthProps {
+interface TaskHeaderProps {
   task: TaskResponse;
   showActions?: boolean;
+  user: MeResponse;
 }
 
 export function TaskHeader({

@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 
-export const EyeSlashFilledIcon = (props: SVGProps<SVGSVGElement>) => {
+export function EyeSlashFilledIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       aria-hidden="true"
@@ -34,9 +34,9 @@ export const EyeSlashFilledIcon = (props: SVGProps<SVGSVGElement>) => {
       />
     </svg>
   );
-};
+}
 
-export const EyeFilledIcon = (props: SVGProps<SVGSVGElement>) => {
+export function EyeFilledIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       aria-hidden="true"
@@ -58,4 +58,4 @@ export const EyeFilledIcon = (props: SVGProps<SVGSVGElement>) => {
       />
     </svg>
   );
-};
+}

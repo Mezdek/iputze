@@ -65,7 +65,7 @@ export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
       <CardBody className="gap-3 pt-3">
         {/* Due Date */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-default-600">Due:</span>
+          <span>Due:</span>
           <span className={`font-medium ${isOverdue ? 'text-danger' : ''}`}>
             {format(new Date(dueAt), 'MMM dd, yyyy - HH:mm')}
           </span>
@@ -74,7 +74,7 @@ export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
         {/* Cleaners */}
         {cleaners.length > 0 && (
           <div className="flex items-center justify-between text-sm">
-            <span className="text-default-600">Cleaners:</span>
+            <span>Cleaners:</span>
             {cleaners.map(({ id, name }) => (
               <span key={id}>{name} </span>
             ))}
@@ -82,7 +82,7 @@ export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
         )}
 
         {/* Quick Stats */}
-        <div className="flex gap-4 text-xs text-default-500">
+        <div className="flex gap-4 text-xs">
           <span>📝 {notes.length} notes</span>
           <span>📷 {images.length} images</span>
         </div>

@@ -22,8 +22,6 @@ export function middleware(request: NextRequest) {
   // Define allowed origins (your app's domains)
   const allowedOrigins = [
     process.env['NEXT_PUBLIC_APP_URL'], // Production URL
-    'http://localhost:3000', // Development
-    'http://localhost:3001', // Alternative dev port
   ].filter(Boolean) as string[];
 
   // Check if request comes from an allowed origin
@@ -35,7 +33,11 @@ export function middleware(request: NextRequest) {
     referer && allowedOrigins.some((allowed) => referer.startsWith(allowed));
 
   // Block if neither origin nor referer match
-  if (!isAllowedOrigin && !isAllowedReferer) {
+  if (
+    !(process.env.NODE_ENV === 'development') &&
+    !isAllowedOrigin &&
+    !isAllowedReferer
+  ) {
     console.warn('[CSRF] Blocked suspicious request:', {
       method,
       path: request.nextUrl.pathname,

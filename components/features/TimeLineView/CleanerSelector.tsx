@@ -73,7 +73,7 @@ export const CleanerSelector = memo(function CleanerSelector({
                   {name.charAt(0).toUpperCase()}
                 </div>
                 <span className="text-foreground">{name}</span>
-                <span className="ml-auto text-xs text-default-500">
+                <span className="ml-auto text-xs">
                   [{tasksThisWeek.length}]
                 </span>
               </div>

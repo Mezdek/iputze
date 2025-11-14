@@ -1,9 +1,10 @@
 'use client';
 
-import { RoomForm } from '@components';
+import { Icons, RoomForm } from '@components';
 import {
   addToast,
   Button,
+  type ButtonProps,
   Modal,
   ModalBody,
   ModalContent,
@@ -25,7 +26,10 @@ import type {
 } from '@/types';
 import { RoomFormModes } from '@/types';
 
-export function RoomCreation({ hotelId }: RoomCollectionParams) {
+export function RoomCreation({
+  hotelId,
+  ...buttonProps
+}: RoomCollectionParams & ButtonProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { mutateAsync: createRoom } = useCreateRoom({ hotelId });
   const { data: roles } = useRoles({ hotelId });
@@ -73,8 +77,14 @@ export function RoomCreation({ hotelId }: RoomCollectionParams) {
 
   return (
     <>
-      <Button color="primary" onPress={onOpen}>
-        {t('creation.buttons.open')}
+      <Button
+        color="primary"
+        onPress={onOpen}
+        {...buttonProps}
+        aria-label="Add room"
+        size="sm"
+      >
+        {buttonProps.isIconOnly ? <Icons.Plus /> : t('creation.buttons.open')}
       </Button>
       <Modal
         disableAnimation

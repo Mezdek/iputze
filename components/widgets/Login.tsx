@@ -72,7 +72,7 @@ export function LoginWidget() {
   };
 
   return (
-    <Card className="max-w-full w-1/4 h-1/2">
+    <Card className="max-w-full lg:w-1/4 h-1/2">
       <CardBody className="overflow-hidden">
         <Tabs
           fullWidth

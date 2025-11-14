@@ -18,9 +18,7 @@ export const EmptyFloorState = memo(function EmptyFloorState({
           <div className="text-6xl">🏨</div>
           <div className="space-y-2">
             <h3 className="text-2xl font-bold text-foreground">No Rooms Yet</h3>
-            <p className="text-default-500">
-              Start by creating your first room to see the floor map
-            </p>
+            <p>Start by creating your first room to see the floor map</p>
           </div>
           <RoomCreation hotelId={hotelId} />
         </div>

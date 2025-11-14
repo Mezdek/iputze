@@ -32,9 +32,9 @@ export function PasswordInput(props: PasswordInputProps) {
           onClick={() => setIsVisible(!isVisible)}
         >
           {isVisible ? (
-            <Icons.EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+            <Icons.EyeSlashFilledIcon className="text-2xl pointer-events-none" />
           ) : (
-            <Icons.EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+            <Icons.EyeFilledIcon className="text-2xl pointer-events-none" />
           )}
         </button>
       }

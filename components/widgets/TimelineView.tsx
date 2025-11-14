@@ -9,14 +9,13 @@ import {
 import { Button, Card } from '@heroui/react';
 import { useTasks, useTimelineData } from '@hooks';
 import { addWeeks } from 'date-fns';
-import { useParams } from 'next/navigation';
 import { useCallback, useMemo, useState } from 'react';
 
+import type { HotelViewProps } from '@/app/hotels/[hotelId]/page';
 import { formatDateRange, getWeekStart } from '@/lib/shared/utils/date';
-import type { InjectedAuthProps, StatusFilterType } from '@/types';
+import type { StatusFilterType } from '@/types';
 
-export function WeeklyTimelineView(props: InjectedAuthProps) {
-  const { hotelId } = useParams<{ hotelId: string }>();
+export function WeeklyTimelineView({ hotelId, user }: HotelViewProps) {
   const { data: tasks, isLoading, error } = useTasks({ hotelId });
 
   const [currentWeekStart, setCurrentWeekStart] = useState(() =>
@@ -85,7 +84,7 @@ export function WeeklyTimelineView(props: InjectedAuthProps) {
             <p className="text-danger text-lg font-semibold mb-2">
               Error loading tasks
             </p>
-            <p className="text-default-500 text-sm">
+            <p className="text-sm">
               {error instanceof Error
                 ? error.message
                 : 'Unknown error occurred'}
@@ -160,7 +159,7 @@ export function WeeklyTimelineView(props: InjectedAuthProps) {
       />
 
       {/* Stats Summary */}
-      <div className="flex items-center gap-4 text-sm text-default-600">
+      <div className="flex items-center gap-4 text-sm">
         <span>
           <strong className="text-foreground">{totalTasks}</strong>{' '}
           {totalTasks === 1 ? 'task' : 'tasks'} this week
@@ -180,7 +179,7 @@ export function WeeklyTimelineView(props: InjectedAuthProps) {
             <DayColumn
               day={day}
               key={day.date.toISOString()}
-              user={props.user}
+              user={user}
               viewMode={viewMode}
               onChipClick={handleChipClick}
             />

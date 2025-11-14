@@ -4,23 +4,24 @@ import {
   EmptyFloorState,
   FloorMapError,
   FloorMapGrid,
-  FloorMapSidebar,
   FloorMapSkeleton,
 } from '@components';
 import { useFloorMapData } from '@hooks';
-import { useParams } from 'next/navigation';
 import { useCallback } from 'react';
 
+import { FloorMapSideBar } from '@/components/features/FloorMapView/FloorMapSideBar';
 import type { FloorMapViewProps } from '@/types';
 
-export function FloorMapView({ room, setRoom }: FloorMapViewProps) {
-  const { hotelId } = useParams<{ hotelId: string }>();
-
-  const { floors, selectedRoomTasks, isLoading, error, hasRooms } =
-    useFloorMapData({
-      hotelId,
-      selectedRoomId: room?.id,
-    });
+export function FloorMapView({
+  room,
+  setRoom,
+  tasks,
+  hotelId,
+}: FloorMapViewProps) {
+  const { floors, isLoading, error, hasRooms } = useFloorMapData({
+    hotelId,
+    selectedRoomId: room?.id,
+  });
 
   const handleRoomSelect = useCallback(
     (selectedRoom: typeof room) => {
@@ -28,10 +29,6 @@ export function FloorMapView({ room, setRoom }: FloorMapViewProps) {
     },
     [setRoom]
   );
-
-  const handleClearSelection = useCallback(() => {
-    setRoom(undefined);
-  }, [setRoom]);
 
   // Loading state
   if (isLoading) {
@@ -52,19 +49,17 @@ export function FloorMapView({ room, setRoom }: FloorMapViewProps) {
     <div className="grid grid-cols-1 lg:grid-cols-7 gap-2 p-2 h-full">
       {/* Floor map grid */}
       <FloorMapGrid
-        className="lg:col-span-5 h-full"
+        className="lg:col-span-5"
         floors={floors}
         selectedRoomId={room?.id}
         onRoomSelect={handleRoomSelect}
       />
-
       {/* Sidebar */}
-      <FloorMapSidebar
+      <FloorMapSideBar
         className="lg:col-span-2"
         hotelId={hotelId}
         room={room}
-        tasks={selectedRoomTasks}
-        onClose={handleClearSelection}
+        tasks={tasks}
       />
     </div>
   );

@@ -1,11 +1,11 @@
 'use client';
 
 import { useHotels } from '@hooks';
-import { useParams } from 'next/navigation';
 
-export function PendingView() {
+import type { HotelViewProps } from '@/app/hotels/[hotelId]/page';
+
+export function PendingView({ hotelId }: HotelViewProps) {
   const { data: hotels } = useHotels();
-  const { hotelId } = useParams<{ hotelId: string }>();
   const hotel = hotels?.find((hotel) => hotel.id === hotelId);
 
   return (

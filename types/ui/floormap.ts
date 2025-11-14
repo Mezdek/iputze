@@ -37,6 +37,8 @@ export interface FloorMapData {
 }
 
 export interface FloorMapViewProps {
-  room: RoomWithContext | undefined;
-  setRoom: (room: RoomWithContext | undefined) => void;
+  room?: RoomWithContext;
+  setRoom: (room?: RoomWithContext) => void;
+  tasks?: TaskResponse[] | null;
+  hotelId: string;
 }
