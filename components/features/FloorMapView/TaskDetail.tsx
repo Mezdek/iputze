@@ -5,9 +5,9 @@ import {
   ImageGallery,
   NotesSection,
   RichText,
+  TaskHeader,
 } from '@components';
 import {
-  Button,
   Chip,
   Divider,
   Modal,
@@ -21,15 +21,14 @@ import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useState } from 'react';
 
-import { TASK_STATUS_COLORS } from '@/lib/shared/constants/features/room';
-import { capitalize } from '@/lib/shared/utils/capitalize';
-import type { TaskResponse } from '@/types';
+import type { MeResponse, TaskResponse } from '@/types';
 
 interface TaskDetailProps {
   task: TaskResponse | null;
   isOpen: boolean;
   onClose: () => void;
   viewMode?: 'manager' | 'cleaner';
+  user: MeResponse;
 }
 
 export function TaskDetail({
@@ -37,6 +36,7 @@ export function TaskDetail({
   isOpen,
   onClose,
   viewMode = 'manager',
+  user,
 }: TaskDetailProps) {
   const t = useTranslations('task');
   const [selectedTab, setSelectedTab] = useState<string>('details');
@@ -47,13 +47,12 @@ export function TaskDetail({
     id,
     status,
     dueAt,
-    priority,
     cleaners,
     createdAt,
     startedAt,
     completedAt,
-    cancelledAt,
-    cancellationNote,
+    canceledAt,
+    cancelationNote,
     room,
     images,
     creator,
@@ -66,32 +65,7 @@ export function TaskDetail({
     <Modal isOpen={isOpen} scrollBehavior="inside" size="3xl" onClose={onClose}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-2 pb-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold">
-                {t('header', { number: room.number })}
-              </h2>
-              {isOverdue && (
-                <Chip color="danger" size="sm" variant="flat">
-                  Overdue
-                </Chip>
-              )}
-            </div>
-            <Button color="danger" variant="light" onPress={onClose}>
-              Close
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Chip color={TASK_STATUS_COLORS[status]} size="sm" variant="flat">
-              {capitalize(status, '_', 'ALL_WORDS')}
-            </Chip>
-            {priority !== 'LOW' && (
-              <Chip color="warning" size="sm" variant="flat">
-                Priority: {priority}
-              </Chip>
-            )}
-          </div>
+          <TaskHeader task={task} user={user} onClose={onClose} />
         </ModalHeader>
 
         <ModalBody className="pb-6">
@@ -166,26 +140,28 @@ export function TaskDetail({
                   />
 
                   <DetailRow
-                    label="Cancelled"
+                    label="Canceled"
                     value={
-                      cancelledAt
-                        ? format(new Date(cancelledAt), 'MMM dd, yyyy HH:mm')
+                      canceledAt
+                        ? format(new Date(canceledAt), 'MMM dd, yyyy HH:mm')
                         : 'N/A'
                     }
                   />
                 </div>
 
-                {/* Cancellation Note */}
-                {cancellationNote && (
-                  <>
-                    <Divider />
+                <Divider />
+                {/* Cancelation Note */}
+                {cancelationNote && (
+                  <div className="grid grid-cols-2">
                     <DetailRow
-                      label="Cancellation Reason"
-                      value={
-                        <p className="text-danger italic">{cancellationNote}</p>
-                      }
+                      label="Cancelation Reason"
+                      value={cancelationNote}
                     />
-                  </>
+                    <DetailRow
+                      label="Canceled By"
+                      value={task.canceler?.name}
+                    />
+                  </div>
                 )}
               </div>
             </Tab>

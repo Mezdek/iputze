@@ -24,7 +24,7 @@ export function StatusFilter({
       color: 'primary',
     },
     { key: TaskStatus.COMPLETED, label: 'Completed', color: 'success' },
-    { key: TaskStatus.CANCELLED, label: 'Cancelled', color: 'danger' },
+    { key: TaskStatus.CANCELED, label: 'Canceled', color: 'danger' },
   ];
 
   return (

@@ -1,10 +1,23 @@
 'use client';
 
-import { addToast, Button } from '@heroui/react';
+import {
+  addToast,
+  Autocomplete,
+  AutocompleteItem,
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from '@heroui/react';
 import { useErrorToast, useUpdateTask } from '@hooks';
 import { TaskStatus } from '@prisma/client';
 import { useTranslations } from 'next-intl';
+import { useCallback, useState } from 'react';
 
+import { ApprovalRequest } from '@/components/ui';
 import { capitalize } from '@/lib/shared/utils/capitalize';
 import { checkRoles } from '@/lib/shared/utils/permissions';
 import type { MeResponse, TaskResponse } from '@/types';
@@ -74,15 +87,76 @@ export function TaskActions({ task, user, compact = false }: TaskActionsProps) {
   });
 
   return (
-    <Button
-      className={compact ? 'text-sm' : 'rounded-lg text-sm font-medium'}
-      color={status === TaskStatus.PENDING ? 'primary' : 'success'}
-      isDisabled={isPending}
-      isLoading={isPending}
-      size={compact ? 'sm' : 'md'}
-      onPress={handleStatusChange}
-    >
-      {buttonText}
-    </Button>
+    <>
+      <Button
+        className={compact ? 'text-sm' : 'rounded-lg text-sm font-medium'}
+        color={status === TaskStatus.PENDING ? 'primary' : 'success'}
+        isDisabled={isPending}
+        isLoading={isPending}
+        size={compact ? 'sm' : 'md'}
+        onPress={handleStatusChange}
+      >
+        {buttonText}
+      </Button>
+      {task.status === 'PENDING' && <CancelTask task={task} user={user} />}
+    </>
   );
 }
+
+function CancelTask({ task, user }: { task: TaskResponse; user: MeResponse }) {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [cancelationNote, setCancelationNote] = useState<string>();
+  const { mutateAsync: update } = useUpdateTask({
+    hotelId: task.room.hotelId,
+    taskId: task.id,
+  });
+  const handleSubmit = useCallback(async () => {
+    await update({ cancelationNote });
+    onClose();
+  }, [cancelationNote, onClose, update]);
+  return (
+    <>
+      <Button onPress={onOpen}>Reject</Button>
+      <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
+        <ModalContent>
+          <ModalHeader>Task Cancelation</ModalHeader>
+          <ModalBody>
+            <Autocomplete
+              allowsCustomValue
+              isRequired
+              defaultItems={cancelationReasons}
+              errorMessage={'error'}
+              label={'Cancelation Reasons'}
+              name="cancelationNote"
+              placeholder={'Give a reason'}
+              variant="bordered"
+              onInputChange={(text) => {
+                setCancelationNote(text);
+              }}
+            >
+              {({ key }) => (
+                <AutocompleteItem key={key}>
+                  {capitalize(key, '_')}
+                </AutocompleteItem>
+              )}
+            </Autocomplete>
+          </ModalBody>
+          <ModalFooter>
+            <ApprovalRequest
+              header="Task Cancelation"
+              modalButtonProps={{ text: 'Reject' }}
+              question="Are you sure you want to reject this task"
+              submitHandler={handleSubmit}
+            />
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}
+
+const cancelationReasons = [
+  { key: 'SICK_VACATION' },
+  { key: 'ROOM_UNAVAILABLE' },
+  { key: 'MATERIALS_UNAVAILABLE' },
+];

@@ -52,11 +52,11 @@ export const canModifyTask = ({
   const updateFields = Object.keys(updateData) as (keyof TaskUpdateBody)[];
 
   const allowedFieldsForManagers: Set<keyof TaskUpdateBody> = new Set([
-    'cancellationNote',
+    'cancelationNote',
     'priority',
   ]);
   const allowedFieldsForCleaners: Set<keyof TaskUpdateBody> = new Set([
-    'cancellationNote',
+    'cancelationNote',
     'status',
   ]);
 

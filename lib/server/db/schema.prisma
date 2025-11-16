@@ -36,7 +36,7 @@ enum TaskStatus {
   PENDING
   IN_PROGRESS
   COMPLETED
-  CANCELLED
+  CANCELED
 }
 
 enum TaskPriority {
@@ -106,6 +106,7 @@ model User {
   deletedImages   Image[]           @relation("ImageDeletor")
   createdTasks    Task[]            @relation("Creator")
   deletedTasks    Task[]            @relation("TaskDeletor")
+  canceledTasks   Task[]            @relation("TaskCanceler")
   cleaners        Cleaner[]
   defaultCleaners DefaultCleaners[]
 }
@@ -130,27 +131,29 @@ model Role {
 }
 
 model Task {
-  id               String       @id @default(uuid())
-  status           TaskStatus   @default(PENDING)
-  priority         TaskPriority @default(LOW)
-  cancellationNote String?
-  createdAt        DateTime     @default(now())
-  dueAt            DateTime
-  startedAt        DateTime?
-  completedAt      DateTime?
-  cancelledAt      DateTime?
-  deletedAt        DateTime?
+  id              String       @id @default(uuid())
+  status          TaskStatus   @default(PENDING)
+  priority        TaskPriority @default(LOW)
+  cancelationNote String?
+  createdAt       DateTime     @default(now())
+  dueAt           DateTime
+  startedAt       DateTime?
+  completedAt     DateTime?
+  canceledAt      DateTime?
+  deletedAt       DateTime?
 
   //Relations
-  creatorId String?
-  creator   User?     @relation("Creator", fields: [creatorId], references: [id], onDelete: SetNull)
-  deletorId String?
-  deletor   User?     @relation("TaskDeletor", fields: [deletorId], references: [id], onDelete: SetNull)
-  roomId    String
-  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  notes     Note[]
-  images    Image[]
-  cleaners  Cleaner[]
+  creatorId  String?
+  creator    User?     @relation("Creator", fields: [creatorId], references: [id], onDelete: SetNull)
+  deletorId  String?
+  deletor    User?     @relation("TaskDeletor", fields: [deletorId], references: [id], onDelete: SetNull)
+  cancelerId String?
+  canceler   User?     @relation("TaskCanceler", fields: [cancelerId], references: [id], onDelete: SetNull)
+  roomId     String
+  room       Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  notes      Note[]
+  images     Image[]
+  cleaners   Cleaner[]
 
   @@index([roomId, status])
   @@index([status, priority, dueAt])

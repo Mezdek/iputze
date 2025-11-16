@@ -1,6 +1,6 @@
 import type { TaskPriority } from '@prisma/client';
 
-import type { RoomWithContext, TaskResponse } from '@/types';
+import type { MeResponse, RoomWithContext, TaskResponse } from '@/types';
 
 // Actual room statuses matching existing StatusBar logic
 export enum RoomStatus {
@@ -41,4 +41,5 @@ export interface FloorMapViewProps {
   setRoom: (room?: RoomWithContext) => void;
   tasks?: TaskResponse[] | null;
   hotelId: string;
+  user: MeResponse;
 }

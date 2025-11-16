@@ -1,53 +1,88 @@
 'use client';
 import {
+  Autocomplete,
+  AutocompleteItem,
   DatePicker,
   Form,
-  Input,
   Select,
   SelectItem,
-  TimeInput,
 } from '@heroui/react';
-import { getLocalTimeZone, now, today } from '@internationalized/date';
+import {
+  fromDate,
+  getLocalTimeZone,
+  now,
+  today,
+} from '@internationalized/date';
 import { TaskPriority } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import { type FormEvent } from 'react';
 
-import type { DefaultCleaner, TRoleWithUser } from '@/types';
+import { useRooms } from '@/hooks';
+import type { TRoleWithUser } from '@/types';
+
+type TRoomNumber = {
+  id: string;
+  number: string;
+};
 
 export default function TaskForm({
-  form,
   cleaners,
+  form,
+  hotelId,
+  roomId,
   submitHandler,
-  roomNumber,
-  defaultCleaners,
+  setRoomId,
+  defaultDate,
 }: {
-  form: string;
   cleaners: TRoleWithUser[];
-  defaultCleaners?: DefaultCleaner[];
+  form: string;
+  hotelId: string;
+  roomId?: string;
   submitHandler: (event: FormEvent<HTMLFormElement>) => void;
-  roomNumber?: string;
+  setRoomId: (roomId: string) => void;
+  defaultDate?: Date;
 }) {
   const t = useTranslations('task.creation');
+
+  const { data: rooms } = useRooms({ hotelId });
+
+  const roomNumbers: TRoomNumber[] =
+    rooms?.map(({ id, number }) => ({ id, number })) ?? [];
+
+  const preSelectedRoom = roomNumbers.find(({ id }) => id === roomId);
+
+  const getDefaultCleaners = (roomId?: string) =>
+    rooms
+      ?.find(({ id }) => id === roomId)
+      ?.defaultCleaners.map(({ id }) => id) ?? [];
+
+  const parsedDefaultDate = defaultDate
+    ? fromDate(defaultDate, getLocalTimeZone()).set({ hour: 11, minute: 0 })
+    : now(getLocalTimeZone()).add({ days: 1 }).set({ hour: 11, minute: 0 });
 
   return (
     <Form className="flex flex-col gap-4" id={form} onSubmit={submitHandler}>
       {/* Room Number */}
-      <Input
-        required
-        defaultValue={roomNumber}
+      <Autocomplete
+        isRequired
+        defaultInputValue={preSelectedRoom?.number}
+        defaultItems={roomNumbers}
         errorMessage={t('inputs.room_number.error_message')}
         label={t('inputs.room_number.label')}
         name="number"
         placeholder={t('inputs.room_number.placeholder')}
         variant="bordered"
-      />
+        onSelectionChange={(id) => setRoomId(id ? id.toString() : '')}
+      >
+        {({ number, id }) => (
+          <AutocompleteItem key={id}>{number}</AutocompleteItem>
+        )}
+      </Autocomplete>
       {/* Cleaners Selection */}
       <Select
         fullWidth
         isRequired
-        defaultSelectedKeys={
-          defaultCleaners ? defaultCleaners.map(({ id }) => id) : []
-        }
+        defaultSelectedKeys={getDefaultCleaners(roomId)}
         errorMessage={t('inputs.cleaners.error_message')}
         form={form}
         isDisabled={cleaners.length === 0}
@@ -73,7 +108,7 @@ export default function TaskForm({
       <div className="grid grid-cols-2 gap-4">
         <DatePicker
           isRequired
-          defaultValue={today(getLocalTimeZone()).add({ days: 1 })}
+          defaultValue={parsedDefaultDate}
           description={t('inputs.due_date.description')}
           errorMessage={t('inputs.due_date.error_message')}
           form={form}
@@ -83,36 +118,22 @@ export default function TaskForm({
           minValue={today(getLocalTimeZone())}
           name="dueAt"
         />
-
-        <TimeInput
-          defaultValue={now(getLocalTimeZone()).set({ hour: 11 })}
-          description={t('inputs.due_time.description', {
-            default: 'Select time',
-          })}
+        {/* Priority */}
+        <Select
+          defaultSelectedKeys={[TaskPriority.MEDIUM]}
+          description={t('inputs.priority.description')}
           form={form}
-          hourCycle={24}
-          label={t('inputs.due_time.label', {
-            default: 'Due Time',
-          })}
-          name="dueTime"
-        />
+          label={t('inputs.priority.label')}
+          name="priority"
+          placeholder={t('inputs.priority.placeholder')}
+        >
+          {Object.values(TaskPriority).map((priority) => (
+            <SelectItem key={priority}>
+              {t(`inputs.priority.options.${priority}`)}
+            </SelectItem>
+          ))}
+        </Select>
       </div>
-
-      {/* Priority */}
-      <Select
-        defaultSelectedKeys={[TaskPriority.MEDIUM]}
-        description={t('inputs.priority.description')}
-        form={form}
-        label={t('inputs.priority.label')}
-        name="priority"
-        placeholder={t('inputs.priority.placeholder')}
-      >
-        {Object.values(TaskPriority).map((priority) => (
-          <SelectItem key={priority}>
-            {t(`inputs.priority.options.${priority}`)}
-          </SelectItem>
-        ))}
-      </Select>
     </Form>
   );
 }

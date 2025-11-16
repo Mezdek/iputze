@@ -23,7 +23,6 @@ CREATE TABLE "Room" (
     "floor" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "deletedAt" DATETIME,
     "hotelId" TEXT NOT NULL,
     CONSTRAINT "Room_hotelId_fkey" FOREIGN KEY ("hotelId") REFERENCES "Hotel" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -61,18 +60,20 @@ CREATE TABLE "Task" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "priority" TEXT NOT NULL DEFAULT 'LOW',
-    "cancellationNote" TEXT,
+    "cancelationNote" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "dueAt" DATETIME NOT NULL,
     "startedAt" DATETIME,
     "completedAt" DATETIME,
-    "cancelledAt" DATETIME,
+    "canceledAt" DATETIME,
     "deletedAt" DATETIME,
     "creatorId" TEXT,
     "deletorId" TEXT,
+    "cancelerId" TEXT,
     "roomId" TEXT NOT NULL,
     CONSTRAINT "Task_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Task_deletorId_fkey" FOREIGN KEY ("deletorId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Task_cancelerId_fkey" FOREIGN KEY ("cancelerId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT "Task_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "Room" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -171,6 +172,15 @@ CREATE INDEX "Task_status_priority_dueAt_idx" ON "Task"("status", "priority", "d
 
 -- CreateIndex
 CREATE INDEX "Task_dueAt_idx" ON "Task"("dueAt");
+
+-- CreateIndex
+CREATE INDEX "Task_creatorId_idx" ON "Task"("creatorId");
+
+-- CreateIndex
+CREATE INDEX "Task_status_dueAt_idx" ON "Task"("status", "dueAt");
+
+-- CreateIndex
+CREATE INDEX "Task_roomId_status_dueAt_idx" ON "Task"("roomId", "status", "dueAt");
 
 -- CreateIndex
 CREATE INDEX "Cleaner_userId_assignedAt_idx" ON "Cleaner"("userId", "assignedAt");

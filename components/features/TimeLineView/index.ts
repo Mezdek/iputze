@@ -5,6 +5,5 @@ export * from './EmptyDayState';
 export * from './LoadingSkeleton';
 export * from './StatusFilter';
 export * from './TaskActions';
-export * from './TaskCard';
 export * from './TaskHeader';
 export * from './TaskStatus';

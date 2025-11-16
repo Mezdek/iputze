@@ -21,17 +21,13 @@ export function ApprovalRequest({
   header,
   question,
   modalButtonProps,
+  submitHandler,
 }: ApprovalRequestProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const t = useTranslations('ApprovalRequest');
   const { showErrorToast } = useErrorToast();
-  const {
-    submitHandler,
-    text: submitText,
-    ...submitButtonRestProps
-  } = submitButtonProps!;
-  const { text: modalText, ...modalButtonRestProps } = modalButtonProps!;
-  const cancelText = cancelButtonProps?.text;
+  const { text: modalText, ...modalButtonRestProps } = modalButtonProps;
+
   const handleSubmit = async () => {
     try {
       if (!submitHandler) throw new Error(GeneralErrors.NO_SUBMIT_FUNCTION);
@@ -63,14 +59,14 @@ export function ApprovalRequest({
           </ModalBody>
           <ModalFooter className="flex justify-end gap-3">
             <Button color="success" onPress={onClose} {...cancelButtonProps}>
-              {cancelText ?? t('closeButton')}
+              {cancelButtonProps?.text ?? t('closeButton')}
             </Button>
             <Button
               color="warning"
               onPress={handleSubmit}
-              {...submitButtonRestProps}
+              {...submitButtonProps}
             >
-              {submitText ?? t('submitButton')}
+              {submitButtonProps?.text ?? t('submitButton')}
             </Button>
           </ModalFooter>
         </ModalContent>

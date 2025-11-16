@@ -4,18 +4,19 @@ import {
   RoomUpdate,
   StatusBar,
   TaskCreation,
-  TaskDetail,
   TaskList,
 } from '@components';
 import { Card, CardBody, CardHeader, cn, Divider } from '@heroui/react';
 import { RoomCleanliness, TaskStatus } from '@prisma/client';
-import { useState } from 'react';
 
-import type { RoomDetailsCardProps, TaskResponse } from '@/types';
+import type { RoomDetailsCardProps } from '@/types';
 
-export function RoomDetails({ room, tasks, ...props }: RoomDetailsCardProps) {
-  const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
-
+export function RoomDetails({
+  room,
+  tasks,
+  user,
+  ...props
+}: RoomDetailsCardProps) {
   const activeTasks = tasks.filter(
     (t) =>
       t.status === TaskStatus.IN_PROGRESS || t.status === TaskStatus.PENDING
@@ -52,19 +53,11 @@ export function RoomDetails({ room, tasks, ...props }: RoomDetailsCardProps) {
             <TaskList
               emptyMessage="No active tasks"
               tasks={activeTasks}
-              onTaskClick={setSelectedTask}
+              user={user}
             />
           </div>
         )}
       </CardBody>
-
-      {/* Task Detail Modal */}
-      <TaskDetail
-        isOpen={!!selectedTask}
-        task={selectedTask}
-        viewMode="manager"
-        onClose={() => setSelectedTask(null)}
-      />
     </Card>
   );
 }

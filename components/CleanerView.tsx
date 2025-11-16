@@ -12,7 +12,11 @@ export function CleanerView({ user, hotelId }: HotelViewProps) {
   return (
     <div className="flex flex-col gap-2 items-center justify-around w-full h-screen">
       <HotelBanner hotelName={role.hotel.name} />
-      <TasksView taskListClassName="md:grid md:grid-cols-3" tasks={tasks} />
+      <TasksView
+        taskListClassName="md:grid md:grid-cols-3"
+        tasks={tasks}
+        user={user}
+      />
     </div>
   );
 }

@@ -17,6 +17,7 @@ export function FloorMapView({
   setRoom,
   tasks,
   hotelId,
+  user,
 }: FloorMapViewProps) {
   const { floors, isLoading, error, hasRooms } = useFloorMapData({
     hotelId,
@@ -56,10 +57,11 @@ export function FloorMapView({
       />
       {/* Sidebar */}
       <FloorMapSideBar
-        className="lg:col-span-2"
+        className="hidden lg:flex lg:col-span-2"
         hotelId={hotelId}
         room={room}
         tasks={tasks}
+        user={user}
       />
     </div>
   );

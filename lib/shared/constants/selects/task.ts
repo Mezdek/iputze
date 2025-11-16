@@ -5,9 +5,9 @@ export const taskSelect = {
   dueAt: true,
   startedAt: true,
   completedAt: true,
-  cancelledAt: true,
+  canceledAt: true,
   createdAt: true,
-  cancellationNote: true,
+  cancelationNote: true,
   deletedAt: true,
   _count: {
     select: { cleaners: true, notes: true, images: true },
@@ -55,6 +55,14 @@ export const taskSelect = {
   },
 
   deletor: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      avatarUrl: true,
+    },
+  },
+  canceler: {
     select: {
       id: true,
       name: true,

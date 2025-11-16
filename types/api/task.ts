@@ -26,7 +26,7 @@ export interface TaskAccessContext {
 
 // Tasks
 export interface TaskResponse
-  extends Omit<Task, 'creatorId' | 'roomId' | 'deletorId'> {
+  extends Omit<Task, 'creatorId' | 'roomId' | 'deletorId' | 'cancelerId'> {
   _count: {
     notes: number;
     images: number;
@@ -37,6 +37,7 @@ export interface TaskResponse
   cleaners: TransformedCleaner[];
   creator: BasicUser | null;
   deletor: BasicUser | null;
+  canceler: BasicUser | null;
   notes: NoteWithAuthor[];
 }
 
@@ -53,8 +54,8 @@ export type TaskUpdateBody = {
   priority?: TaskPriority | undefined;
   completedAt?: Date | undefined;
   startedAt?: Date | undefined;
-  cancelledAt?: Date | undefined;
-  cancellationNote?: string | undefined;
+  canceledAt?: Date | undefined;
+  cancelationNote?: string | undefined;
 };
 
 export type TaskCollectionParams = HotelParams;
@@ -63,7 +64,7 @@ export type TaskParams = TaskCollectionParams & {
 };
 
 export interface TransformTaskProps
-  extends Omit<Task, 'creatorId' | 'roomId' | 'deletorId'> {
+  extends Omit<Task, 'creatorId' | 'roomId' | 'deletorId' | 'cancelerId'> {
   _count: {
     notes: number;
     images: number;
@@ -74,6 +75,7 @@ export interface TransformTaskProps
   images: ImageWithUploader[];
   creator: BasicUser | null;
   deletor: BasicUser | null;
+  canceler: BasicUser | null;
   cleaners: (Pick<Cleaner, 'assignedAt'> & { user: BasicUser })[];
 }
 

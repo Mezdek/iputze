@@ -9,7 +9,6 @@ export const roomSelect = {
   floor: true,
   createdAt: true,
   updatedAt: true,
-  deletedAt: true,
 
   defaultCleaners: {
     select: {

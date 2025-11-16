@@ -1,4 +1,4 @@
-import type { ImageResponse, TaskResponse } from '@/types';
+import type { ImageResponse } from '@/types';
 
 // ==================== Image Management ====================
 
@@ -78,16 +78,6 @@ export const PRIORITY_RANGES = {
 } as const;
 
 // ==================== Component Props ====================
-
-/**
- * Props for TaskCard component
- */
-export interface TaskCardProps {
-  task: TaskResponse;
-  onOpenDetails?: (task: TaskResponse) => void;
-  showMediaBadges?: boolean;
-  viewMode?: ViewMode;
-}
 
 /**
  * Props for NotesSection component

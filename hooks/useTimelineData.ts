@@ -1,4 +1,4 @@
-import { isSameDay } from 'date-fns';
+import { isPast, isSameDay } from 'date-fns';
 import { useMemo } from 'react';
 
 import {
@@ -11,7 +11,6 @@ import type {
   DayData,
   StatusFilterType,
   TaskResponse,
-  TimeLineViewMode,
   WeekBoundaries,
 } from '@/types';
 
@@ -26,7 +25,6 @@ interface UseTimelineDataReturn {
   weekBoundaries: WeekBoundaries;
   cleanersList: CleanerWithTasks[];
   weekData: DayData[];
-  viewMode: TimeLineViewMode;
   totalTasks: number;
 }
 
@@ -36,10 +34,6 @@ export function useTimelineData({
   statusFilter,
   selectedCleanerId,
 }: UseTimelineDataParams): UseTimelineDataReturn {
-  const viewMode: TimeLineViewMode = selectedCleanerId
-    ? 'selected'
-    : 'overview';
-
   // Calculate week boundaries
   const weekBoundaries = useMemo((): WeekBoundaries => {
     const start = new Date(currentWeekStart);
@@ -121,16 +115,14 @@ export function useTimelineData({
       const dayTasks = tasksByDate.get(dateKey) ?? [];
 
       // Filter by selected cleaner if in selected mode
-      const visibleTasks =
-        viewMode === 'selected' && selectedCleanerId
-          ? dayTasks.filter((task) =>
-              task.cleaners.some((c) => c.id === selectedCleanerId)
-            )
-          : dayTasks;
-
+      const cleanersTasksOfToday = selectedCleanerId
+        ? dayTasks.filter((task) =>
+            task.cleaners.some((c) => c.id === selectedCleanerId)
+          )
+        : dayTasks;
       // Get unique cleaners for this day
       const cleanerIds = new Set<string>();
-      visibleTasks.forEach((task) => {
+      dayTasks.forEach((task) => {
         task.cleaners.forEach((cleaner) => cleanerIds.add(cleaner.id));
       });
 
@@ -151,18 +143,19 @@ export function useTimelineData({
         dayName,
         dayNumber: date.getDate(),
         isToday: isSameDay(date, today),
+        isPast: isPast(date) && !isSameDay(date, today),
         isWeekend: index >= 5,
         cleaners: dayCleaners,
-        tasks: visibleTasks,
+        selectedTasks: cleanersTasksOfToday,
+        dayTasks: dayTasks,
       };
     });
-  }, [weekDays, filteredTasks, viewMode, selectedCleanerId, cleanersMap]);
+  }, [filteredTasks, weekDays, selectedCleanerId, cleanersMap]);
 
   return {
     weekBoundaries,
     cleanersList,
     weekData,
-    viewMode,
     totalTasks: filteredTasks.length,
   };
 }

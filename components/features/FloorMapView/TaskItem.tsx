@@ -6,54 +6,51 @@ import {
   CardHeader,
   type CardProps,
   Chip,
+  cn,
   Divider,
 } from '@heroui/react';
 import { format } from 'date-fns';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
+import { TaskDetail } from '@/components/features/FloorMapView/TaskDetail';
+import { OverdueChip } from '@/components/shared';
 import { TASK_STATUS_COLORS } from '@/lib/shared/constants/features/room';
 import { capitalize } from '@/lib/shared/utils/capitalize';
-import type { TaskResponse } from '@/types';
+import type { MeResponse, TaskResponse } from '@/types';
 
 interface TaskItemProps extends Omit<CardProps, 'onClick'> {
   task: TaskResponse;
-  onClick?: (task: TaskResponse) => void;
+  user: MeResponse;
 }
 
-export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
+export function TaskItem({ task, user, ...cardProps }: TaskItemProps) {
   const t = useTranslations('task');
   const { status, dueAt, priority, cleaners, notes, images } = task;
 
   const isOverdue = new Date(dueAt) < new Date() && status !== 'COMPLETED';
-  const isPressable = !!onClick;
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <Card
-      className={`
-        ${isPressable ? 'hover:scale-[1.01] transition-transform cursor-pointer' : ''}
-        ${isOverdue ? 'border-2 border-danger' : ''}
-      `}
-      isPressable={isPressable}
-      onPress={onClick ? () => onClick(task) : undefined}
+      isPressable
+      className={cn(
+        'hover:scale-[1.01] transition-transform cursor-pointer w-full',
+        isOverdue && 'border-2 border-danger'
+      )}
+      onPress={() => setIsOpen((isOpen) => !isOpen)}
       {...cardProps}
     >
       <CardHeader className="flex justify-between items-start gap-2 pb-2">
-        <div className="flex flex-col gap-1 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-base font-semibold">
-              {t('header', { number: task.room.number })}
-            </h3>
-            {priority !== 'LOW' && (
-              <Chip color="warning" size="sm" variant="flat">
-                Priority: {priority}
-              </Chip>
-            )}
-            {isOverdue && (
-              <Chip color="danger" size="sm" variant="flat">
-                Overdue
-              </Chip>
-            )}
-          </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="text-base font-semibold">
+            {t('header', { number: task.room.number })}
+          </h3>
+          <OverdueChip isOverdue={isOverdue} />
+          <Chip color="warning" size="sm" variant="flat">
+            {capitalize(priority)}
+          </Chip>
           <Chip color={TASK_STATUS_COLORS[status]} size="sm" variant="flat">
             {capitalize(status, '_', 'ALL_WORDS')}
           </Chip>
@@ -87,6 +84,12 @@ export function TaskItem({ task, onClick, ...cardProps }: TaskItemProps) {
           <span>📷 {images.length} images</span>
         </div>
       </CardBody>
+      <TaskDetail
+        isOpen={isOpen}
+        task={task}
+        user={user}
+        onClose={() => setIsOpen(false)}
+      />
     </Card>
   );
 }

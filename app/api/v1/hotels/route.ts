@@ -19,7 +19,14 @@ export const GET = withErrorHandling(async (req: NextRequest) => {
   await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
 
   const PublicHotelList = await prisma.hotel.findMany({
-    omit: { updatedAt: true, createdAt: true, deletedAt: true },
+    select: {
+      address: true,
+      description: true,
+      email: true,
+      id: true,
+      name: true,
+      phone: true,
+    },
   });
   if (PublicHotelList.length === 0)
     throw APP_ERRORS.notFound(HotelErrors.EMPTY);

@@ -50,7 +50,7 @@ export const taskCreationSchema = z.object({
 export const taskUpdateSchema = z.object({
   status: z.enum(TaskStatus).optional(),
   priority: z.enum(TaskPriority).optional(),
-  cancellationNote: z.string().max(500).optional(),
+  cancelationNote: z.string().max(500).optional(),
 });
 
 export const noteSchema = z.object({

@@ -38,10 +38,12 @@ export const PATCH = withErrorHandling(
   async (req: NextRequest, { params }: { params: TaskParams }) => {
     await checkRateLimit(req, RATE_LIMIT_KEYS.DATABASE, 'api');
 
-    const { taskId, roles, hotelId, task } = await getTaskAccessContext({
-      params,
-      req,
-    });
+    const { taskId, roles, hotelId, task, userId } = await getTaskAccessContext(
+      {
+        params,
+        req,
+      }
+    );
 
     const data = taskUpdateSchema.parse(await req.json());
 
@@ -56,7 +58,7 @@ export const PATCH = withErrorHandling(
       throw APP_ERRORS.forbidden(GeneralErrors.ACTION_DENIED);
     }
 
-    const updateData = appendDates(data);
+    const updateData = appendDates(data, userId);
 
     const updatedTask = await prisma.task.update({
       where: { id: taskId },

@@ -13,7 +13,9 @@ export const useCreateRole = ({ hotelId }: RoleCollectionParams) => {
       const res = await api.post<Role>(getPath({ hotelId }).API.ROLES);
       return res;
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [queryKeys.me] }),
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.me,
+      }),
   });
 };

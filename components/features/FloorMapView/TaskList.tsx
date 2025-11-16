@@ -5,22 +5,22 @@ import { Card, CardBody, cn } from '@heroui/react';
 import { useTranslations } from 'next-intl';
 
 import { sortByPriority } from '@/lib/shared/utils/sortBy';
-import type { StatusFilterType, TaskResponse } from '@/types';
+import type { MeResponse, StatusFilterType, TaskResponse } from '@/types';
 
 interface TaskListProps {
   tasks: TaskResponse[];
-  onTaskClick?: (task: TaskResponse) => void;
   emptyMessage?: string;
   filterStatus?: StatusFilterType;
   className?: string;
+  user: MeResponse;
 }
 
 export function TaskList({
   tasks,
-  onTaskClick,
   emptyMessage,
   filterStatus,
   className,
+  user,
 }: TaskListProps) {
   const t = useTranslations('task');
 
@@ -51,7 +51,7 @@ export function TaskList({
   return (
     <div className={cn('gap-3 p-2 flex flex-col', className)}>
       {sortedTasks.map((task) => (
-        <TaskItem key={task.id} task={task} onClick={onTaskClick} />
+        <TaskItem key={task.id} task={task} user={user} />
       ))}
     </div>
   );

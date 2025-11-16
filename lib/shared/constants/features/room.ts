@@ -42,5 +42,5 @@ export const TASK_STATUS_COLORS = {
   PENDING: 'warning',
   IN_PROGRESS: 'primary',
   COMPLETED: 'success',
-  CANCELLED: 'danger',
+  CANCELED: 'danger',
 } as const;

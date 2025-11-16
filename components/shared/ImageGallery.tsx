@@ -160,6 +160,7 @@ export function ImageGallery({
 
             <input
               accept="image/jpeg,image/jpg,image/png,image/webp"
+              capture="environment"
               className="hidden"
               ref={fileInputRef}
               type="file"

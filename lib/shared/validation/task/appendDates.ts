@@ -1,25 +1,27 @@
+import { type Task, TaskStatus } from '@prisma/client';
+
 import type { TaskUpdateBody } from '@/types';
 
-export function appendDates(data: TaskUpdateBody): typeof data & {
-  startedAt?: Date;
-  completedAt?: Date;
-  cancelledAt?: Date;
-} {
-  const obj: {
-    startedAt?: Date;
-    completedAt?: Date;
-    cancelledAt?: Date;
-  } = {};
-
-  if (data.status === 'IN_PROGRESS') {
-    obj.startedAt = new Date();
+export function appendDates(
+  data: TaskUpdateBody,
+  userId: string
+): Partial<Task> {
+  if (data.status === TaskStatus.IN_PROGRESS) {
+    const startedAt = new Date();
+    return { ...data, startedAt };
   }
-  if (data.status === 'COMPLETED') {
-    obj.completedAt = new Date();
+  if (data.status === TaskStatus.COMPLETED) {
+    const completedAt = new Date();
+    return { ...data, completedAt };
   }
-  if (data.cancellationNote) {
-    obj.cancelledAt = new Date();
+  if (data.cancelationNote) {
+    const canceledAt = new Date();
+    return {
+      ...data,
+      status: TaskStatus.CANCELED,
+      canceledAt,
+      cancelerId: userId,
+    };
   }
-
-  return { ...data, ...obj };
+  return data;
 }

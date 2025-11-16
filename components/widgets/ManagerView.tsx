@@ -1,6 +1,7 @@
 'use client';
 import {
   FloorMapView,
+  Staff,
   TasksView,
   ViewSwitcher,
   WeeklyTimelineView,
@@ -48,19 +49,20 @@ export function ManagerView({ user, hotelId }: HotelViewProps) {
           room={room}
           setRoom={setRoom}
           tasks={tasks}
+          user={user}
         />
       )}
       {view === ROOM_VIEWS.TASKS && (
-        <TasksView taskListClassName="md:grid md:grid-cols-3" tasks={tasks} />
+        <TasksView
+          taskListClassName="md:grid md:grid-cols-3"
+          tasks={tasks}
+          user={user}
+        />
       )}
       {view === ROOM_VIEWS.TIMELINE && (
         <WeeklyTimelineView hotelId={hotelId} user={user} />
       )}
-      {view === ROOM_VIEWS.CLEANERS && <ComingSoon str={user.name} />}
+      {view === ROOM_VIEWS.CLEANERS && <Staff hotelId={hotelId} />}
     </div>
   );
-}
-
-function ComingSoon({ str }: { str?: string }) {
-  return <p>ComingSoon {str}</p>;
 }

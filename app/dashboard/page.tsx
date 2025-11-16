@@ -4,13 +4,16 @@ import { JoinHotel, withAuthGuard } from '@components';
 import { Button, Card, CardHeader, Divider } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 
+import { useMe } from '@/hooks';
 import { getPath } from '@/lib/shared/constants/pathes';
 import type { InjectedAuthProps } from '@/types';
 
 function Dashboard({ user }: InjectedAuthProps) {
   const router = useRouter();
-  const { name, roles } = user;
-
+  // const { name, roles } = user;
+  const { data } = useMe();
+  const roles = data?.roles ?? [];
+  const name = data?.name;
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex flex-col flex-1 items-center sm:justify-center gap-10 p-6 bg-gray-50">

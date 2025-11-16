@@ -331,9 +331,9 @@ Defines user access levels per hotel.
 
 Cleaning tasks assigned to rooms.
 
-- Status: PENDING, IN_PROGRESS, COMPLETED, CANCELLED
+- Status: PENDING, IN_PROGRESS, COMPLETED, CANCELED
 - Priority: HIGH, MEDIUM, LOW
-- Timestamps: due, started, completed, cancelled
+- Timestamps: due, started, completed, canceled
 - Related: Room, Creator, Cleaners, Notes, Images
 
 #### **Cleaner**

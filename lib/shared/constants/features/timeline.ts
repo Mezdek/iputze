@@ -16,7 +16,7 @@ export const STATUS_STYLES: Record<TaskStatus, StatusStyle> = {
     color: 'success',
     variant: 'flat',
   },
-  [TaskStatus.CANCELLED]: {
+  [TaskStatus.CANCELED]: {
     color: 'danger',
     variant: 'flat',
   },
@@ -55,7 +55,7 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
   [TaskStatus.PENDING]: 'Pending',
   [TaskStatus.IN_PROGRESS]: 'In Progress',
   [TaskStatus.COMPLETED]: 'Completed',
-  [TaskStatus.CANCELLED]: 'Cancelled',
+  [TaskStatus.CANCELED]: 'Canceled',
 } as const;
 
 export const PRIORITY_LABELS = {

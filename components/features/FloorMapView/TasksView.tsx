@@ -4,13 +4,19 @@ import { RoomDetails, StatusFilter, TaskDetail, TaskList } from '@components';
 import { Button, Card } from '@heroui/react';
 import { memo, useState } from 'react';
 
-import type { RoomWithContext, StatusFilterType, TaskResponse } from '@/types';
+import type {
+  MeResponse,
+  RoomWithContext,
+  StatusFilterType,
+  TaskResponse,
+} from '@/types';
 
 interface TasksViewProps {
   room?: RoomWithContext;
   tasks?: TaskResponse[] | null;
   onClose?: () => void;
   taskListClassName?: string;
+  user: MeResponse;
 }
 
 export const TasksView = memo(function TasksView({
@@ -18,6 +24,7 @@ export const TasksView = memo(function TasksView({
   tasks,
   onClose,
   taskListClassName,
+  user,
 }: TasksViewProps) {
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   const hasTasks: boolean = !!tasks && tasks.length > 0;
@@ -39,7 +46,12 @@ export const TasksView = memo(function TasksView({
             ← Back to Map
           </Button>
         )}
-        <RoomDetails className="flex-1" room={room} tasks={roomTasks} />
+        <RoomDetails
+          className="flex-1"
+          room={room}
+          tasks={roomTasks}
+          user={user}
+        />
       </div>
     );
   }
@@ -66,7 +78,7 @@ export const TasksView = memo(function TasksView({
             emptyMessage="No tasks available"
             filterStatus={statusFilter === 'all' ? undefined : statusFilter}
             tasks={tasks ?? []}
-            onTaskClick={setSelectedTask}
+            user={user}
           />
         </div>
       )}
@@ -75,6 +87,7 @@ export const TasksView = memo(function TasksView({
         <TaskDetail
           isOpen={!!selectedTask}
           task={selectedTask}
+          user={user}
           viewMode="manager"
           onClose={() => setSelectedTask(null)}
         />

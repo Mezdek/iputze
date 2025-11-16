@@ -1,37 +1,52 @@
-import { CleanerChip, EmptyDayState, TaskCard } from '@components';
+import { CleanerChip, EmptyDayState, TaskItem } from '@components';
+import { cn } from '@heroui/react';
 import { memo } from 'react';
 
-import type { DayData, MeResponse, TimeLineViewMode } from '@/types';
+import type { CleanerWithTasks, DayData, MeResponse } from '@/types';
+
+type TSelection = { cleanerId: string | null; dayNumber: number | null };
 
 interface DayColumnProps {
   day: DayData;
-  viewMode: TimeLineViewMode;
-  onChipClick: (cleanerId: string) => void;
+  hotelId: string;
+  onChipClick: (selection: TSelection) => void;
+  selection: TSelection;
   user: MeResponse;
 }
 
 export const DayColumn = memo(function DayColumn({
   day,
-  viewMode,
+  hotelId,
   onChipClick,
+  selection,
   user,
 }: DayColumnProps) {
-  const totalTasks = day.tasks.length;
+  const totalTasks = day.selectedTasks.length;
   const uniqueCleaners = day.cleaners.length;
 
   return (
     <div
-      className={`flex flex-col border border-divider rounded-lg overflow-hidden ${
-        day.isWeekend ? 'bg-default-50' : 'bg-content1'
-      }`}
+      className={cn(
+        'flex flex-col border border-divider rounded-lg overflow-hidden w-full',
+        day.isWeekend ? 'bg-default-50' : 'bg-content1',
+        day.dayNumber === selection.dayNumber ? 'col-span-2' : ''
+      )}
     >
       {/* Day Header */}
       <div
-        className={`p-2 text-center border-b border-divider ${
+        className={`p-2 text-center border-b border-divider w-full ${
           day.isToday
             ? 'bg-primary text-primary-foreground font-semibold'
             : 'bg-default-100 text-default-700'
         }`}
+        role="button"
+        tabIndex={0}
+        onClick={() => onChipClick({ cleanerId: null, dayNumber: null })}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            onChipClick({ cleanerId: null, dayNumber: null });
+          }
+        }}
       >
         <div className="text-xs">{day.dayName}</div>
         <div className="text-lg font-bold">{day.dayNumber}</div>
@@ -39,40 +54,96 @@ export const DayColumn = memo(function DayColumn({
 
       {/* Content */}
       <div className="flex-1 p-2 overflow-y-auto space-y-2">
-        {viewMode === 'overview' ? (
-          day.cleaners.length > 0 ? (
-            day.cleaners.map((cleaner) => {
-              const cleanerTasksToday = day.tasks.filter((task) =>
-                task.cleaners.some(({ id }) => id === cleaner.id)
-              );
-              return (
-                <CleanerChip
-                  cleaner={cleaner}
-                  key={cleaner.id}
-                  taskCount={cleanerTasksToday.length}
-                  onClick={() => onChipClick(cleaner.id)}
-                />
-              );
-            })
-          ) : (
-            <EmptyDayState mode="overview" />
-          )
-        ) : day.tasks.length > 0 ? (
-          day.tasks.map((task) => (
-            <TaskCard key={task.id} task={task} user={user} />
-          ))
-        ) : (
-          <EmptyDayState mode="selected" />
-        )}
+        <Day
+          day={day}
+          hotelId={hotelId}
+          selection={selection}
+          user={user}
+          onChipClick={onChipClick}
+        />
       </div>
 
-      {/* Footer Stats */}
-      {viewMode === 'overview' && totalTasks > 0 && (
-        <div className="p-2 text-xs text-center border-t border-divider bg-default-50 text-default-600">
-          <div>{totalTasks} tasks</div>
-          <div>{uniqueCleaners} cleaners</div>
-        </div>
-      )}
+      <div className="p-2 text-xs text-center border-t border-divider bg-default-50 text-default-600">
+        <div>{totalTasks} tasks</div>
+        <div>{uniqueCleaners} cleaners</div>
+      </div>
     </div>
   );
 });
+
+function Day({
+  day,
+  hotelId,
+  onChipClick,
+  selection,
+  user,
+}: {
+  day: DayData;
+  hotelId: string;
+  onChipClick: (props: TSelection) => void;
+  selection: TSelection;
+  user: MeResponse;
+}) {
+  if (selection.dayNumber === day.dayNumber) {
+    const restCleaners = day.cleaners.filter(
+      ({ id }) => id !== selection.cleanerId
+    );
+    return (
+      <>
+        {day.selectedTasks.map((task) => (
+          <TaskItem key={task.id} task={task} user={user} />
+        ))}
+        <CleanerChipList
+          cleaners={restCleaners}
+          day={day}
+          onChipClick={onChipClick}
+        />
+      </>
+    );
+  }
+  if (day.cleaners.length < 1) {
+    return (
+      <EmptyDayState
+        defaultDate={day.date}
+        hotelId={hotelId}
+        isTaskCreationButtonDisabled={day.isPast}
+      />
+    );
+  }
+  return (
+    <CleanerChipList
+      cleaners={day.cleaners}
+      day={day}
+      onChipClick={onChipClick}
+    />
+  );
+}
+
+function CleanerChipList({
+  cleaners,
+  onChipClick,
+  day,
+}: {
+  cleaners: CleanerWithTasks[];
+  onChipClick: (props: TSelection) => void;
+  day: DayData;
+}) {
+  return cleaners.map((cleaner) => {
+    const cleanerTasksToday = day.dayTasks.filter((task) =>
+      task.cleaners.some(({ id }) => id === cleaner.id)
+    );
+    return (
+      <CleanerChip
+        cleaner={cleaner}
+        key={cleaner.id}
+        taskCount={cleanerTasksToday.length}
+        onClick={() =>
+          onChipClick({
+            cleanerId: cleaner.id,
+            dayNumber: day.dayNumber,
+          })
+        }
+      />
+    );
+  });
+}

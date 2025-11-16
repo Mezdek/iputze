@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 
 import type {
   ApprovalRequestProps,
+  MeResponse,
   RoomWithContext,
   RoomWithStatus,
   TaskResponse,
@@ -15,13 +16,14 @@ export interface RoomCardProps {
   onClick: () => void;
 }
 
-export interface RoomDeletionProps extends ApprovalRequestProps {
+export interface RoomDeletionProps extends Partial<ApprovalRequestProps> {
   room: RoomWithContext;
 }
 
 export interface RoomDetailsCardProps extends CardProps {
   room: RoomWithContext;
   tasks: TaskResponse[];
+  user: MeResponse;
 }
 
 export enum RoomFormModes {

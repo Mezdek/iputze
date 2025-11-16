@@ -16,9 +16,11 @@ export interface DayData {
   dayName: string;
   dayNumber: number;
   isToday: boolean;
+  isPast: boolean;
   isWeekend: boolean;
   cleaners: CleanerWithTasks[];
-  tasks: TaskResponse[];
+  selectedTasks: TaskResponse[];
+  dayTasks: TaskResponse[];
 }
 
 export type TimeLineViewMode = 'overview' | 'selected';

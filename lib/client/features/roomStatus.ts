@@ -21,7 +21,7 @@ export function calculateRoomStatus(
   room: RoomWithContext,
   tasks: TaskResponse[]
 ): RoomStatusInfo {
-  // Check for active tasks (not cancelled or completed)
+  // Check for active tasks (not canceled or completed)
   const taskInProgress = tasks.some((t) => t.status === TaskStatus.IN_PROGRESS);
 
   const taskPending = tasks.some((t) => t.status === TaskStatus.PENDING);

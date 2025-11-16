@@ -44,10 +44,10 @@ export function RoomDeletion({ room, ...props }: RoomDeletionProps) {
       question={t('approval_question', { number: room.number })}
       submitButtonProps={{
         text: t('buttons.submit'),
-        submitHandler: handleDelete,
         title: 'Delete',
         ...submitButtonProps,
       }}
+      submitHandler={handleDelete}
       {...rest}
     />
   );

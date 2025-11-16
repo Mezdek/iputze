@@ -2,7 +2,7 @@
   "name": "Tasks",
   "header": "Room {number}",
   "creation": {
-    "modal_button": "Create Task",
+    "modal_button": "+ Assign Task",
     "header": "New Task",
     "inputs": {
       "room_number": {
@@ -41,7 +41,7 @@
     "no_cleaners": "No cleaners available. Please add cleaners first."
   },
   "status": {
-    "CANCELLED": { "state": "Canceled", "button": "Restart" },
+    "CANCELED": { "state": "Canceled", "button": "Restart" },
     "COMPLETED": { "state": "Completed", "button": "" },
     "IN_PROGRESS": { "state": "In Progress", "button": "Finish" },
     "PENDING": { "state": "Pending", "button": "Start" }

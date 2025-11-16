@@ -11,7 +11,7 @@ import {
   ModalHeader,
   useDisclosure,
 } from '@heroui/react';
-import { useCreateTask, useErrorToast, useRoles, useRoom } from '@hooks';
+import { useCreateTask, useErrorToast, useRoles } from '@hooks';
 import { RoleLevel } from '@prisma/client';
 import { useTranslations } from 'next-intl';
 import type { FormEvent } from 'react';
@@ -23,19 +23,23 @@ import { getRoles } from '@/lib/shared/utils/permissions';
 import type { TaskCreationBody, TRoleWithUser } from '@/types';
 
 export function TaskCreation({
-  roomId,
   hotelId,
+  roomId,
+  isDisabled = false,
+  defaultDate,
 }: {
   hotelId: string;
-  roomId: string;
+  roomId?: string;
+  isDisabled?: boolean;
+  defaultDate?: Date;
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { data: roles } = useRoles({ hotelId });
-  const { data: room } = useRoom({ hotelId, roomId });
   const { mutateAsync: createTask } = useCreateTask({ hotelId });
   const t = useTranslations('task.creation');
   const { showErrorToast } = useErrorToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedRoomId, setSelectedRoomId] = useState<string>(roomId ?? '');
   const FORM = 'task_creation_form';
 
   const allCleaners = getRoles.byLevel<TRoleWithUser>({
@@ -53,15 +57,15 @@ export function TaskCreation({
       const formData = parseFormData<TaskCreationBody>(e.currentTarget, {
         cleaners: [],
         dueAt: new Date(),
-        roomId,
+        roomId: '',
         notes: '',
         priority: 'LOW',
       });
-      const dueAt = new FormData(e.currentTarget).get('dueAt');
-      const dueTime = new FormData(e.currentTarget).get('dueTime');
+      const dueAt = new FormData(e.currentTarget).get('dueAt')?.slice(0, 19);
       const data: TaskCreationBody = {
         ...formData,
-        dueAt: new Date(`${dueAt} ${dueTime}`),
+        dueAt: new Date(`${dueAt}`),
+        roomId: selectedRoomId,
       };
 
       await createTask(data);
@@ -81,9 +85,10 @@ export function TaskCreation({
   return (
     <>
       <Button
-        aria-label="Create task"
-        className="w-full"
+        aria-label="+ Assign Task"
         color="primary"
+        isDisabled={isDisabled}
+        variant="flat"
         onPress={onOpen}
       >
         {t('modal_button')}
@@ -100,16 +105,15 @@ export function TaskCreation({
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader id="create-task-title">
-                {t('header')} for Room {room?.number}
-              </ModalHeader>
-
+              <ModalHeader id="create-task-title">{t('header')}</ModalHeader>
               <ModalBody>
                 <TaskForm
                   cleaners={allCleaners}
-                  defaultCleaners={room?.defaultCleaners}
+                  defaultDate={defaultDate}
                   form={FORM}
-                  roomNumber={room?.number}
+                  hotelId={hotelId}
+                  roomId={selectedRoomId}
+                  setRoomId={setSelectedRoomId}
                   submitHandler={handleCreate}
                 />
               </ModalBody>

@@ -3,10 +3,10 @@ import { TaskStatus } from '@prisma/client';
 import { APP_ERRORS } from '@/lib/shared/errors/api/factories';
 
 const VALID_TRANSITIONS: Record<TaskStatus, TaskStatus[]> = {
-  [TaskStatus.PENDING]: [TaskStatus.IN_PROGRESS, TaskStatus.CANCELLED],
-  [TaskStatus.IN_PROGRESS]: [TaskStatus.COMPLETED, TaskStatus.CANCELLED],
+  [TaskStatus.PENDING]: [TaskStatus.IN_PROGRESS, TaskStatus.CANCELED],
+  [TaskStatus.IN_PROGRESS]: [TaskStatus.COMPLETED, TaskStatus.CANCELED],
   [TaskStatus.COMPLETED]: [], // Terminal state
-  [TaskStatus.CANCELLED]: [], // Terminal state
+  [TaskStatus.CANCELED]: [], // Terminal state
 };
 
 export function validateStatusTransition(

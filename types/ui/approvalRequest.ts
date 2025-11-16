@@ -1,17 +1,14 @@
 import type { ButtonProps } from '@heroui/react';
 
 interface ButtonPropsWithText extends ButtonProps {
-  text?: string;
+  text: string;
 }
 
-interface SubmitButtonProps extends ButtonPropsWithText {
-  submitHandler: () => Promise<void>;
-}
-
-export type ApprovalRequestProps = Partial<{
+export type ApprovalRequestProps = {
   header: string;
-  question: string;
-  cancelButtonProps: ButtonPropsWithText;
   modalButtonProps: ButtonPropsWithText;
-  submitButtonProps: Partial<SubmitButtonProps>;
-}>;
+  question: string;
+  submitHandler: () => Promise<void>;
+  cancelButtonProps?: Partial<ButtonPropsWithText>;
+  submitButtonProps?: Partial<ButtonPropsWithText>;
+};

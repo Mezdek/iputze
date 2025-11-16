@@ -17,7 +17,9 @@ export const useUpdateRole = ({ hotelId, roleId }: RoleParams) => {
       );
       return res;
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: [queryKeys.roles, hotelId] }),
+    onSuccess: async () =>
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.roles(hotelId),
+      }),
   });
 };
